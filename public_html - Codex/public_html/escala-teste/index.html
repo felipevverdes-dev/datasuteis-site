@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+        <script>(function () { try { var t = localStorage.getItem('theme') || localStorage.getItem('datasuteis_theme'); if (t === 'dark') document.documentElement.classList.add('dark'); } catch (e) { } })()</script>
+    <script>(function () { try { var l = localStorage.getItem('lang') || localStorage.getItem('datasuteis_lang') || 'pt'; var m = { pt: 'pt-BR', en: 'en', es: 'es' }; if (m[l]) document.documentElement.lang = m[l]; } catch (e) { } })()</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9198198D5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', 'G-E9198198D5');
+    </script>
+<meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>[TESTE] Simulador de Dimensionamento de Equipe | Datas Úteis</title>
+    <link rel="canonical" href="https://datasuteis.com.br/escala-teste/">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/brand/favicon-16.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/brand/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/assets/css/tailwind.css">
+    <link rel="stylesheet" href="/assets/css/material3.css">
+    <link rel="stylesheet" href="/assets/css/components.css?v=20260308-2">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print">
+    <style>
+        /* ---- Barra de teste ---- */
+        .test-banner {
+            background: #fef3c7;
+            border-bottom: 2px solid #f59e0b;
+            color: #92400e;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            padding: 8px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .dark .test-banner {
+            background: #1c1300;
+            border-color: #b45309;
+            color: #fbbf24;
+        }
+        /* ---- Status badges ---- */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .status-ok     { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+        .status-obs    { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .status-no     { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .dark .status-ok  { background: #064e3b; color: #6ee7b7; border-color: #059669; }
+        .dark .status-obs { background: #1c1300; color: #fbbf24; border-color: #b45309; }
+        .dark .status-no  { background: #450a0a; color: #fca5a5; border-color: #b91c1c; }
+        /* ---- Result blocks ---- */
+        .result-block {
+            border-radius: 14px;
+            border: 1.5px solid rgb(203 213 225);
+            background: #fff;
+            overflow: hidden;
+        }
+        .dark .result-block { background: #171b22; border-color: rgb(61 68 80); }
+        .result-block__header {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgb(203 213 225);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dark .result-block__header { border-color: rgb(61 68 80); }
+        .result-block__body { padding: 18px; }
+        .result-block--system .result-block__header { background: #eff6ff; }
+        .dark .result-block--system .result-block__header { background: #0f2040; }
+        .result-block--user .result-block__header { background: #f0fdf4; }
+        .dark .result-block--user .result-block__header { background: #052e16; }
+        /* ---- Metric grid ---- */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .metric-card {
+            background: rgb(248 250 252);
+            border: 1px solid rgb(226 232 240);
+            border-radius: 10px;
+            padding: 12px 14px;
+            text-align: center;
+        }
+        .dark .metric-card { background: rgb(23 27 34); border-color: rgb(51 65 85); }
+        .metric-card__value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: rgb(30 64 175);
+        }
+        .dark .metric-card__value { color: rgb(147 197 253); }
+        .metric-card__label { font-size: 11px; color: rgb(100 116 139); margin-top: 4px; }
+        /* ---- Reason list ---- */
+        .reason-list { list-style: none; padding: 0; margin: 0; }
+        .reason-list li {
+            display: flex;
+            gap: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 8px 0;
+            border-bottom: 1px solid rgb(241 245 249);
+        }
+        .dark .reason-list li { border-color: rgb(51 65 85); }
+        .reason-list li:last-child { border-bottom: none; }
+        .reason-icon { flex: 0 0 16px; margin-top: 2px; }
+        /* ---- Scale calendar ---- */
+        .sim-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 3px;
+            font-size: 11px;
+        }
+        .sim-cal-cell {
+            min-height: 38px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            padding: 2px;
+        }
+        .sim-cal-cell--header {
+            font-weight: 700;
+            color: rgb(100 116 139);
+            font-size: 10px;
+            min-height: 20px;
+            border-radius: 0;
+        }
+        .sim-cal-cell--empty { background: transparent; }
+        .sim-cal-cell--off {
+            background: rgb(241 245 249);
+            color: rgb(100 116 139);
+        }
+        .dark .sim-cal-cell--off { background: rgb(30 41 59); color: rgb(100 116 139); }
+        .sim-cal-cell--work {
+            background: rgb(219 234 254);
+            color: rgb(30 64 175);
+            font-weight: 600;
+        }
+        .dark .sim-cal-cell--work { background: rgb(30 58 138); color: rgb(191 219 254); }
+        .sim-cal-cell--holiday {
+            background: rgb(254 243 199);
+            color: rgb(146 64 14);
+        }
+        .dark .sim-cal-cell--holiday { background: rgb(28 19 0); color: rgb(251 191 36); }
+        .sim-cal-cell--deficit {
+            background: rgb(254 226 226);
+            color: rgb(153 27 27);
+            border: 1px solid rgb(252 165 165);
+        }
+        .dark .sim-cal-cell--deficit { background: rgb(69 10 10); color: rgb(252 165 165); }
+        .sim-cal-cell--weekend-off {
+            background: rgb(248 250 252);
+            color: rgb(148 163 184);
+            opacity: 0.6;
+        }
+        .cal-day-num { font-size: 12px; font-weight: 700; line-height: 1; }
+        .cal-day-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 1px; }
+        .cal-emp-tag {
+            font-size: 9px;
+            font-weight: 700;
+            background: rgb(29 78 216);
+            color: #fff;
+            border-radius: 3px;
+            padding: 0 3px;
+            line-height: 14px;
+        }
+        /* ---- Weekend detail group ---- */
+        #sim-weekend-details { display: block; }
+        .weekend-detail-disabled { opacity: 0.65; }
+        /* ---- Conditional 24h fields ---- */
+        .sim-scale-suggest-note { display: none; }
+        /* ---- Suggestion alternative chips ---- */
+        .alt-chip {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            border: 1px solid rgb(147 197 253);
+            background: rgb(239 246 255);
+            color: rgb(30 64 175);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .dark .alt-chip { background: rgb(23 37 84); border-color: rgb(59 130 246); color: rgb(147 197 253); }
+        /* ---- Legal note ---- */
+        .legal-note {
+            font-size: 12px;
+            color: rgb(100 116 139);
+            background: rgb(248 250 252);
+            border-left: 3px solid rgb(203 213 225);
+            border-radius: 0 6px 6px 0;
+            padding: 8px 12px;
+            margin-top: 10px;
+        }
+        .dark .legal-note { background: rgb(23 27 34); border-color: rgb(61 68 80); color: rgb(148 163 184); }
+        /* ---- Section divider ---- */
+        .section-divider {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: rgb(148 163 184);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin: 6px 0;
+        }
+        /* ---- Responsive adjustments ---- */
+        @media (max-width: 640px) {
+            .metric-card__value { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+
+<body data-page="escala-teste" class="min-h-screen flex flex-col">
+
+    <!-- Barra de aviso de ambiente de teste -->
+    <div class="test-banner">
+        &#9888; PÁGINA DE TESTE DEPRECADA — Esta versão não é a produção e não será mantida. Acesse
+        <a href="/escala/" class="underline">/escala/</a> para o simulador oficial.
+    </div>
+
+    <nav class="sticky top-0 z-50 glass border-b border-surface-200/50 dark:border-surface-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="h-10 flex items-center">
+                    <img src="/assets/brand/datasuteis-logo.png" width="40" height="40" alt="Datas Úteis" class="img-logo">
+                </a>
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="/" class="tab-btn">Início</a>
+                    <a href="/calcular/" class="tab-btn">Calcular</a>
+                    <a href="/calendario/" class="tab-btn">Calendário</a>
+                    <a href="/escala/" class="tab-btn">Escala</a>
+                    <a href="/blog/" class="tab-btn">Blog</a>
+                    <a href="/escala-teste/" class="tab-btn active">Simulador v2 (Teste)</a>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="theme-toggle"
+                        class="p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+                        aria-label="Alternar tema">
+                        <svg id="theme-icon" class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </button>
+                    <button id="mobile-menu-btn"
+                        class="md:hidden p-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800"
+                        aria-label="Menu">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden border-t border-surface-200 dark:border-surface-700 pb-3">
+            <a href="/" class="block px-6 py-2 text-sm font-medium">Início</a>
+            <a href="/calcular/" class="block px-6 py-2 text-sm font-medium">Calcular</a>
+            <a href="/calendario/" class="block px-6 py-2 text-sm font-medium">Calendário</a>
+            <a href="/escala/" class="block px-6 py-2 text-sm font-medium">Escala (produção)</a>
+            <a href="/escala-teste/" class="block px-6 py-2 text-sm font-medium">Simulador v2 (Teste)</a>
+        </div>
+    </nav>
+
+    <main class="app-main flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
+
+        <h1 class="text-2xl md:text-3xl font-extrabold mb-2">
+            Simulador de Dimensionamento de Equipe
+        </h1>
+        <p class="help-copy mb-6">
+            Calcule o quadro mínimo de funcionários, valide se a escala escolhida é viável para a sua operação
+            e receba uma recomendação automática com justificativa. Versão de testes — não substitui análise jurídica.
+        </p>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+
+            <!-- ============================================================
+                 COLUNA ESQUERDA: FORMULÁRIO
+            ============================================================ -->
+            <section class="lg:col-span-1 space-y-5">
+                <div class="card p-5">
+                    <h2 class="font-bold text-base mb-4">Parâmetros da operação</h2>
+
+                    <form id="sim-form" class="space-y-4">
+
+                        <!-- Mês / Ano -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-1.5">Mês / Ano de referência</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <select id="sim-month-select" class="input-field" aria-label="Mês" required></select>
+                                <select id="sim-year-select" class="input-field" aria-label="Ano" required></select>
+                            </div>
+                        </div>
+
+                        <!-- Tipo de escala -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-1.5">Tipo de escala</label>
+                            <select id="sim-scale-type" class="input-field">
+                                <option value="auto">&#10024; Sugerida pelo sistema</option>
+                                <option value="5x2">5x2 (Segunda a Sexta)</option>
+                                <option value="6x1">6x1</option>
+                                <option value="12x36">12x36</option>
+                                <option value="24x48">24x48</option>
+                                <option value="4x2">4x2</option>
+                                <option value="6x2">6x2</option>
+                                <option value="12x60">12x60</option>
+                            </select>
+                            <p id="sim-scale-suggest-note" class="help-copy mt-1" style="display:none;">
+                                O sistema escolherá automaticamente a melhor escala com base nos parâmetros informados.
+                            </p>
+                        </div>
+
+                        <!-- Horas mensais por funcionário -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-1.5">Horas mensais por funcionário</label>
+                            <select id="sim-monthly-hours" class="input-field">
+                                <option value="160">160h / mês</option>
+                                <option value="180" selected>180h / mês</option>
+                                <option value="200">200h / mês</option>
+                                <option value="220">220h / mês</option>
+                            </select>
+                            <p class="help-copy mt-1">Conforme contrato de trabalho ou jornada acordada.</p>
+                        </div>
+
+                        <!-- Quantidade de postos -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-1.5">Quantidade de postos de trabalho</label>
+                            <input type="number" id="sim-postos" class="input-field" value="1" min="1" max="99" inputmode="numeric">
+                            <p class="help-copy mt-1">Número de postos que precisam estar cobertos simultaneamente.</p>
+                        </div>
+
+                        <!-- Opera 24h? -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-1.5">Opera 24 horas por dia?</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sim-24h" id="sim-24h-yes" value="yes" class="accent-brand-600">
+                                    <span>Sim</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sim-24h" id="sim-24h-no" value="no" checked class="accent-brand-600">
+                                    <span>Não (turno diurno de 8h)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Trabalha finais de semana? -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-1.5">Trabalha finais de semana?</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sim-weekends" id="sim-weekends-yes" value="yes" class="accent-brand-600">
+                                    <span>Sim (sáb. e dom.)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sim-weekends" id="sim-weekends-no" value="no" checked class="accent-brand-600">
+                                    <span>Não</span>
+                                </label>
+                            </div>
+                            <!-- Sábado / Domingo -->
+                            <div id="sim-weekend-details" class="mt-3 pl-3 border-l-2 border-surface-200 dark:border-surface-700 space-y-2">
+                                <p class="help-copy text-xs font-semibold uppercase tracking-wide mb-2">Cobertura de sábado e domingo</p>
+                                <label id="sim-sat-wrap" class="flex items-center gap-2 cursor-pointer text-sm">
+                                    <input type="checkbox" id="sim-sat" class="accent-brand-600">
+                                    Trabalha sábado?
+                                </label>
+                                <label id="sim-sun-wrap" class="flex items-center gap-2 cursor-pointer text-sm">
+                                    <input type="checkbox" id="sim-sun" class="accent-brand-600">
+                                    Trabalha domingo?
+                                </label>
+                                <p class="help-copy text-xs">Se marcar "Trabalha finais de semana? = Sim", sábado e domingo ficam ativos automaticamente.</p>
+                            </div>
+                        </div>
+
+                        <!-- Trabalha feriados? -->
+                        <div>
+                            <label class="block text-sm font-semibold mb-1.5">Trabalha feriados nacionais?</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sim-holidays" id="sim-holidays-yes" value="yes" class="accent-brand-600">
+                                    <span>Sim</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="sim-holidays" id="sim-holidays-no" value="no" checked class="accent-brand-600">
+                                    <span>Não</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="grid grid-cols-2 gap-2 pt-2">
+                            <button id="sim-calc-btn" type="submit" class="btn-primary w-full">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <rect x="4" y="3" width="16" height="18" rx="2" />
+                                    <line x1="8" y1="8" x2="16" y2="8" />
+                                    <line x1="8" y1="12" x2="16" y2="12" />
+                                </svg>
+                                <span>Calcular</span>
+                            </button>
+                            <button class="btn-secondary btn-print w-full" type="button">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <polyline points="7 8 7 3 17 3 17 8" />
+                                    <rect x="7" y="14" width="10" height="7" />
+                                    <path d="M5 9h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2" />
+                                    <path d="M5 16H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2" />
+                                </svg>
+                                <span>Imprimir</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Card de referência rápida -->
+                <div class="card p-5">
+                    <h2 class="font-bold text-base mb-3">Como o cálculo funciona</h2>
+                    <p class="help-copy mb-3">
+                        Fórmula principal: <strong>Quadro mínimo = &#8968;Horas totais de operação ÷ Horas mensais por funcionário&#8969;</strong>
+                    </p>
+                    <ul class="text-sm space-y-2 text-surface-600 dark:text-surface-400">
+                        <li>&#8227; <strong>Horas totais</strong> = dias operados × horas/dia × n.º de postos</li>
+                        <li>&#8227; <strong>24h/dia</strong> = 24h por posto; turno padrão = 8h</li>
+                        <li>&#8227; Arredondamento sempre para cima (função teto)</li>
+                        <li>&#8227; Exemplo: 720h ÷ 160h = 4,5 → <strong>5 funcionários</strong></li>
+                    </ul>
+                    <div class="legal-note mt-3">
+                        Este simulador é uma ferramenta de planejamento. Não substitui análise jurídica, acordos coletivos ou validação com o RH.
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 COLUNA DIREITA: RESULTADOS
+            ============================================================ -->
+            <section class="lg:col-span-2 space-y-5">
+                <div id="sim-result">
+                    <!-- Placeholder inicial -->
+                    <div id="sim-placeholder" class="card p-8 text-center text-surface-400">
+                        <svg class="icon mx-auto mb-3" style="width:40px;height:40px;opacity:.35" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <p class="font-semibold text-base mb-1">Preencha os parâmetros e clique em Calcular</p>
+                        <p class="text-sm">Os resultados de dimensionamento e viabilidade aparecerão aqui.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /grid -->
+
+    </main>
+
+    <footer class="site-footer">
+        <p>O Datas Úteis é uma ferramenta gratuita para calcular dias úteis no Brasil, consultar calendário com feriados nacionais e utilizar um simulador de escala de trabalho online.</p>
+        <p>
+            <a href="/calcular/">Calcular Dias Úteis</a> |
+            <a href="/calendario/">Calendário</a> |
+            <a href="/escala/">Simulador de Escalas</a> |
+            <a href="/blog/">Blog</a>
+        </p>
+        <p><a href="/privacidade/">Política de Privacidade</a></p>
+    </footer>
+
+    <div class="print-footer">
+        <div class="site-credit">Gerado por www.datasuteis.com.br</div>
+    </div>
+
+    <!-- Mobile bottom nav -->
+    <nav class="mobile-bottom-nav" aria-label="Navegacao principal">
+        <a href="/" class="mobile-bottom-nav__item">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 10.5l9-7 9 7V20a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1v-9.5z" />
+            </svg>
+            <span>Início</span>
+        </a>
+        <a href="/calcular/" class="mobile-bottom-nav__item">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <rect x="4" y="2" width="16" height="20" rx="2" />
+                <path d="M8 6h8M8 10h8M8 14h4" />
+            </svg>
+            <span>Calcular</span>
+        </a>
+        <a href="/calendario/" class="mobile-bottom-nav__item">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="17" rx="2" />
+                <line x1="8" y1="2.5" x2="8" y2="6" />
+                <line x1="16" y1="2.5" x2="16" y2="6" />
+                <line x1="3" y1="9" x2="21" y2="9" />
+            </svg>
+            <span>Calendário</span>
+        </a>
+        <a href="/escala/" class="mobile-bottom-nav__item">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M8 4h8" />
+                <rect x="4" y="3" width="16" height="18" rx="2" />
+                <path d="M8 8h8M8 12h8M8 16h8" />
+            </svg>
+            <span>Escala</span>
+        </a>
+    </nav>
+
+    <!-- Engines -->
+    <script src="/assets/js/engine/scale-dimensioner.js" defer></script>
+    <script src="/assets/js/escala-teste.js" defer></script>
+</body>
+
+</html>

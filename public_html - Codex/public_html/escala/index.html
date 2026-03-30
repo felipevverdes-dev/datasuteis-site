@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+        <script>(function () { try { var t = localStorage.getItem('theme') || localStorage.getItem('datasuteis_theme'); if (t === 'dark') document.documentElement.classList.add('dark'); } catch (e) { } })()</script>
+    <script>(function () { try { var l = localStorage.getItem('lang') || localStorage.getItem('datasuteis_lang') || 'pt'; var m = { pt: 'pt-BR', en: 'en', es: 'es' }; if (m[l]) document.documentElement.lang = m[l]; } catch (e) { } })()</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9198198D5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', 'G-E9198198D5');
+    </script>
+<meta name="google-adsense-account" content="ca-pub-3377250238500968">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Simulador de Escalas de Trabalho Online | CLT 2026 | Datas Úteis</title>
+    <meta name="description"
+        content="Use o simulador de escalas de trabalho para estimar quadro mínimo em 5x2, 5x1, 6x1, 6x2, 12x36, 12x60, 24x48 e 4x2, com cobertura mensal e feriados nacionais.">
+    <meta name="robots" content="index, follow">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Simulador de Escalas de Trabalho Online | CLT 2026 | Datas Úteis">
+    <meta property="og:description" content="Simule escalas 5x2, 5x1, 6x1, 6x2, 12x36, 12x60, 24x48 e 4x2 para estimar quadro mínimo e cobertura mensal.">
+    <meta property="og:url" content="https://datasuteis.com.br/escala/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Datas Úteis">
+    <meta property="og:image" content="https://datasuteis.com.br/assets/brand/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Datas Úteis - Simulador de Escalas de Trabalho">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Simulador de Escalas de Trabalho Online | CLT 2026 | Datas Úteis">
+    <meta name="twitter:description" content="Simule escalas de trabalho e estime quadro mínimo com cobertura mensal e feriados nacionais.">
+    <meta name="twitter:image" content="https://datasuteis.com.br/assets/brand/og-image.png">
+    <link rel="canonical" href="https://datasuteis.com.br/escala/">
+    <link rel="alternate" hreflang="pt" href="https://datasuteis.com.br/escala/">
+    <link rel="alternate" hreflang="en" href="https://datasuteis.com.br/escala/">
+    <link rel="alternate" hreflang="es" href="https://datasuteis.com.br/escala/">
+    <link rel="alternate" hreflang="x-default" href="https://datasuteis.com.br/escala/">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/brand/favicon-16.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/brand/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="image" href="/assets/brand/datasuteis-logo.png">
+    <!-- [FIX-PSI] Loads non-critical font and enhancement layers without blocking first paint — 2026-03-06 -->
+    <!-- CLS-FIX-FOUC: load the font stylesheet eagerly to reduce late metric swaps in the hero -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional"></noscript>
+    <!-- CLS-FIX-FOUC: critical site CSS must block first paint to avoid a large unstyled layout -->
+    <link rel="stylesheet" href="/assets/css/tailwind.css">
+    <link rel="stylesheet" href="/assets/css/material3.css">
+    <link rel="stylesheet" href="/assets/css/components.css?v=20260308-2">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print">
+    <style>
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .sim-intro {
+            padding: 14px 16px;
+            background: rgb(248 250 252);
+            border-color: rgba(203, 213, 225, 0.9);
+        }
+
+        .dark .sim-intro {
+            background: rgb(15 23 42);
+            border-color: rgba(51, 65, 85, 0.95);
+        }
+
+        .sim-intro__grid {
+            display: grid;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .sim-intro__eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.7);
+            color: rgb(30 64 175);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .dark .sim-intro__eyebrow {
+            background: rgba(30, 41, 59, 0.72);
+            color: rgb(147 197 253);
+        }
+
+        .sim-intro__list {
+            display: grid;
+            gap: 10px;
+            align-content: start;
+        }
+
+        .sim-intro__list li {
+            position: relative;
+            padding: 12px 14px 12px 36px;
+            border-radius: 12px;
+            border: 1px solid rgb(191 219 254);
+            background: rgba(255, 255, 255, 0.82);
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgb(30 41 59);
+        }
+
+        .sim-intro__list li::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 14px;
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: rgb(37 99 235);
+            box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.14);
+        }
+
+        .dark .sim-intro__list li {
+            border-color: rgba(59, 130, 246, 0.4);
+            background: rgba(15, 23, 42, 0.82);
+            color: rgb(226 232 240);
+        }
+
+        .field-cluster {
+            display: grid;
+            gap: 10px;
+        }
+
+        .field-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .field-label {
+            display: inline-flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            color: rgb(15 23 42);
+        }
+
+        .dark .field-label {
+            color: rgb(241 245 249);
+        }
+
+        .field-label__text {
+            line-height: 1.4;
+        }
+
+        .best-practice-box {
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgb(226 232 240);
+            background: rgb(248 250 252);
+        }
+
+        .dark .best-practice-box {
+            border-color: rgb(51 65 85);
+            background: rgb(15 23 42);
+        }
+
+        .best-practice-list {
+            display: grid;
+            gap: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgb(51 65 85);
+        }
+
+        .best-practice-list li {
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .best-practice-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: rgb(37 99 235);
+            font-weight: 700;
+        }
+
+        .dark .best-practice-list {
+            color: rgb(203 213 225);
+        }
+
+        .inline-note {
+            margin: 0;
+            padding: 6px 0 0 10px;
+            border-left: 2px solid rgb(191 219 254);
+            background: transparent;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .inline-note--warning {
+            border-color: rgb(253 230 138);
+            color: rgb(146 64 14);
+        }
+
+        .inline-note--info {
+            color: rgb(30 64 175);
+        }
+
+        .dark .inline-note--info {
+            border-color: rgba(59, 130, 246, 0.45);
+            color: rgb(191 219 254);
+        }
+
+        .dark .inline-note--warning {
+            border-color: rgb(146 64 14);
+            color: rgb(252 211 77);
+        }
+
+        .muted-group {
+            opacity: 0.72;
+        }
+
+        .action-guides {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .action-guide {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: rgb(248 250 252);
+            border: 1px solid rgb(226 232 240);
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            color: rgb(71 85 105);
+        }
+
+        .dark .action-guide {
+            background: rgb(15 23 42);
+            border-color: rgb(51 65 85);
+            color: rgb(203 213 225);
+        }
+
+        .ag-tip-slot {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .ag-tip-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .ag-tip-wrap--right .ag-tip-panel,
+        .ag-tip-panel--right {
+            left: auto;
+            right: 0;
+        }
+
+        .ag-tip-panel--left {
+            left: 0;
+            right: auto;
+        }
+
+        .ag-tip-panel--bottom {
+            top: calc(100% + 8px);
+            bottom: auto;
+        }
+
+        .ag-tip-panel--top {
+            top: auto;
+            bottom: calc(100% + 8px);
+        }
+
+        .ag-tip-trigger {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            min-height: 22px;
+            padding: 0;
+            border-radius: 999px;
+            border: 1px solid rgb(191 219 254);
+            background: rgb(239 246 255);
+            color: rgb(29 78 216);
+            font-size: 12px;
+            font-weight: 800;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ag-tip-trigger:hover {
+            background: rgb(219 234 254);
+        }
+
+        .ag-tip-trigger:focus-visible {
+            outline: 3px solid rgba(37, 99, 235, 0.28);
+            outline-offset: 2px;
+        }
+
+        .dark .ag-tip-trigger {
+            border-color: rgba(96, 165, 250, 0.4);
+            background: rgba(30, 58, 138, 0.45);
+            color: rgb(191 219 254);
+        }
+
+        .dark .ag-tip-trigger:hover {
+            background: rgba(30, 64, 175, 0.65);
+        }
+
+        .ag-tip-panel {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            min-width: min(220px, calc(100vw - 24px));
+            max-width: min(280px, calc(100vw - 24px));
+            width: max-content;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgb(30 41 59);
+            background: rgb(15 23 42);
+            color: rgb(248 250 252);
+            font-size: 13px;
+            line-height: 1.4;
+            white-space: normal;
+            word-break: normal;
+            overflow-wrap: break-word;
+            box-shadow: 0 18px 32px rgba(15, 23, 42, 0.22);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(4px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 1000;
+        }
+
+        .ag-tip-panel p {
+            margin: 0;
+        }
+
+        .ag-tip-panel p + p {
+            margin-top: 6px;
+        }
+
+        .ag-tip-wrap.is-open .ag-tip-panel {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .ag-tip-kicker {
+            display: none;
+        }
+
+        .dark .ag-tip-panel {
+            border-color: rgb(71 85 105);
+            background: rgb(2 6 23);
+            color: rgb(241 245 249);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-ok {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .status-obs {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        .status-no {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .dark .status-ok {
+            background: #064e3b;
+            color: #6ee7b7;
+            border-color: #059669;
+        }
+
+        .dark .status-obs {
+            background: #1c1300;
+            color: #fbbf24;
+            border-color: #b45309;
+        }
+
+        .dark .status-no {
+            background: #450a0a;
+            color: #fca5a5;
+            border-color: #b91c1c;
+        }
+
+        .result-block {
+            border-radius: 14px;
+            border: 1.5px solid rgb(203 213 225);
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .result-block--system {
+            border-color: rgb(147 197 253);
+        }
+
+        .result-block--user {
+            border-color: rgb(187 247 208);
+        }
+
+        .dark .result-block {
+            background: #171b22;
+            border-color: rgb(61 68 80);
+        }
+
+        .dark .result-block--system {
+            border-color: rgb(30 64 175);
+        }
+
+        .dark .result-block--user {
+            border-color: rgb(21 128 61);
+        }
+
+        .result-block__header {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgb(203 213 225);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .dark .result-block__header {
+            border-color: rgb(61 68 80);
+        }
+
+        .result-block__body {
+            padding: 18px;
+        }
+
+        .result-block--system .result-block__header {
+            background: #eff6ff;
+        }
+
+        .dark .result-block--system .result-block__header {
+            background: #0f2040;
+        }
+
+        .result-block--user .result-block__header {
+            background: #f0fdf4;
+        }
+
+        .dark .result-block--user .result-block__header {
+            background: #052e16;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .metric-card {
+            background: rgb(248 250 252);
+            border: 1px solid rgb(226 232 240);
+            border-radius: 10px;
+            padding: 12px 14px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .dark .metric-card {
+            background: rgb(23 27 34);
+            border-color: rgb(51 65 85);
+        }
+
+        .metric-card__value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: rgb(30 64 175);
+        }
+
+        .dark .metric-card__value {
+            color: rgb(147 197 253);
+        }
+
+        .metric-card__label {
+            font-size: 12px;
+            color: rgb(100 116 139);
+            margin-top: 0;
+        }
+
+        .metric-card__head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .metric-card__label-copy {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .status-copy {
+            display: grid;
+            gap: 4px;
+        }
+
+        .status-desc {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgb(71 85 105);
+        }
+
+        .dark .status-desc {
+            color: rgb(203 213 225);
+        }
+
+        .result-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .result-assurance {
+            max-width: none;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            font-size: 12px;
+            line-height: 1.45;
+            color: rgb(71 85 105);
+        }
+
+        .dark .result-assurance {
+            color: rgb(203 213 225);
+        }
+
+        .result-empty {
+            border-style: dashed;
+        }
+
+        .executive-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            background:
+                radial-gradient(circle at top right, rgba(191, 219, 254, 0.55), transparent 38%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
+            box-shadow: 0 18px 38px rgba(15, 23, 42, 0.08);
+        }
+
+        .executive-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto;
+            height: 3px;
+            background: linear-gradient(90deg, rgb(29 78 216), rgb(14 165 233), rgb(16 185 129));
+        }
+
+        .executive-card__header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .executive-card__grid {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        }
+
+        .executive-card__metric {
+            display: grid;
+            gap: 8px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(8px);
+        }
+
+        .executive-card__metric--highlight {
+            border-color: rgba(147, 197, 253, 0.9);
+            background: linear-gradient(135deg, rgba(239, 246, 255, 0.98), rgba(219, 234, 254, 0.88));
+        }
+
+        .executive-card__metric-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgb(71 85 105);
+        }
+
+        .executive-card__metric-value {
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            line-height: 1.35;
+            color: rgb(15 23 42);
+        }
+
+        .executive-card__metric--status .executive-card__metric-value {
+            color: inherit;
+        }
+
+        .executive-card__text-value {
+            display: block;
+        }
+
+        .executive-card__summary-line {
+            margin: 16px 0 0;
+            padding-top: 14px;
+            border-top: 1px solid rgba(203, 213, 225, 0.9);
+            font-size: 13px;
+            line-height: 1.65;
+            color: rgb(51 65 85);
+        }
+
+        .executive-card__summary-line strong {
+            color: rgb(15 23 42);
+        }
+
+        .dark .executive-card {
+            border-color: rgba(71, 85, 105, 0.9);
+            background:
+                radial-gradient(circle at top right, rgba(30, 64, 175, 0.32), transparent 38%),
+                linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
+            box-shadow: 0 18px 38px rgba(2, 6, 23, 0.32);
+        }
+
+        .dark .executive-card__metric {
+            border-color: rgba(71, 85, 105, 0.95);
+            background: rgba(15, 23, 42, 0.82);
+        }
+
+        .dark .executive-card__metric--highlight {
+            border-color: rgba(59, 130, 246, 0.7);
+            background: linear-gradient(135deg, rgba(15, 32, 64, 0.95), rgba(30, 64, 175, 0.32));
+        }
+
+        .dark .executive-card__metric-label {
+            color: rgb(148 163 184);
+        }
+
+        .dark .executive-card__metric-value {
+            color: rgb(241 245 249);
+        }
+
+        .dark .executive-card__summary-line {
+            border-color: rgba(71, 85, 105, 0.95);
+            color: rgb(203 213 225);
+        }
+
+        .dark .executive-card__summary-line strong {
+            color: rgb(241 245 249);
+        }
+
+        .compare-summary {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        }
+
+        .compare-summary__item {
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgb(226 232 240);
+            background: rgb(248 250 252);
+        }
+
+        .compare-summary__item--recommended {
+            border-color: rgb(191 219 254);
+            background: rgb(239 246 255);
+        }
+
+        .compare-summary__label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgb(100 116 139);
+        }
+
+        .compare-summary__value {
+            display: block;
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.35;
+            color: rgb(15 23 42);
+        }
+
+        .compare-summary__note {
+            display: block;
+            margin-top: 4px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: rgb(71 85 105);
+        }
+
+        .dark .compare-summary__item {
+            border-color: rgb(51 65 85);
+            background: rgb(15 23 42);
+        }
+
+        .dark .compare-summary__item--recommended {
+            border-color: rgb(30 64 175);
+            background: rgb(15 32 64);
+        }
+
+        .dark .compare-summary__value {
+            color: rgb(241 245 249);
+        }
+
+        .dark .compare-summary__note {
+            color: rgb(203 213 225);
+        }
+
+        .result-block--ideal .result-block__header {
+            background: linear-gradient(135deg, rgb(219 234 254), rgb(220 252 231));
+        }
+
+        .dark .result-block--ideal .result-block__header {
+            background: linear-gradient(135deg, rgb(15 32 64), rgb(5 46 22));
+        }
+
+        .adblock-note {
+            display: none;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-top: 14px;
+            padding: 14px 16px;
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .adblock-note.is-visible {
+            display: flex;
+        }
+
+        .adblock-note__copy {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgb(51 65 85);
+        }
+
+        .adblock-note__close {
+            flex: 0 0 auto;
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            border: 1px solid rgb(226 232 240);
+            background: rgba(255, 255, 255, 0.78);
+            color: rgb(71 85 105);
+        }
+
+        .dark .adblock-note {
+            border-color: rgba(71, 85, 105, 0.8);
+            background: rgba(15, 23, 42, 0.82);
+            box-shadow: 0 14px 30px rgba(2, 6, 23, 0.3);
+        }
+
+        .dark .adblock-note__copy {
+            color: rgb(226 232 240);
+        }
+
+        .dark .adblock-note__close {
+            border-color: rgb(51 65 85);
+            background: rgba(15, 23, 42, 0.78);
+            color: rgb(203 213 225);
+        }
+
+        .print-config-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 80;
+        }
+
+        .print-config-modal.is-open {
+            display: flex;
+        }
+
+        .print-config-modal__backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.52);
+        }
+
+        .print-config-modal__panel {
+            position: relative;
+            width: min(560px, calc(100vw - 32px));
+            max-height: calc(100vh - 32px);
+            overflow: auto;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 30px 60px rgba(15, 23, 42, 0.22);
+        }
+
+        .dark .print-config-modal__panel {
+            border-color: rgba(51, 65, 85, 0.9);
+            background: rgba(15, 23, 42, 0.98);
+        }
+
+        .print-config-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .print-config-field {
+            display: grid;
+            gap: 8px;
+        }
+
+        .print-config-field label,
+        .print-config-check {
+            font-size: 14px;
+            font-weight: 700;
+            color: rgb(15 23 42);
+        }
+
+        .dark .print-config-field label,
+        .dark .print-config-check {
+            color: rgb(241 245 249);
+        }
+
+        .print-config-help {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.45;
+            color: rgb(100 116 139);
+        }
+
+        .dark .print-config-help {
+            color: rgb(148 163 184);
+        }
+
+        .print-config-logo {
+            display: none;
+            max-height: 52px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .print-config-logo.is-visible {
+            display: block;
+        }
+
+        .print-config-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        #scale-print-sheet {
+            display: none;
+        }
+
+        .scale-ad-slot {
+            position: relative;
+            display: block;
+            border: 1px dashed rgb(203 213 225);
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.8), rgba(241, 245, 249, 0.92));
+            overflow: hidden;
+        }
+
+        .scale-ad-slot--top {
+            min-height: 120px;
+        }
+
+        .scale-ad-slot--sidebar {
+            min-height: 320px;
+        }
+
+        .scale-ad-slot--inline {
+            min-height: 250px;
+        }
+
+        .scale-ad-slot__label {
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgb(100 116 139);
+            pointer-events: none;
+        }
+
+        .scale-ad-slot .adsbygoogle {
+            width: 100%;
+            min-height: inherit;
+        }
+
+        .scale-ad-slot--filled .scale-ad-slot__label {
+            display: none;
+        }
+
+        .dark .scale-ad-slot {
+            border-color: rgb(51 65 85);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.88), rgba(2, 6, 23, 0.94));
+        }
+
+        .dark .scale-ad-slot__label {
+            color: rgb(148 163 184);
+        }
+
+        .reason-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .reason-list li {
+            display: flex;
+            gap: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 8px 0;
+            border-bottom: 1px solid rgb(241 245 249);
+        }
+
+        .dark .reason-list li {
+            border-color: rgb(51 65 85);
+        }
+
+        .reason-list li:last-child {
+            border-bottom: none;
+        }
+
+        .reason-icon {
+            flex: 0 0 16px;
+            margin-top: 2px;
+        }
+
+        .sim-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 3px;
+            font-size: 11px;
+        }
+
+        .sim-cal-cell {
+            min-height: 38px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            padding: 2px;
+        }
+
+        .sim-cal-cell--header {
+            font-weight: 700;
+            color: rgb(100 116 139);
+            font-size: 10px;
+            min-height: 20px;
+            border-radius: 0;
+        }
+
+        .sim-cal-cell--empty {
+            background: transparent;
+        }
+
+        .sim-cal-cell--off {
+            background: rgb(241 245 249);
+            color: rgb(100 116 139);
+        }
+
+        .dark .sim-cal-cell--off {
+            background: rgb(30 41 59);
+            color: rgb(100 116 139);
+        }
+
+        .sim-cal-cell--work {
+            background: rgb(219 234 254);
+            color: rgb(30 64 175);
+            font-weight: 600;
+        }
+
+        .dark .sim-cal-cell--work {
+            background: rgb(30 58 138);
+            color: rgb(191 219 254);
+        }
+
+        .sim-cal-cell--holiday {
+            background: rgb(254 243 199);
+            color: rgb(146 64 14);
+        }
+
+        .dark .sim-cal-cell--holiday {
+            background: rgb(28 19 0);
+            color: rgb(251 191 36);
+        }
+
+        .sim-cal-cell--deficit {
+            background: rgb(254 226 226);
+            color: rgb(153 27 27);
+            border: 1px solid rgb(252 165 165);
+        }
+
+        .dark .sim-cal-cell--deficit {
+            background: rgb(69 10 10);
+            color: rgb(252 165 165);
+        }
+
+        .sim-cal-cell--weekend-off {
+            background: rgb(248 250 252);
+            color: rgb(148 163 184);
+            opacity: 0.6;
+        }
+
+        .dark .sim-cal-cell--weekend-off {
+            background: rgb(15 23 42);
+            color: rgb(100 116 139);
+        }
+
+        .cal-day-num {
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .cal-day-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1px;
+        }
+
+        .cal-emp-tag {
+            font-size: 9px;
+            font-weight: 700;
+            background: rgb(29 78 216);
+            color: #fff;
+            border-radius: 3px;
+            padding: 0 3px;
+            line-height: 14px;
+        }
+
+        #sim-weekend-details {
+            display: block;
+        }
+
+        .weekend-detail-disabled {
+            opacity: 0.65;
+        }
+
+        .sim-scale-suggest-note {
+            display: none;
+        }
+
+        .alt-chip {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            border: 1px solid rgb(147 197 253);
+            background: rgb(239 246 255);
+            color: rgb(30 64 175);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .dark .alt-chip {
+            background: rgb(23 37 84);
+            border-color: rgb(59 130 246);
+            color: rgb(147 197 253);
+        }
+
+        .legal-note {
+            font-size: 12px;
+            color: rgb(100 116 139);
+            background: rgb(248 250 252);
+            border-left: 3px solid rgb(203 213 225);
+            border-radius: 0 6px 6px 0;
+            padding: 8px 12px;
+            margin-top: 10px;
+        }
+
+        .dark .legal-note {
+            background: rgb(23 27 34);
+            border-color: rgb(61 68 80);
+            color: rgb(148 163 184);
+        }
+
+        .section-divider {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: rgb(148 163 184);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin: 6px 0;
+        }
+
+        .list-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .calendar-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 16px 0 12px;
+        }
+
+        .sim-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            margin-top: 12px;
+            color: rgb(100 116 139);
+        }
+
+        .sim-legend__item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .sim-legend__swatch {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .calendar-scroll {
+            overflow-x: auto;
+        }
+
+        .form-actions-note {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.45;
+            color: rgb(71 85 105);
+        }
+
+        .dark .form-actions-note {
+            color: rgb(203 213 225);
+        }
+
+        .sim-choice-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .sim-choice-card {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgb(226 232 240);
+            background: rgb(248 250 252);
+            cursor: pointer;
+            transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .sim-choice-card:hover {
+            transform: translateY(-1px);
+            border-color: rgb(147 197 253);
+        }
+
+        .sim-choice-card input {
+            margin-top: 2px;
+        }
+
+        .sim-choice-card__title {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: rgb(15 23 42);
+        }
+
+        .sim-choice-card__desc {
+            display: block;
+            margin-top: 2px;
+            font-size: 12px;
+            line-height: 1.45;
+            color: rgb(71 85 105);
+        }
+
+        .dark .sim-choice-card {
+            border-color: rgb(51 65 85);
+            background: rgb(15 23 42);
+        }
+
+        .dark .sim-choice-card__title {
+            color: rgb(241 245 249);
+        }
+
+        .dark .sim-choice-card__desc {
+            color: rgb(148 163 184);
+        }
+
+        .sim-choice-card:has(input:checked) {
+            border-color: rgb(37 99 235);
+            background: rgb(239 246 255);
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+        }
+
+        .dark .sim-choice-card:has(input:checked) {
+            border-color: rgb(96 165 250);
+            background: rgba(30, 58, 138, 0.28);
+        }
+
+        .turn-row {
+            display: grid;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgb(226 232 240);
+            background: rgb(248 250 252);
+        }
+
+        .turn-row__label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgb(71 85 105);
+        }
+
+        .dark .turn-row {
+            border-color: rgb(51 65 85);
+            background: rgb(15 23 42);
+        }
+
+        .dark .turn-row__label {
+            color: rgb(148 163 184);
+        }
+
+        .sim-summary-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .sim-summary-item {
+            display: grid;
+            gap: 4px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgb(226 232 240);
+            background: rgb(248 250 252);
+        }
+
+        .sim-summary-item strong {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: rgb(71 85 105);
+        }
+
+        .sim-summary-item span {
+            font-size: 15px;
+            font-weight: 700;
+            color: rgb(15 23 42);
+        }
+
+        .dark .sim-summary-item {
+            border-color: rgb(51 65 85);
+            background: rgb(15 23 42);
+        }
+
+        .dark .sim-summary-item strong {
+            color: rgb(148 163 184);
+        }
+
+        .dark .sim-summary-item span {
+            color: rgb(241 245 249);
+        }
+
+        .result-hours-adjust {
+            display: grid;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid rgb(226 232 240);
+            background: rgb(248 250 252);
+        }
+
+        .result-hours-adjust__controls {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .result-hours-adjust__input {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .result-hours-adjust__status {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgb(71 85 105);
+        }
+
+        .dark .result-hours-adjust {
+            border-color: rgb(51 65 85);
+            background: rgb(15 23 42);
+        }
+
+        .dark .result-hours-adjust__status {
+            color: rgb(148 163 184);
+        }
+
+        .result-notes__foot {
+            margin-top: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: rgb(71 85 105);
+        }
+
+        .dark .result-notes__foot {
+            color: rgb(148 163 184);
+        }
+
+        .result-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .field-heading {
+                align-items: flex-start;
+            }
+
+            .action-guides {
+                grid-template-columns: 1fr;
+            }
+
+            .executive-card__grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-block__body {
+                padding: 16px;
+            }
+
+            .metric-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .metric-card__value {
+                font-size: 1.4rem;
+            }
+
+            .sim-cal-cell {
+                min-height: 44px;
+                padding: 4px 2px;
+            }
+
+            .cal-day-num {
+                font-size: 11px;
+            }
+
+            .cal-emp-tag {
+                font-size: 8px;
+                line-height: 13px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .sim-intro__grid {
+                grid-template-columns: minmax(0, 1.45fr) minmax(270px, 0.85fr);
+            }
+        }
+    </style>
+    <link rel="preload" href="/data/feriados/nacionais-2026.json" as="fetch">
+    <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://datasuteis.com.br/" },
+          { "@type": "ListItem", "position": 2, "name": "Simulador de Escalas", "item": "https://datasuteis.com.br/escala/" }
+        ]
+      },
+      {
+        "@type": "WebApplication",
+        "name": "Escala de Trabalho Mensal",
+        "url": "https://datasuteis.com.br/escala/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "Simula escalas de trabalho para estimar quadro mínimo, cobertura mensal e impacto de feriados nacionais."
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body data-page="escala" data-date-locale="pt-BR" data-scale-simulator="v2" class="min-h-screen flex flex-col">
+    <div data-site-nav></div>
+
+    <main class="app-main flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
+
+
+        <h1 class="text-2xl md:text-3xl font-extrabold mb-2" data-i18n="scale_title">Simulador de Escalas de
+            Trabalho Online</h1>
+        <p class="help-copy mb-4" data-i18n="scale_page_subtitle">Compare escalas, estime quadro mínimo por posto e
+            visualize alertas operacionais do mês com uma leitura objetiva para planejamento da operação.</p>
+
+        <section class="card mb-5 sim-intro" aria-labelledby="sim-intro-title">
+            <h2 id="sim-intro-title" class="font-bold text-lg mb-2">Dimensionamento rápido da escala do mês</h2>
+            <p class="text-sm text-surface-500 leading-relaxed">
+                Use o simulador de escala de trabalho para estimar quadro mínimo de funcionários, comparar escala 12x36,
+                escala 6x1, escala 5x2 e rotinas de plantão, com leitura de feriados nacionais no dimensionamento da equipe.
+            </p>
+        </section>
+
+        <div id="ads-top" class="ad-slot ad-slot-header scale-ad-slot scale-ad-slot--top mb-6" aria-label="Espaco reservado para anuncios">
+            <ins class="adsbygoogle" data-ad-client="ca-pub-3377250238500968" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+
+        <aside id="adblock-note" class="adblock-note no-print" aria-live="polite">
+            <p class="adblock-note__copy" data-i18n="scale_adblock_notice">Se você usa bloqueador de anúncios, considere liberar o Datas Úteis. Isso ajuda a manter a ferramenta gratuita.</p>
+            <button type="button" id="adblock-note-close" class="adblock-note__close" aria-label="Fechar aviso" data-i18n-aria="help_close">×</button>
+        </aside>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+            <section class="lg:col-span-1 space-y-4" aria-labelledby="sim-form-title">
+                <div class="card p-4">
+                    <h2 id="sim-form-title" class="font-bold text-base mb-3">Parâmetros da operação a ser simulada</h2>
+                    <form id="sim-form" class="space-y-4">
+                        <div class="field-cluster">
+                            <div class="field-heading">
+                                <p class="field-label">
+                                    <span class="field-label__text">Tipo de simulação</span>
+                                </p>
+                            </div>
+                            <div class="sim-choice-grid" role="radiogroup" aria-label="Tipo de simulação">
+                                <label class="sim-choice-card">
+                                    <input type="radio" name="sim-simulation-type" id="sim-mode-continuous" value="continuous" checked class="accent-brand-600">
+                                    <span>
+                                        <span class="sim-choice-card__title">Operação contínua / recorrente</span>
+                                        <span class="sim-choice-card__desc">Usa uma base padrão de 30 dias para a simulação operacional.</span>
+                                    </span>
+                                </label>
+                                <label class="sim-choice-card">
+                                    <input type="radio" name="sim-simulation-type" id="sim-mode-project" value="project" class="accent-brand-600">
+                                    <span>
+                                        <span class="sim-choice-card__title">Projeto temporário</span>
+                                        <span class="sim-choice-card__desc">Calcula com data inicial e final reais do projeto.</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <p id="sim-scenario-note" class="inline-note inline-note--info">Operação contínua usa base padrão de 30 dias.</p>
+                            <div id="sim-project-fields" class="grid grid-cols-2 gap-3 hidden">
+                                <label class="field-cluster">
+                                    <span class="field-label__text text-sm font-semibold">Data inicial</span>
+                                    <input type="date" id="sim-start-date" class="input-field">
+                                </label>
+                                <label class="field-cluster">
+                                    <span class="field-label__text text-sm font-semibold">Data final</span>
+                                    <input type="date" id="sim-end-date" class="input-field">
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="field-cluster">
+                            <div class="field-heading">
+                                <p class="field-label">
+                                    <span class="field-label__text">Funcionamento da operação</span>
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="field-cluster">
+                                    <span class="field-label__text text-sm font-semibold">Horário de início da operação</span>
+                                    <input type="time" id="sim-operation-start" class="input-field" value="08:00" required>
+                                </label>
+                                <label class="field-cluster">
+                                    <span class="field-label__text text-sm font-semibold">Horário de fim da operação</span>
+                                    <input type="time" id="sim-operation-end" class="input-field" value="17:00" required>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="field-cluster">
+                                    <span class="field-label__text text-sm font-semibold">Quantas pessoas precisam trabalhar juntas</span>
+                                    <input type="number" id="sim-postos" class="input-field" value="1" min="1" max="99" inputmode="numeric" required>
+                                </label>
+                                <label class="field-cluster">
+                                    <span class="field-label__text text-sm font-semibold">Quantos turnos existem</span>
+                                    <input type="number" id="sim-shift-count" class="input-field" value="1" min="1" max="4" inputmode="numeric" required>
+                                </label>
+                            </div>
+                            <fieldset class="field-cluster">
+                                <legend class="field-label">
+                                    <span class="field-label__text">Existe encontro de turnos?</span>
+                                </legend>
+                                <div class="flex gap-4" role="radiogroup" aria-label="Existe encontro de turnos">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="sim-overlap" id="sim-overlap-no" value="no" checked class="accent-brand-600">
+                                        <span>Não</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="sim-overlap" id="sim-overlap-yes" value="yes" class="accent-brand-600">
+                                        <span>Sim</span>
+                                    </label>
+                                </div>
+                                <p id="sim-turn-note" class="inline-note inline-note--info">Sem encontro de turnos, o sistema distribui a cobertura pelo intervalo informado.</p>
+                            </fieldset>
+                            <div id="sim-shift-rows" class="space-y-2" aria-live="polite"></div>
+                        </div>
+
+                        <fieldset class="field-cluster">
+                            <legend class="field-label">
+                                <span class="field-label__text">Cobertura da operação</span>
+                            </legend>
+                            <div class="grid grid-cols-1 gap-2">
+                                <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                    <input type="checkbox" id="sim-sat" class="accent-brand-600">
+                                    <span>Trabalha sábado?</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                    <input type="checkbox" id="sim-sun" class="accent-brand-600">
+                                    <span>Trabalha domingo?</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer text-sm">
+                                    <input type="checkbox" id="sim-holidays" class="accent-brand-600">
+                                    <span>Trabalha feriados?</span>
+                                </label>
+                            </div>
+                            <p id="sim-coverage-note" class="inline-note inline-note--info">Informe apenas o que realmente entra na operação.</p>
+                        </fieldset>
+
+                        <div class="field-cluster">
+                            <div class="field-heading">
+                                <p class="field-label">
+                                    <span class="field-label__text">Escala</span>
+                                    <span class="ag-tip-slot" data-ag-tip-key="scale-type" data-ag-tip-align="right"></span>
+                                </p>
+                            </div>
+                            <div class="sim-choice-grid" role="radiogroup" aria-label="Escolha da escala">
+                                <label class="sim-choice-card">
+                                    <input type="radio" name="sim-scale-mode" id="sim-scale-auto" value="auto" checked class="accent-brand-600">
+                                    <span>
+                                        <span class="sim-choice-card__title">Opção sugerida pelo sistema</span>
+                                        <span class="sim-choice-card__desc">O motor escolhe a escala mais aderente ao cenário informado.</span>
+                                    </span>
+                                </label>
+                                <label class="sim-choice-card">
+                                    <input type="radio" name="sim-scale-mode" id="sim-scale-manual" value="manual" class="accent-brand-600">
+                                    <span>
+                                        <span class="sim-choice-card__title">Opção manual</span>
+                                        <span class="sim-choice-card__desc">Força uma escala específica para comparar com a recomendação.</span>
+                                    </span>
+                                </label>
+                            </div>
+                            <p id="sim-scale-suggest-note" class="help-copy">O sistema escolherá automaticamente a melhor escala com base nos parâmetros informados.</p>
+                            <div id="sim-manual-scale-wrap" class="hidden">
+                                <select id="sim-scale-type" class="input-field"></select>
+                            </div>
+                        </div>
+
+                        <p class="form-actions-note">Preencha a operação, gere o cenário e ajuste as horas no resultado se precisar testar variações.</p>
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button id="sim-calc-btn" type="submit" class="btn-primary w-full">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <rect x="4" y="3" width="16" height="18" rx="2" />
+                                    <line x1="8" y1="8" x2="16" y2="8" />
+                                    <line x1="8" y1="12" x2="16" y2="12" />
+                                </svg>
+                                <span>Calcular cenário</span>
+                            </button>
+                            <button class="btn-secondary js-scale-print w-full" type="button">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <polyline points="7 8 7 3 17 3 17 8" />
+                                    <rect x="7" y="14" width="10" height="7" />
+                                    <path d="M5 9h14a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2" />
+                                    <path d="M5 16H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2" />
+                                </svg>
+                                <span>Imprimir leitura</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card p-4">
+                    <div class="field-heading mb-2">
+                        <h2 class="font-bold text-base">Leitura operacional</h2>
+                    </div>
+                    <p id="sim-how-summary" class="help-copy mb-2">
+                        O sistema cruza período, jornada da operação, cobertura, escala sugerida e horas por colaborador.
+                    </p>
+                    <ul id="sim-how-list" class="text-sm space-y-2 text-surface-600 dark:text-surface-400">
+                        <li>Primeiro a operação, depois a escala.</li>
+                        <li>Turnos e sobreposição alteram a carga diária e o quadro mínimo.</li>
+                        <li>Horas por colaborador podem ser ajustadas no resultado.</li>
+                    </ul>
+                    <p class="help-copy mt-3">Leitura voltada ao planejamento operacional. A validação final pode depender de acordo coletivo e regras internas.</p>
+                </div>
+
+                <div id="ads-sidebar" class="ad-slot ad-slot-sidebar scale-ad-slot scale-ad-slot--sidebar" aria-label="Espaco reservado para anuncios">
+                    <ins class="adsbygoogle" data-ad-client="ca-pub-3377250238500968" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                </div>
+            </section>
+
+            <section class="lg:col-span-2 space-y-5" aria-labelledby="sim-results-title">
+                <div class="result-header">
+                    <div>
+                        <h2 id="sim-results-title" class="font-bold text-base">Resultado</h2>
+                        <p class="help-copy mt-1">Leitura operacional do cenário simulado.</p>
+                    </div>
+                </div>
+                <p class="result-assurance">Estimativa voltada ao planejamento operacional. A validação final pode depender de acordo coletivo e regras internas.</p>
+                <div id="sim-result-live" class="visually-hidden" aria-live="polite"></div>
+                <div id="sim-result" role="region" aria-live="polite" aria-labelledby="sim-results-title" aria-busy="false">
+                    <div class="card p-8 text-center text-surface-400 result-empty">
+                        <svg class="icon mx-auto mb-3" style="width:40px;height:40px;opacity:.35" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <p class="font-semibold text-base mb-1">Preencha a operação e gere a leitura do cenário</p>
+                        <p class="text-sm">O card executivo, o ajuste de jornada e o calendário aparecem aqui.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="ads-result" class="ad-slot ad-slot-inline scale-ad-slot scale-ad-slot--inline mt-6" aria-label="Espaco reservado para anuncios">
+            <ins class="adsbygoogle" data-ad-client="ca-pub-3377250238500968" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+
+        <section class="card p-5 mt-6" aria-label="Conteúdo explicativo sobre simulador de escala">
+            <h2 class="font-bold text-xl mb-3" data-i18n="scale_guide_title">Como o simulador ajuda no planejamento mensal</h2>
+            <p class="text-sm text-surface-500 leading-relaxed mb-3" data-i18n="scale_guide_p1">
+                O simulador de escala de trabalho foi criado para transformar uma tarefa operacional complexa em um
+                processo mais rápido e previsível. Ao informar o tipo de simulação, o funcionamento da operação, a
+                cobertura e a quantidade de postos, você visualiza uma leitura objetiva do quadro mínimo de
+                funcionários, da cobertura do cenário e dos pontos que
+                pedem revisão antes de publicar a escala.
+            </p>
+            <h3 class="font-bold text-lg mb-3" data-i18n="scale_guide_title_2">Como combinar escala, calendário e dias úteis</h3>
+            <p class="text-sm text-surface-500 leading-relaxed mb-3" data-i18n="scale_guide_p2">
+                Ao cruzar o simulador com o calendário e o contador de dias úteis, fica mais fácil revisar cenários de
+                escala 12x36, escala 6x1, escala 5x2 e outras rotinas de plantão com feriados nacionais do Brasil.
+                Isso melhora o dimensionamento de equipe, antecipa ajustes de cobertura e reduz conflitos entre prazo,
+                demanda e disponibilidade.
+            </p>
+        </section>
+
+        <!-- [BLOG-F1] Reverse links to blog articles -->
+        <section class="card p-5 mt-6">
+            <h2 class="font-bold text-lg mb-3">Leia também no Blog</h2>
+            <ul class="text-sm space-y-2">
+                <li><a href="/blog/escalas-de-trabalho-clt/"
+                        title="Ler guia completo sobre escalas de trabalho na CLT" data-i18n-title="scale_link_title_blog_clt"
+                        class="text-brand-600 dark:text-brand-400 underline">Escalas de Trabalho na CLT: Guia
+                        Completo</a></li>
+                <li><a href="/blog/escala-12x36-como-funciona/"
+                        title="Ler artigo sobre escala 12x36" data-i18n-title="scale_link_title_blog_1236"
+                        class="text-brand-600 dark:text-brand-400 underline">Escala 12x36: Como Funciona na Prática</a>
+                </li>
+                <li><a href="/blog/escala-6x1-como-funciona/"
+                        title="Ler artigo sobre escala 6x1" data-i18n-title="scale_link_title_blog_61"
+                        class="text-brand-600 dark:text-brand-400 underline">Escala 6x1: Como Funciona no Dia a Dia</a>
+                </li>
+            </ul>
+        </section>
+
+        <section id="scale-print-sheet" aria-hidden="true"></section>
+    </main>
+
+    <div data-site-footer></div>
+    <div class="print-footer">
+        <div class="site-credit" data-i18n="print_footer">Gerado por www.datasuteis.com.br - O guia oficial de prazos.
+        </div>
+        <div class="timestamp"></div>
+    </div>
+
+    <div id="scale-print-modal" class="print-config-modal no-print" aria-hidden="true">
+        <div class="print-config-modal__backdrop" data-scale-print-close></div>
+        <div class="print-config-modal__panel" role="dialog" aria-modal="true" aria-labelledby="scale-print-modal-title">
+            <h2 id="scale-print-modal-title" class="font-bold text-lg mb-2" data-i18n="scale_print_modal_title">Configurar impressão</h2>
+            <p class="print-config-help mb-4" data-i18n="scale_print_modal_intro">Personalize o cabeçalho do relatório antes de imprimir. Todos os campos são opcionais.</p>
+            <div class="print-config-grid">
+                <div class="print-config-field">
+                    <label for="scale-print-logo" data-i18n="scale_print_modal_logo">Logo da empresa</label>
+                    <input id="scale-print-logo" type="file" accept=".png,.jpg,.jpeg" class="input-field">
+                    <img id="scale-print-logo-preview" class="print-config-logo" alt="Pré-visualização da logo">
+                    <p id="scale-print-logo-help" class="print-config-help" data-i18n="scale_print_modal_logo_help">Use PNG ou JPG com até 2MB.</p>
+                </div>
+                <div class="print-config-field">
+                    <label for="scale-print-manager" data-i18n="scale_print_modal_manager">Nome do gestor/solicitante</label>
+                    <input id="scale-print-manager" type="text" class="input-field" maxlength="80" placeholder="Opcional" data-i18n-placeholder="scale_print_modal_optional">
+                </div>
+                <label class="print-config-check flex items-center gap-2 cursor-pointer">
+                    <input id="scale-print-legend" type="checkbox" class="accent-brand-600" checked>
+                    <span data-i18n="scale_print_modal_legend">Mostrar legenda</span>
+                </label>
+            </div>
+            <div class="print-config-actions">
+                <button type="button" class="btn-secondary" data-scale-print-close data-i18n="scale_print_modal_cancel">Cancelar</button>
+                <button type="button" id="scale-print-confirm" class="btn-primary" data-i18n="scale_print_modal_confirm">Imprimir relatório</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/app.min.js?v=20260310-1" defer></script>
+    <script src="/assets/js/escala.bundle.js?v=20260310-2" defer></script>
+    <div data-mobile-bottom-nav></div>
+    <div data-help-sheet></div>
+</body>
+
+</html>

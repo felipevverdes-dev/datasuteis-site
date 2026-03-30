@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16" role="img" aria-labelledby="title">
+  <title>Bandera de España</title>
+  <rect width="24" height="16" fill="#aa151b"/>
+  <rect y="4" width="24" height="8" fill="#f1bf00"/>
+  <rect x="5.2" y="5.2" width="2.2" height="3.6" rx=".35" fill="#aa151b"/>
+  <rect x="6.05" y="5.9" width=".5" height="2.2" fill="#f1bf00"/>
+</svg>

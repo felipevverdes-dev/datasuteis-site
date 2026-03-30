@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:feriados.com.br)",
+      "WebFetch(domain:contadordeprazo.com.br)",
+      "WebFetch(domain:www.dias-uteis.com)",
+      "WebFetch(domain:www.mobills.com.br)",
+      "WebFetch(domain:www.ferramentasja.com.br)",
+      "WebFetch(domain:clubedospoupadores.com)",
+      "WebFetch(domain:www.idinheiro.com.br)",
+      "WebFetch(domain:www.webcid.com.br)",
+      "WebFetch(domain:www.calendario.cnt.br)",
+      "WebFetch(domain:www.calculefast.com.br)",
+      "WebFetch(domain:www.serasaexperian.com.br)",
+      "WebFetch(domain:infofinanceira.com.br)",
+      "WebFetch(domain:www.invertexto.com)",
+      "WebFetch(domain:www.calendario.com.br)",
+      "WebFetch(domain:blog.feriados.com.br)",
+      "Bash(pnpm check:*)",
+      "Bash(npx tsc:*)",
+      "Bash(cmd /c \"cd /d \"\"d:\\\\Clouds\\\\OneDrive\\\\01 - Marketing Digital\\\\Sites\\\\DatasUteis\\\\datas-uteis-new\"\" && pnpm check 2>&1\")",
+      "Bash(npm run:*)",
+      "Bash(grep -l \"FLAG_ICON_PATH_BY_LANGUAGE\\\\|BRAND_LOGO_SRC\\\\|/assets/\" \"d:\\\\Clouds\\\\OneDrive\\\\01 - Marketing Digital\\\\Sites\\\\DatasUteis\\\\datas-uteis-new\\\\client\\\\src\\\\components\"/*.tsx)",
+      "Bash(xargs basename:*)",
+      "Bash(npx vite:*)",
+      "Bash(node scripts/postbuild-seo.mjs)"
+    ]
+  }
+}

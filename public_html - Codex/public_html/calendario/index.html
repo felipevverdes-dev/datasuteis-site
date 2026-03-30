@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+        <script>(function () { try { var t = localStorage.getItem('theme') || localStorage.getItem('datasuteis_theme'); if (t === 'dark') document.documentElement.classList.add('dark'); } catch (e) { } })()</script>
+    <script>(function () { try { var l = localStorage.getItem('lang') || localStorage.getItem('datasuteis_lang') || 'pt'; var m = { pt: 'pt-BR', en: 'en', es: 'es' }; if (m[l]) document.documentElement.lang = m[l]; } catch (e) { } })()</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9198198D5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', 'G-E9198198D5');
+    </script>
+<meta name="google-adsense-account" content="ca-pub-3377250238500968">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Calendários com Feriados Nacionais | Datas Úteis</title>
+    <meta name="description"
+        content="Consulte o calendário 2026 com feriados nacionais, visualize dias úteis por mês e apoie seu planejamento com contador de dias úteis e simulador de escala de trabalho.">
+    <meta name="robots" content="index, follow">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Calendário 2026 com Feriados Nacionais | Datas Úteis">
+    <meta property="og:description" content="Consulte o calendário 2026 com feriados nacionais e visualize dias úteis por mês.">
+    <meta property="og:url" content="https://datasuteis.com.br/calendario/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Datas Úteis">
+    <meta property="og:image" content="https://datasuteis.com.br/assets/brand/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Datas Úteis - Calendário com Feriados Nacionais">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Calendário 2026 com Feriados Nacionais | Datas Úteis">
+    <meta name="twitter:description" content="Consulte o calendário 2026 com feriados nacionais e visualize dias úteis por mês.">
+    <meta name="twitter:image" content="https://datasuteis.com.br/assets/brand/og-image.png">
+    <link rel="canonical" href="https://datasuteis.com.br/calendario/">
+    <link rel="alternate" hreflang="pt" href="https://datasuteis.com.br/calendario/">
+    <link rel="alternate" hreflang="en" href="https://datasuteis.com.br/calendario/">
+    <link rel="alternate" hreflang="es" href="https://datasuteis.com.br/calendario/">
+    <link rel="alternate" hreflang="x-default" href="https://datasuteis.com.br/calendario/">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/brand/favicon-16.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/brand/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="image" href="/assets/brand/datasuteis-logo.png">
+    <!-- [FIX-PSI] Loads non-critical font and enhancement layers without blocking first paint — 2026-03-06 -->
+    <!-- CLS-FIX-FOUC: load the font stylesheet eagerly to reduce late metric swaps in the hero -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional"></noscript>
+    <!-- CLS-FIX-FOUC: critical site CSS must block first paint to avoid a large unstyled layout -->
+    <link rel="stylesheet" href="/assets/css/tailwind.css">
+    <link rel="stylesheet" href="/assets/css/material3.css">
+    <link rel="stylesheet" href="/assets/css/components.css?v=20260308-2">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print">
+    <link rel="preload" href="/data/feriados/nacionais-2026.json" as="fetch">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://datasuteis.com.br/" },
+        { "@type": "ListItem", "position": 2, "name": "Calendário com Feriados", "item": "https://datasuteis.com.br/calendario/" }
+      ]
+    }
+    </script>
+    <style>
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in .4s ease-out
+        }
+
+        .calendar-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            max-width: 30rem;
+        }
+
+        .calendar-controls__year {
+            width: 100%;
+        }
+
+        .calendar-controls__year .input-field {
+            width: 100%;
+        }
+
+        .calendar-controls .btn-print {
+            justify-content: center;
+            width: 100%;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 640px) {
+            .calendar-controls {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .calendar-controls__year {
+                flex: 0 0 11rem;
+                max-width: 11rem;
+            }
+
+            .calendar-controls .btn-print {
+                width: auto;
+            }
+        }
+    </style>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Calendário de Dias Úteis 2026",
+  "description": "Calendário mensal e anual de dias úteis com feriados nacionais.",
+  "url": "https://datasuteis.com.br/calendario/",
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://datasuteis.com.br/" },
+      { "@type": "ListItem", "position": 2, "name": "Calendário", "item": "https://datasuteis.com.br/calendario/" }
+    ]
+  }
+}
+</script>
+</head>
+
+<body data-page="calendario" data-year="2026" class="min-h-screen flex flex-col">
+    <!-- SITE-CHROME:NAV -->
+    <div data-site-nav></div>
+
+    <main class="app-main flex-1 max-w-7xl mx-auto px-4 py-6 w-full">
+        <!-- CLS-FIX-ADS -->
+        <div id="ads-top" class="ad-slot ad-slot-header mb-6" aria-label="Espaco reservado para anuncios">
+            <!-- CLS-FIX-ADS -->
+            <ins class="adsbygoogle" data-ad-client="ca-pub-3377250238500968" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+        <!-- [FIX-P2] Calendar header stacks editorial copy above the controls to free lateral room — 2026-03-06 -->
+        <section class="mb-6 max-w-4xl">
+            <h1 class="text-2xl md:text-3xl font-extrabold" data-i18n="calendar_title">Calendários com Feriados
+                Nacionais</h1>
+            <p class="help-copy mt-3" data-i18n="calendar_intro_copy">Calcule prazos exatos considerando feriados
+                nacionais do Brasil e organize escalas de trabalho de forma simples, rápida e gratuita.</p>
+        </section>
+
+        <div class="calendar-controls">
+            <div class="calendar-controls__year">
+                <select id="calendar-year" class="input-field text-sm font-bold"></select>
+            </div>
+            <button class="btn-primary text-xs btn-print" data-format="portrait">
+                <svg class="icon w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <polyline points="6 9 6 2 18 2 18 9" />
+                    <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" />
+                    <rect x="6" y="14" width="12" height="8" />
+                </svg>
+                <span data-i18n="print_btn">Imprimir</span>
+            </button>
+        </div>
+
+        <div id="fallback-warning" class="warning-banner mb-6 hidden"></div>
+
+        <div class="flex gap-2 p-1 rounded-xl bg-surface-100 dark:bg-surface-800 w-fit mb-6">
+            <button class="calendar-view-tab tab-btn active" data-view="annual" data-i18n="annual">Anual</button>
+            <button class="calendar-view-tab tab-btn" data-view="monthly" data-i18n="monthly">Mensal</button>
+        </div>
+
+        <div id="calendar-container" class="mb-8"></div>
+
+        <!-- CLS-FIX-ADS -->
+        <div id="ads-result" class="ad-slot ad-slot-inline mb-6" aria-label="Espaco reservado para anuncios">
+            <!-- CLS-FIX-ADS -->
+            <ins class="adsbygoogle" data-ad-client="ca-pub-3377250238500968" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+        <!-- CLS-FIX-ADS -->
+        <div id="ads-sidebar" class="ad-slot ad-slot-inline mb-6" aria-label="Espaco reservado para anuncios">
+            <!-- CLS-FIX-ADS -->
+            <ins class="adsbygoogle" data-ad-client="ca-pub-3377250238500968" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+        <section class="card p-5 mt-6" aria-label="Conteúdo explicativo sobre calendário e feriados">
+            <h2 class="font-bold text-xl mb-3" data-calendar-year-i18n="calendar_guide_title">Calendário 2026 com
+                feriados nacionais e dias úteis</h2>
+            <p class="text-sm text-surface-500 leading-relaxed mb-3" data-i18n="calendar_guide_p1">
+                O calendário 2026 com feriados nacionais facilita o planejamento de prazos, escalas e entregas ao longo
+                do ano. Com a visualização mensal e anual, você identifica rapidamente períodos com maior concentração
+                de
+                folgas, feriados prolongados e semanas com menos dias úteis. Esse tipo de leitura é valioso para equipes
+                administrativas, operações, comércio e serviços, porque permite antecipar ajustes de agenda e distribuir
+                melhor as atividades. Em vez de consultar fontes diferentes, você centraliza o calendário e a
+                conferência
+                de dias úteis em um único fluxo.
+            </p>
+            <h2 class="font-bold text-xl mb-3" data-i18n="calendar_combo_title">Como combinar calendário, contador de
+                dias úteis e simulador de escala</h2>
+            <p class="text-sm text-surface-500 leading-relaxed mb-3" data-i18n="calendar_combo_p1">
+                Depois de localizar o período no calendário, você pode usar o contador de dias úteis para validar prazos
+                entre datas com mais precisão. Essa combinação reduz retrabalho em contratos, cronogramas internos e
+                promessas de atendimento. Para operações de plantão, o próximo passo é projetar cobertura com o
+                simulador
+                de escala 12x36, 6x1 e escala de plantão, alinhando a jornada da equipe aos feriados nacionais. Assim,
+                o planejamento sai do nível visual e vira uma decisão operacional mais objetiva, com menor risco de
+                conflito entre prazo, demanda e disponibilidade.
+            </p>
+        </section>
+    </main>
+
+    <div data-site-footer></div>
+    <div class="print-footer">
+        <div class="site-credit" data-i18n="print_footer">Gerado por www.datasuteis.com.br - O guia oficial de prazos.
+        </div>
+        <div class="timestamp"></div>
+    </div>
+    <script src="/assets/js/app.min.js?v=20260309-2" defer></script>
+
+    <div data-mobile-bottom-nav></div>
+    <div data-help-sheet></div>
+</body>
+
+</html>

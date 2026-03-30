@@ -1,0 +1,72 @@
+[
+    {
+        "data": "2026-01-01",
+        "nome": "Confraternização Universal",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-02-16",
+        "nome": "Carnaval",
+        "tipo": "nacional_facultativo"
+    },
+    {
+        "data": "2026-02-17",
+        "nome": "Carnaval (terça-feira)",
+        "tipo": "nacional_facultativo"
+    },
+    {
+        "data": "2026-04-03",
+        "nome": "Sexta-Feira Santa",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-04-05",
+        "nome": "Páscoa",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-04-21",
+        "nome": "Tiradentes",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-05-01",
+        "nome": "Dia do Trabalho",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-06-04",
+        "nome": "Corpus Christi",
+        "tipo": "nacional_facultativo"
+    },
+    {
+        "data": "2026-09-07",
+        "nome": "Independência do Brasil",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-10-12",
+        "nome": "Nossa Senhora Aparecida",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-11-02",
+        "nome": "Finados",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-11-15",
+        "nome": "Proclamação da República",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-11-20",
+        "nome": "Dia da Consciência Negra",
+        "tipo": "nacional"
+    },
+    {
+        "data": "2026-12-25",
+        "nome": "Natal",
+        "tipo": "nacional"
+    }
+]

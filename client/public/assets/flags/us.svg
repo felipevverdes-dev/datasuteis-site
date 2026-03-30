@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 16" role="img" aria-labelledby="title">
+  <title>Flag of the United States</title>
+  <rect width="24" height="16" fill="#fff"/>
+  <rect width="24" height="1.23" y="0" fill="#b22234"/>
+  <rect width="24" height="1.23" y="2.46" fill="#b22234"/>
+  <rect width="24" height="1.23" y="4.92" fill="#b22234"/>
+  <rect width="24" height="1.23" y="7.38" fill="#b22234"/>
+  <rect width="24" height="1.23" y="9.84" fill="#b22234"/>
+  <rect width="24" height="1.23" y="12.3" fill="#b22234"/>
+  <rect width="24" height="1.24" y="14.76" fill="#b22234"/>
+  <rect width="10.4" height="8.6" fill="#3c3b6e"/>
+  <circle cx="2" cy="1.8" r=".45" fill="#fff"/>
+  <circle cx="4.2" cy="1.8" r=".45" fill="#fff"/>
+  <circle cx="6.4" cy="1.8" r=".45" fill="#fff"/>
+  <circle cx="8.6" cy="1.8" r=".45" fill="#fff"/>
+  <circle cx="3.1" cy="3.4" r=".45" fill="#fff"/>
+  <circle cx="5.3" cy="3.4" r=".45" fill="#fff"/>
+  <circle cx="7.5" cy="3.4" r=".45" fill="#fff"/>
+  <circle cx="2" cy="5" r=".45" fill="#fff"/>
+  <circle cx="4.2" cy="5" r=".45" fill="#fff"/>
+  <circle cx="6.4" cy="5" r=".45" fill="#fff"/>
+  <circle cx="8.6" cy="5" r=".45" fill="#fff"/>
+  <circle cx="3.1" cy="6.6" r=".45" fill="#fff"/>
+  <circle cx="5.3" cy="6.6" r=".45" fill="#fff"/>
+  <circle cx="7.5" cy="6.6" r=".45" fill="#fff"/>
+</svg>

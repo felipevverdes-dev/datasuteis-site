@@ -1,0 +1,318 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+
+    <meta name="theme-color" content="#1a3a5c" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        overflow-x: hidden;
+        background: #ffffff;
+        color: #111827;
+        font-family: "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      }
+
+      .dark body {
+        background: #0f172a;
+        color: #f1f5f9;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin-inline: auto;
+        padding-inline: 1.5rem;
+      }
+
+      header[role="banner"] {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        border-bottom: 1px solid rgba(209, 213, 219, 0.7);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .dark header[role="banner"] {
+        border-color: rgba(71, 85, 105, 0.7);
+        background: rgba(15, 23, 42, 0.95);
+      }
+
+      .hero {
+        padding-block: 3rem;
+        border-bottom: 1px solid #d1d5db;
+        background: linear-gradient(
+          135deg,
+          rgba(26, 58, 92, 0.1),
+          #ffffff 55%,
+          #ffffff
+        );
+      }
+
+      .dark .hero {
+        border-color: #475569;
+        background: linear-gradient(
+          135deg,
+          rgba(26, 58, 92, 0.24),
+          #0f172a 55%,
+          #0f172a
+        );
+      }
+
+      .hero-title {
+        margin-top: 1.25rem;
+        color: #1a3a5c;
+        font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+        font-size: 2.25rem;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+
+      .hero-subtitle {
+        margin-top: 1.5rem;
+        color: #4b5563;
+        font-size: 1.125rem;
+        line-height: 1.75;
+      }
+
+      .dark .hero-subtitle {
+        color: #cbd5e1;
+      }
+
+      .btn-primary,
+      .btn-outline {
+        display: inline-flex;
+        min-height: 2.75rem;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: #1a3a5c;
+        color: #ffffff;
+      }
+
+      .btn-outline {
+        border: 2px solid #1a3a5c;
+        color: #1a3a5c;
+      }
+
+      @media (min-width: 768px) {
+        .hero {
+          padding-block: 5rem;
+        }
+
+        .hero-title {
+          font-size: 3rem;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .hero {
+          padding-block: 7rem;
+        }
+
+        .hero-title {
+          font-size: 3.75rem;
+        }
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem("datasuteis_theme") === "dark") {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <title>Datas Úteis: dias úteis, calendário, feriados, ferramentas</title>
+    <meta
+      name="description"
+      content="Calcule dias úteis, consulte o calendário com feriados, simule escalas de trabalho, descubra sua idade exata, jogue e use ferramentas online grátis."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Datas Úteis" />
+    <link rel="canonical" href="https://datasuteis.com.br/" />
+    <link rel="alternate" hreflang="pt-BR" href="https://datasuteis.com.br/" />
+    <link rel="alternate" hreflang="en" href="https://datasuteis.com.br/?lang=en" />
+    <link rel="alternate" hreflang="es" href="https://datasuteis.com.br/?lang=es" />
+    <link rel="alternate" hreflang="x-default" href="https://datasuteis.com.br/" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Datas Úteis: dias úteis, calendário, feriados, ferramentas"
+    />
+    <meta
+      property="og:description"
+      content="Calcule dias úteis, consulte o calendário com feriados, simule escalas de trabalho, descubra sua idade exata, jogue e use ferramentas online grátis."
+    />
+    <meta property="og:url" content="https://datasuteis.com.br/" />
+    <meta property="og:site_name" content="Datas Úteis" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:updated_time" content="2026-03-29T00:00:00-03:00" />
+    <meta
+      property="og:image"
+      content="https://datasuteis.com.br/assets/brand/og-image.png"
+    />
+    <meta
+      property="og:image:alt"
+      content="Datas Úteis - Ferramentas úteis para o dia a dia"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Datas Úteis: dias úteis, calendário, feriados, ferramentas"
+    />
+    <meta
+      name="twitter:description"
+      content="Calcule dias úteis, consulte o calendário com feriados, simule escalas de trabalho, descubra sua idade exata, jogue e use ferramentas online grátis."
+    />
+    <meta
+      name="twitter:image"
+      content="https://datasuteis.com.br/assets/brand/og-image.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Datas Úteis - Ferramentas úteis para o dia a dia"
+    />
+
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preconnect" href="https://api.open-meteo.com" crossorigin />
+    <link rel="preconnect" href="https://api.frankfurter.app" crossorigin />
+    <link rel="dns-prefetch" href="https://api.frankfurter.app" />
+    <link rel="dns-prefetch" href="https://api.bigdatacloud.net" />
+    <link rel="dns-prefetch" href="https://ipapi.co" />
+    <link rel="dns-prefetch" href="https://ipwho.is" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+    <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+    <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/assets/brand/favicon-32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/assets/brand/favicon-16.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/assets/brand/apple-touch-icon.png"
+    />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    <script>
+      const COOKIE_CONSENT_KEY = "datasuteis_cookie_consent_v1";
+      const isProductionHost = ["datasuteis.com.br", "www.datasuteis.com.br"].includes(
+        window.location.hostname
+      );
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      const loadThirdPartyScript = (src, attributes = {}) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        Object.entries(attributes).forEach(([key, value]) =>
+          script.setAttribute(key, value)
+        );
+        document.head.appendChild(script);
+      };
+      const scheduleThirdPartyScript = (callback, timeout) => {
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(callback, { timeout });
+          return;
+        }
+        if (document.readyState === "complete") {
+          window.setTimeout(callback, 1);
+          return;
+        }
+        window.addEventListener("load", callback, { once: true });
+      };
+      let thirdPartyLoaded = false;
+      const loadConsentBasedScripts = () => {
+        if (thirdPartyLoaded || !isProductionHost) {
+          return;
+        }
+        thirdPartyLoaded = true;
+        gtag("js", new Date());
+        gtag("config", "G-E9198198D5", { send_page_view: false });
+        scheduleThirdPartyScript(
+          () =>
+            loadThirdPartyScript(
+              "https://www.googletagmanager.com/gtag/js?id=G-E9198198D5"
+            ),
+          2500
+        );
+        scheduleThirdPartyScript(
+          () =>
+            loadThirdPartyScript(
+              "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3377250238500968",
+              { crossorigin: "anonymous" }
+            ),
+          4500
+        );
+      };
+      const readConsent = () => {
+        try {
+          return localStorage.getItem(COOKIE_CONSENT_KEY);
+        } catch (error) {
+          return null;
+        }
+      };
+      if (readConsent() === "accepted") {
+        loadConsentBasedScripts();
+      }
+      window.addEventListener("datasuteis-consent-updated", event => {
+        if (event.detail?.status === "accepted") {
+          loadConsentBasedScripts();
+        }
+      });
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Datas Úteis",
+        "url": "https://datasuteis.com.br/",
+        "inLanguage": "pt-BR"
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Datas Úteis",
+        "url": "https://datasuteis.com.br/",
+        "logo": "https://datasuteis.com.br/assets/brand/datas-uteis.svg",
+        "email": "contato@datasuteis.com.br"
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

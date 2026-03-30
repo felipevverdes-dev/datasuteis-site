@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <script>(function () { try { var t = localStorage.getItem('theme') || localStorage.getItem('datasuteis_theme'); if (t === 'dark') document.documentElement.classList.add('dark'); } catch (e) { } })()</script>
+    <script>(function () { try { var l = localStorage.getItem('lang') || localStorage.getItem('datasuteis_lang') || 'pt'; var m = { pt: 'pt-BR', en: 'en', es: 'es' }; if (m[l]) document.documentElement.lang = m[l]; } catch (e) { } })()</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9198198D5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', 'G-E9198198D5');
+    </script>
+    <meta name="google-adsense-account" content="ca-pub-3377250238500968">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Calculadora Online Grátis | Calculadora Simples Responsiva | Datas Úteis</title>
+    <meta name="description" content="Use a calculadora online grátis do Datas Úteis com modos simples, financeira, científica, programador e cálculo de datas, em layout responsivo para desktop e mobile.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Calculadora Online Grátis | Calculadora Simples Responsiva | Datas Úteis">
+    <meta property="og:description" content="Calculadora online com modos simples, financeira, científica, programador e cálculo de datas em layout rápido e responsivo.">
+    <meta property="og:url" content="https://datasuteis.com.br/calculadora/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Datas Úteis">
+    <meta property="og:image" content="https://datasuteis.com.br/assets/brand/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Datas Úteis - Calculadora Online">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Calculadora Online Grátis | Calculadora Simples Responsiva | Datas Úteis">
+    <meta name="twitter:description" content="Calculadora online gratuita com modos simples, financeira, científica, programador e cálculo de datas.">
+    <meta name="twitter:image" content="https://datasuteis.com.br/assets/brand/og-image.png">
+    <link rel="canonical" href="https://datasuteis.com.br/calculadora/">
+    <link rel="alternate" hreflang="pt" href="https://datasuteis.com.br/calculadora/">
+    <link rel="alternate" hreflang="en" href="https://datasuteis.com.br/calculadora/">
+    <link rel="alternate" hreflang="es" href="https://datasuteis.com.br/calculadora/">
+    <link rel="alternate" hreflang="x-default" href="https://datasuteis.com.br/calculadora/">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/brand/favicon-16.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/brand/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="image" href="/assets/brand/datasuteis-logo.png">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional"></noscript>
+    <link rel="stylesheet" href="/assets/css/tailwind.css">
+    <link rel="stylesheet" href="/assets/css/material3.css">
+    <link rel="stylesheet" href="/assets/css/components.css?v=20260308-2">
+    <link rel="stylesheet" href="/assets/css/print.css" media="print">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://datasuteis.com.br/" },
+            { "@type": "ListItem", "position": 2, "name": "Calculadora", "item": "https://datasuteis.com.br/calculadora/" }
+          ]
+        },
+        {
+          "@type": "WebApplication",
+          "name": "Calculadora Online do Datas Úteis",
+          "url": "https://datasuteis.com.br/calculadora/",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires JavaScript",
+          "description": "Calculadora online gratuita com modos simples, financeira, científica, programador e cálculo de datas.",
+          "featureList": [
+            "Calculadora simples",
+            "Calculadora financeira",
+            "Calculadora científica",
+            "Calculadora para programador",
+            "Cálculo de datas"
+          ],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "BRL"
+          }
+        }
+      ]
+    }
+    </script>
+    <style>
+        .calc-hero {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 38%),
+                linear-gradient(135deg, rgba(219, 234, 254, 0.92), rgba(240, 253, 244, 0.92));
+            border: 1px solid rgba(191, 219, 254, 0.9);
+        }
+
+        .dark .calc-hero {
+            background:
+                radial-gradient(circle at top left, rgba(96, 165, 250, 0.18), transparent 38%),
+                linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(3, 20, 37, 0.96));
+            border-color: rgba(51, 65, 85, 0.9);
+        }
+
+        .app-main--calculator {
+            padding-top: 1rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .app-main--calculator #data-feedback {
+            display: none !important;
+        }
+
+        .calculator-layout {
+            display: grid;
+            gap: 1.5rem;
+            align-items: start;
+            margin-top: 1rem;
+        }
+
+        .calculator-main-column {
+            grid-area: main;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .calculator-side-column {
+            display: grid;
+            gap: 1.5rem;
+            align-self: start;
+        }
+
+        .calculator-side-column--left {
+            grid-area: left;
+        }
+
+        .calculator-side-column--right {
+            grid-area: right;
+        }
+
+        .calculator-stage {
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .calculator-top-ad {
+            width: 100%;
+            max-width: 560px;
+            min-height: 86px;
+            margin: 0 auto;
+        }
+
+        .calculator-panel {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 18px;
+            border-radius: 28px;
+            border: 1px solid rgba(203, 213, 225, 0.95);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+        }
+
+        .dark .calculator-panel {
+            border-color: rgba(71, 85, 105, 0.8);
+            background:
+                linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+            box-shadow: 0 28px 56px rgba(2, 6, 23, 0.38);
+        }
+
+        .calculator-screen {
+            min-height: 132px;
+            padding: 18px 20px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96));
+            color: rgb(248 250 252);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: flex-end;
+            gap: 10px;
+            word-break: break-all;
+        }
+
+        .dark .calculator-screen {
+            background: linear-gradient(180deg, rgba(2, 6, 23, 1), rgba(15, 23, 42, 0.98));
+        }
+
+        .calculator-screen__expression {
+            width: 100%;
+            text-align: right;
+            min-height: 24px;
+            font-size: 0.9rem;
+            color: rgba(226, 232, 240, 0.8);
+        }
+
+        .calculator-screen__display {
+            width: 100%;
+            text-align: right;
+            font-size: clamp(2rem, 8vw, 3.4rem);
+            line-height: 1.05;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .calc-key {
+            min-height: 60px;
+            border-radius: 18px;
+            border: 1px solid rgba(226, 232, 240, 0.92);
+            background: rgba(255, 255, 255, 0.94);
+            color: rgb(15 23 42);
+            font-size: 1.05rem;
+            font-weight: 700;
+            transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .calc-key:hover {
+            transform: translateY(-1px);
+            background: rgb(248 250 252);
+        }
+
+        .calc-key:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .dark .calc-key {
+            border-color: rgba(71, 85, 105, 0.95);
+            background: rgba(30, 41, 59, 0.98);
+            color: rgb(241 245 249);
+        }
+
+        .dark .calc-key:hover {
+            background: rgba(51, 65, 85, 0.98);
+        }
+
+        .calc-key--op {
+            background: rgba(219, 234, 254, 0.92);
+            color: rgb(30 64 175);
+            border-color: rgba(147, 197, 253, 0.9);
+        }
+
+        .calc-key--main {
+            background: linear-gradient(135deg, rgb(37, 99, 235), rgb(29, 78, 216));
+            color: #fff;
+            border-color: rgba(29, 78, 216, 0.88);
+        }
+
+        .calc-key--ghost {
+            background: rgba(254, 242, 242, 0.92);
+            color: rgb(153 27 27);
+            border-color: rgba(252, 165, 165, 0.9);
+        }
+
+        .dark .calc-key--op {
+            background: rgba(30, 58, 138, 0.75);
+            color: rgb(191 219 254);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .dark .calc-key--ghost {
+            background: rgba(69, 10, 10, 0.86);
+            color: rgb(254 202 202);
+            border-color: rgba(239, 68, 68, 0.42);
+        }
+
+        .dark .calc-key--main {
+            background: linear-gradient(135deg, rgb(59, 130, 246), rgb(37, 99, 235));
+            color: #fff;
+        }
+
+        .calc-key--wide {
+            grid-column: span 2;
+        }
+
+        .calc-mode-strip,
+        .calc-mode-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .calc-mode-strip {
+            grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+        }
+
+        .calc-mode-button {
+            width: 100%;
+            display: grid;
+            gap: 6px;
+            padding: 14px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(191, 219, 254, 0.95);
+            background: rgba(239, 246, 255, 0.96);
+            color: rgb(30 64 175);
+            text-align: left;
+            transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .calc-mode-button:hover {
+            transform: translateY(-1px);
+            border-color: rgba(96, 165, 250, 0.95);
+            background: rgba(219, 234, 254, 0.96);
+        }
+
+        .calc-mode-button.is-active {
+            background: linear-gradient(135deg, rgb(37, 99, 235), rgb(29, 78, 216));
+            color: #fff;
+            border-color: rgba(29, 78, 216, 0.92);
+            box-shadow: 0 16px 28px rgba(37, 99, 235, 0.18);
+        }
+
+        .calc-mode-button__title {
+            font-size: 0.92rem;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .calc-mode-button__desc {
+            font-size: 0.77rem;
+            line-height: 1.35;
+            color: rgb(71 85 105);
+        }
+
+        .calc-mode-button.is-active .calc-mode-button__desc {
+            color: rgba(239, 246, 255, 0.88);
+        }
+
+        .dark .calc-mode-button {
+            border-color: rgba(59, 130, 246, 0.42);
+            background: rgba(30, 58, 138, 0.35);
+            color: rgb(191 219 254);
+        }
+
+        .dark .calc-mode-button:hover {
+            background: rgba(30, 64, 175, 0.45);
+        }
+
+        .dark .calc-mode-button.is-active {
+            background: linear-gradient(135deg, rgb(59, 130, 246), rgb(37, 99, 235));
+            color: #fff;
+        }
+
+        .dark .calc-mode-button__desc {
+            color: rgb(191 219 254);
+        }
+
+        .calculator-panel-stack {
+            display: grid;
+            gap: 14px;
+        }
+
+        .calc-panel[hidden] {
+            display: none !important;
+        }
+
+        .calculator-panel--wide {
+            max-width: 620px;
+        }
+
+        .calculator-screen__meta {
+            width: 100%;
+            text-align: left;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(191, 219, 254, 0.82);
+        }
+
+        .calculator-grid--scientific {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+
+        .calc-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .calc-toolbar__copy {
+            font-size: 0.85rem;
+            color: rgb(100 116 139);
+        }
+
+        .dark .calc-toolbar__copy {
+            color: rgb(148 163 184);
+        }
+
+        .calc-angle-toggle,
+        .calc-submode-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .calc-submode-button,
+        .calc-angle-button {
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(203, 213, 225, 0.95);
+            background: rgba(255, 255, 255, 0.96);
+            color: rgb(30 41 59);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .calc-submode-button.is-active,
+        .calc-angle-button.is-active {
+            background: rgb(37 99 235);
+            color: #fff;
+            border-color: rgb(37 99 235);
+        }
+
+        .dark .calc-submode-button,
+        .dark .calc-angle-button {
+            border-color: rgba(71, 85, 105, 0.95);
+            background: rgba(15, 23, 42, 0.92);
+            color: rgb(226 232 240);
+        }
+
+        .calc-form-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .calc-form-grid--two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .calc-input-group {
+            display: grid;
+            gap: 6px;
+        }
+
+        .calc-input-group label,
+        .calc-input-group span {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: rgb(30 41 59);
+        }
+
+        .dark .calc-input-group label,
+        .dark .calc-input-group span {
+            color: rgb(226 232 240);
+        }
+
+        .calc-output-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+
+        .calc-output-card {
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: rgba(248, 250, 252, 0.96);
+        }
+
+        .calc-output-card strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgb(100 116 139);
+        }
+
+        .calc-output-card span {
+            display: block;
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.3;
+            color: rgb(15 23 42);
+            word-break: break-word;
+        }
+
+        .dark .calc-output-card {
+            border-color: rgba(71, 85, 105, 0.95);
+            background: rgba(15, 23, 42, 0.92);
+        }
+
+        .dark .calc-output-card strong {
+            color: rgb(148 163 184);
+        }
+
+        .dark .calc-output-card span {
+            color: rgb(241 245 249);
+        }
+
+        .calc-result-panel {
+            display: grid;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .calc-result-lead {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(219, 234, 254, 0.86), rgba(239, 246, 255, 0.96));
+            border: 1px solid rgba(147, 197, 253, 0.9);
+        }
+
+        .calc-result-lead strong {
+            display: block;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgb(30 64 175);
+            margin-bottom: 6px;
+        }
+
+        .calc-result-lead span {
+            display: block;
+            font-size: clamp(1.4rem, 5vw, 2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            color: rgb(15 23 42);
+            word-break: break-word;
+        }
+
+        .dark .calc-result-lead {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.5), rgba(15, 23, 42, 0.96));
+            border-color: rgba(59, 130, 246, 0.45);
+        }
+
+        .dark .calc-result-lead strong {
+            color: rgb(147 197 253);
+        }
+
+        .dark .calc-result-lead span {
+            color: rgb(248 250 252);
+        }
+
+        .calc-hint {
+            font-size: 0.82rem;
+            color: rgb(100 116 139);
+        }
+
+        .dark .calc-hint {
+            color: rgb(148 163 184);
+        }
+
+        .calc-history-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .calc-history-btn {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.92);
+            background: rgba(255, 255, 255, 0.92);
+            color: rgb(15 23 42);
+            text-align: left;
+            transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .calc-history-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(96, 165, 250, 0.9);
+            background: rgb(248 250 252);
+        }
+
+        .calc-history-btn:active {
+            transform: translateY(1px) scale(0.99);
+        }
+
+        .calc-history-index {
+            min-width: 22px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: rgb(37 99 235);
+        }
+
+        .calc-history-formula {
+            flex: 1;
+            display: block;
+            font-size: 0.93rem;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .calc-history-empty {
+            padding: 8px 0 2px;
+        }
+
+        .calc-history-mode {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 74px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: rgba(219, 234, 254, 0.96);
+            color: rgb(30 64 175);
+            font-size: 0.72rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .calc-history-copy {
+            flex: 1;
+            display: grid;
+            gap: 6px;
+        }
+
+        .calc-history-summary {
+            font-size: 0.82rem;
+            color: rgb(71 85 105);
+        }
+
+        .dark .calc-history-btn {
+            border-color: rgba(71, 85, 105, 0.95);
+            background: rgba(15, 23, 42, 0.92);
+            color: rgb(241 245 249);
+        }
+
+        .dark .calc-history-btn:hover {
+            border-color: rgba(96, 165, 250, 0.55);
+            background: rgba(30, 41, 59, 0.96);
+        }
+
+        .dark .calc-history-index {
+            color: rgb(147 197 253);
+        }
+
+        .dark .calc-history-mode {
+            background: rgba(30, 58, 138, 0.45);
+            color: rgb(191 219 254);
+        }
+
+        .dark .calc-history-summary {
+            color: rgb(148 163 184);
+        }
+
+        .calc-side-ad {
+            min-height: 280px;
+        }
+
+        .tool-link-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .tool-link {
+            display: block;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            background: rgba(255, 255, 255, 0.85);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .tool-link:hover {
+            transform: translateY(-1px);
+            border-color: rgba(96, 165, 250, 0.9);
+        }
+
+        .dark .tool-link {
+            background: rgba(15, 23, 42, 0.92);
+            border-color: rgba(51, 65, 85, 0.95);
+        }
+
+        @media (min-width: 1024px) {
+            .calculator-layout {
+                grid-template-columns: minmax(250px, 280px) minmax(0, 1fr) minmax(250px, 280px);
+                grid-template-areas: "left main right";
+                margin-top: 0.75rem;
+            }
+
+            .calculator-main-column {
+                position: relative;
+                z-index: 1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .calculator-panel {
+                padding: 14px;
+                border-radius: 24px;
+            }
+
+            .calculator-grid {
+                gap: 10px;
+            }
+
+            .calc-key {
+                min-height: 56px;
+                border-radius: 16px;
+            }
+
+            .calc-form-grid--two,
+            .calculator-grid--scientific {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .calc-mode-strip {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body data-page="calculadora" class="min-h-screen flex flex-col">
+    <div data-site-nav></div>
+
+    <main class="app-main app-main--calculator flex-1 max-w-7xl mx-auto px-4 w-full">
+        <section class="card p-6 calc-hero">
+            <p class="text-xs font-semibold uppercase tracking-wider text-brand-700 dark:text-blue-400 mb-3">Nova ferramenta</p>
+            <h1 class="text-2xl md:text-3xl font-extrabold mb-3">Calculadora online gratuita</h1>
+            <p class="text-sm md:text-base text-surface-500 leading-relaxed max-w-3xl">
+                Use a calculadora no modo <strong>Simples</strong>, <strong>Financeira</strong>, <strong>Científica</strong>,
+                <strong>Programador</strong> ou <strong>Calcular Data</strong>, com leitura limpa, bom uso no mobile e
+                histórico local dos últimos cálculos.
+            </p>
+        </section>
+
+        <div class="calculator-layout">
+            <section class="calculator-main-column">
+                <div id="ads-top" class="ad-slot ad-slot-header calculator-top-ad" aria-label="Espaco reservado para anuncios">
+                    <ins class="adsbygoogle" data-ad-client="ca-pub-3377250238500968" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                </div>
+
+                <section class="card p-5">
+                    <div class="calculator-stage">
+                        <div class="calc-mode-strip mb-4" role="tablist" aria-label="Tipos de calculadora">
+                            <button type="button" class="calc-mode-button is-active" data-calc-mode-switch="simple" role="tab" aria-selected="true">
+                                <span class="calc-mode-button__title">Simples</span>
+                                <span class="calc-mode-button__desc">Operações rápidas do dia a dia.</span>
+                            </button>
+                            <button type="button" class="calc-mode-button" data-calc-mode-switch="financial" role="tab" aria-selected="false">
+                                <span class="calc-mode-button__title">Financeira</span>
+                                <span class="calc-mode-button__desc">Juros e parcela em poucos campos.</span>
+                            </button>
+                            <button type="button" class="calc-mode-button" data-calc-mode-switch="scientific" role="tab" aria-selected="false">
+                                <span class="calc-mode-button__title">Científica</span>
+                                <span class="calc-mode-button__desc">Funções, potência e trigonometria.</span>
+                            </button>
+                            <button type="button" class="calc-mode-button" data-calc-mode-switch="programmer" role="tab" aria-selected="false">
+                                <span class="calc-mode-button__title">Programador</span>
+                                <span class="calc-mode-button__desc">Bases e operações bit a bit.</span>
+                            </button>
+                            <button type="button" class="calc-mode-button" data-calc-mode-switch="date" role="tab" aria-selected="false">
+                                <span class="calc-mode-button__title">Calcular Data</span>
+                                <span class="calc-mode-button__desc">Diferença e soma de datas.</span>
+                            </button>
+                        </div>
+
+                        <div class="calculator-panel-stack">
+                            <section class="calc-panel" data-calc-panel="simple">
+                                <div class="calculator-panel">
+                                    <div class="calculator-screen" aria-live="polite" aria-atomic="true">
+                                        <p class="calculator-screen__meta">Modo Simples</p>
+                                        <p id="calc-simple-expression" class="calculator-screen__expression">0</p>
+                                        <output id="calc-simple-display" class="calculator-screen__display">0</output>
+                                    </div>
+
+                                    <div class="calculator-grid" aria-label="Teclado da calculadora simples">
+                                        <button type="button" class="calc-key calc-key--ghost" data-calc-action="clear" data-calc-target="simple" aria-label="Limpar tudo">C</button>
+                                        <button type="button" class="calc-key calc-key--ghost" data-calc-action="backspace" data-calc-target="simple" aria-label="Apagar último">⌫</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="(" data-calc-target="simple" aria-label="Abrir parênteses">(</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value=")" data-calc-target="simple" aria-label="Fechar parênteses">)</button>
+
+                                        <button type="button" class="calc-key" data-calc-value="7" data-calc-target="simple">7</button>
+                                        <button type="button" class="calc-key" data-calc-value="8" data-calc-target="simple">8</button>
+                                        <button type="button" class="calc-key" data-calc-value="9" data-calc-target="simple">9</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="÷" data-calc-target="simple" aria-label="Dividir">÷</button>
+
+                                        <button type="button" class="calc-key" data-calc-value="4" data-calc-target="simple">4</button>
+                                        <button type="button" class="calc-key" data-calc-value="5" data-calc-target="simple">5</button>
+                                        <button type="button" class="calc-key" data-calc-value="6" data-calc-target="simple">6</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="×" data-calc-target="simple" aria-label="Multiplicar">×</button>
+
+                                        <button type="button" class="calc-key" data-calc-value="1" data-calc-target="simple">1</button>
+                                        <button type="button" class="calc-key" data-calc-value="2" data-calc-target="simple">2</button>
+                                        <button type="button" class="calc-key" data-calc-value="3" data-calc-target="simple">3</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="-" data-calc-target="simple" aria-label="Subtrair">−</button>
+
+                                        <button type="button" class="calc-key calc-key--wide" data-calc-value="0" data-calc-target="simple">0</button>
+                                        <button type="button" class="calc-key" data-calc-value="." data-calc-target="simple">.</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="+" data-calc-target="simple" aria-label="Somar">+</button>
+
+                                        <button type="button" class="calc-key calc-key--op calc-key--wide" data-calc-value="%" data-calc-target="simple">%</button>
+                                        <button type="button" class="calc-key calc-key--main calc-key--wide" data-calc-action="equals" data-calc-target="simple" aria-label="Calcular resultado">=</button>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="calc-panel" data-calc-panel="financial" hidden>
+                                <div class="calculator-panel calculator-panel--wide">
+                                    <div class="calc-submode-strip mb-4" aria-label="Tipo de cálculo financeiro">
+                                        <button type="button" class="calc-submode-button is-active" data-finance-tool="compound">Juros compostos</button>
+                                        <button type="button" class="calc-submode-button" data-finance-tool="simple">Juros simples</button>
+                                        <button type="button" class="calc-submode-button" data-finance-tool="payment">Parcela</button>
+                                    </div>
+                                    <div class="calc-form-grid calc-form-grid--two">
+                                        <label class="calc-input-group">
+                                            <span id="calc-financial-label-principal">Capital inicial</span>
+                                            <input type="number" id="calc-financial-principal" class="input-field" value="1000" step="0.01" min="0">
+                                        </label>
+                                        <label class="calc-input-group">
+                                            <span>Taxa por período (%)</span>
+                                            <input type="number" id="calc-financial-rate" class="input-field" value="2" step="0.01">
+                                        </label>
+                                        <label class="calc-input-group">
+                                            <span id="calc-financial-label-periods">Número de períodos</span>
+                                            <input type="number" id="calc-financial-periods" class="input-field" value="12" step="1" min="1">
+                                        </label>
+                                        <div class="calc-input-group">
+                                            <span>Leitura</span>
+                                            <p id="calc-financial-help" class="calc-hint">Use para estimar montante e juros acumulados por período.</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <button type="button" class="btn-primary w-full" data-calc-financial-run>Calcular</button>
+                                    </div>
+                                    <div id="calc-financial-result" class="calc-result-panel" aria-live="polite"></div>
+                                </div>
+                            </section>
+
+                            <section class="calc-panel" data-calc-panel="scientific" hidden>
+                                <div class="calculator-panel calculator-panel--wide">
+                                    <div class="calc-toolbar">
+                                        <p class="calc-toolbar__copy">Funções científicas com alternância entre graus e radianos.</p>
+                                        <div class="calc-angle-toggle" aria-label="Modo angular">
+                                            <button type="button" class="calc-angle-button is-active" data-calc-angle="deg">DEG</button>
+                                            <button type="button" class="calc-angle-button" data-calc-angle="rad">RAD</button>
+                                        </div>
+                                    </div>
+                                    <div class="calculator-screen" aria-live="polite" aria-atomic="true">
+                                        <p class="calculator-screen__meta">Modo Científica</p>
+                                        <p id="calc-scientific-expression" class="calculator-screen__expression">0</p>
+                                        <output id="calc-scientific-display" class="calculator-screen__display">0</output>
+                                    </div>
+
+                                    <div class="calculator-grid calculator-grid--scientific" aria-label="Teclado da calculadora científica">
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="sin(" data-calc-target="scientific">sin</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="cos(" data-calc-target="scientific">cos</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="tan(" data-calc-target="scientific">tan</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="sqrt(" data-calc-target="scientific">sqrt</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="log(" data-calc-target="scientific">log</button>
+
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="ln(" data-calc-target="scientific">ln</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="π" data-calc-target="scientific">π</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="e" data-calc-target="scientific">e</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="^" data-calc-target="scientific">x^y</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-action="square" data-calc-target="scientific">x²</button>
+
+                                        <button type="button" class="calc-key calc-key--ghost" data-calc-action="clear" data-calc-target="scientific">C</button>
+                                        <button type="button" class="calc-key calc-key--ghost" data-calc-action="backspace" data-calc-target="scientific">⌫</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="(" data-calc-target="scientific">(</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value=")" data-calc-target="scientific">)</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="÷" data-calc-target="scientific">÷</button>
+
+                                        <button type="button" class="calc-key" data-calc-value="7" data-calc-target="scientific">7</button>
+                                        <button type="button" class="calc-key" data-calc-value="8" data-calc-target="scientific">8</button>
+                                        <button type="button" class="calc-key" data-calc-value="9" data-calc-target="scientific">9</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="×" data-calc-target="scientific">×</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="%" data-calc-target="scientific">%</button>
+
+                                        <button type="button" class="calc-key" data-calc-value="4" data-calc-target="scientific">4</button>
+                                        <button type="button" class="calc-key" data-calc-value="5" data-calc-target="scientific">5</button>
+                                        <button type="button" class="calc-key" data-calc-value="6" data-calc-target="scientific">6</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="-" data-calc-target="scientific">−</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="abs(" data-calc-target="scientific">abs</button>
+
+                                        <button type="button" class="calc-key" data-calc-value="1" data-calc-target="scientific">1</button>
+                                        <button type="button" class="calc-key" data-calc-value="2" data-calc-target="scientific">2</button>
+                                        <button type="button" class="calc-key" data-calc-value="3" data-calc-target="scientific">3</button>
+                                        <button type="button" class="calc-key calc-key--op" data-calc-value="+" data-calc-target="scientific">+</button>
+                                        <button type="button" class="calc-key calc-key--main" data-calc-action="equals" data-calc-target="scientific">=</button>
+
+                                        <button type="button" class="calc-key calc-key--wide" data-calc-value="0" data-calc-target="scientific">0</button>
+                                        <button type="button" class="calc-key" data-calc-value="." data-calc-target="scientific">.</button>
+                                        <button type="button" class="calc-key calc-key--op calc-key--wide" data-calc-action="negate" data-calc-target="scientific">±</button>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="calc-panel" data-calc-panel="programmer" hidden>
+                                <div class="calculator-panel calculator-panel--wide">
+                                    <div class="calc-form-grid calc-form-grid--two">
+                                        <label class="calc-input-group">
+                                            <span>Base de entrada</span>
+                                            <select id="calc-programmer-base" class="input-field">
+                                                <option value="2">Binário</option>
+                                                <option value="8">Octal</option>
+                                                <option value="10" selected>Decimal</option>
+                                                <option value="16">Hexadecimal</option>
+                                            </select>
+                                        </label>
+                                        <label class="calc-input-group">
+                                            <span>Valor para converter</span>
+                                            <input type="text" id="calc-programmer-value" class="input-field" value="255" placeholder="255 ou 0xFF">
+                                        </label>
+                                    </div>
+                                    <div class="mt-4">
+                                        <button type="button" class="btn-primary w-full" data-calc-programmer-convert>Converter valor</button>
+                                    </div>
+                                    <div id="calc-programmer-conversion" class="calc-result-panel" aria-live="polite"></div>
+                                    <div class="calc-form-grid calc-form-grid--two mt-4">
+                                        <label class="calc-input-group">
+                                            <span>Valor A</span>
+                                            <input type="text" id="calc-programmer-a" class="input-field" value="15">
+                                        </label>
+                                        <label class="calc-input-group">
+                                            <span>Operador</span>
+                                            <select id="calc-programmer-op" class="input-field">
+                                                <option value="and">AND</option>
+                                                <option value="or">OR</option>
+                                                <option value="xor">XOR</option>
+                                                <option value="not">NOT</option>
+                                                <option value="lshift">Shift left</option>
+                                                <option value="rshift">Shift right</option>
+                                            </select>
+                                        </label>
+                                        <label class="calc-input-group">
+                                            <span>Valor B / deslocamento</span>
+                                            <input type="text" id="calc-programmer-b" class="input-field" value="3">
+                                        </label>
+                                        <div class="calc-input-group">
+                                            <span>Dica</span>
+                                            <p class="calc-hint">Aceita prefixos como <code>0x</code>, <code>0b</code> e <code>0o</code>.</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <button type="button" class="btn-primary w-full" data-calc-programmer-run>Calcular operação</button>
+                                    </div>
+                                    <div id="calc-programmer-result" class="calc-result-panel" aria-live="polite"></div>
+                                </div>
+                            </section>
+
+                            <section class="calc-panel" data-calc-panel="date" hidden>
+                                <div class="calculator-panel calculator-panel--wide">
+                                    <div class="calc-submode-strip mb-4" aria-label="Tipo de cálculo de data">
+                                        <button type="button" class="calc-submode-button is-active" data-date-tool="difference">Diferença</button>
+                                        <button type="button" class="calc-submode-button" data-date-tool="offset">Somar dias</button>
+                                    </div>
+                                    <div data-date-panel="difference">
+                                        <div class="calc-form-grid calc-form-grid--two">
+                                            <label class="calc-input-group">
+                                                <span>Data inicial</span>
+                                                <input type="date" id="calc-date-start" class="input-field">
+                                            </label>
+                                            <label class="calc-input-group">
+                                                <span>Data final</span>
+                                                <input type="date" id="calc-date-end" class="input-field">
+                                            </label>
+                                        </div>
+                                        <label class="flex items-center gap-2 text-sm mt-3 cursor-pointer">
+                                            <input type="checkbox" id="calc-date-include-end" class="accent-brand-600">
+                                            <span>Incluir a data final na contagem</span>
+                                        </label>
+                                        <div class="mt-4">
+                                            <button type="button" class="btn-primary w-full" data-calc-date-run="difference">Calcular diferença</button>
+                                        </div>
+                                    </div>
+                                    <div data-date-panel="offset" hidden>
+                                        <div class="calc-form-grid calc-form-grid--two">
+                                            <label class="calc-input-group">
+                                                <span>Data base</span>
+                                                <input type="date" id="calc-date-base" class="input-field">
+                                            </label>
+                                            <label class="calc-input-group">
+                                                <span>Quantidade de dias</span>
+                                                <input type="number" id="calc-date-offset-days" class="input-field" value="30" step="1">
+                                            </label>
+                                            <label class="calc-input-group">
+                                                <span>Direção</span>
+                                                <select id="calc-date-offset-direction" class="input-field">
+                                                    <option value="add">Somar</option>
+                                                    <option value="subtract">Subtrair</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="mt-4">
+                                            <button type="button" class="btn-primary w-full" data-calc-date-run="offset">Calcular data</button>
+                                        </div>
+                                    </div>
+                                    <div id="calc-date-result" class="calc-result-panel" aria-live="polite"></div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card p-5" aria-label="Conteúdo explicativo sobre a calculadora online">
+                    <h2 class="font-bold text-xl mb-3">Uma calculadora online simples, gratuita, fácil de usar, e pronta para te ajudar em seus cálculos.</h2>
+                    <p class="text-sm text-surface-500 leading-relaxed mb-3">
+                        Esta calculadora online gratuita foi criada para resolver contas rápidas no desktop e no mobile,
+                        mantendo o mesmo padrão visual do projeto. Agora a página reúne os modos simples, financeira,
+                        científica, programador e calcular data em uma estrutura única, com histórico local para as
+                        últimas contas feitas.
+                    </p>
+                    <p class="text-sm text-surface-500 leading-relaxed">
+                        A base continua preparada para crescer sem ruído, abrindo espaço para evoluções futuras mais
+                        profundas em cada modo sem mudar a navegação principal nem o padrão visual do site.
+                    </p>
+                </section>
+
+                <section class="card p-5">
+                    <h2 class="font-bold text-lg mb-3">Outras ferramentas úteis</h2>
+                    <div class="tool-link-list">
+                        <a href="/calcular/" class="tool-link">
+                            <strong class="block mb-1">Dias Úteis</strong>
+                            <span class="text-sm text-surface-500">Conte dias úteis entre datas e some prazos com feriados nacionais.</span>
+                        </a>
+                        <a href="/calendario/" class="tool-link">
+                            <strong class="block mb-1">Calendário</strong>
+                            <span class="text-sm text-surface-500">Consulte o calendário anual e mensal com feriados nacionais.</span>
+                        </a>
+                        <a href="/escala/" class="tool-link">
+                            <strong class="block mb-1">Simulador de Escalas</strong>
+                            <span class="text-sm text-surface-500">Projete quadro mínimo, referência mensal e cobertura por posto.</span>
+                        </a>
+                    </div>
+                </section>
+            </section>
+
+            <aside class="calculator-side-column calculator-side-column--left">
+                <section class="card p-5 calc-history-card">
+                    <div class="flex items-start justify-between gap-3 mb-3">
+                        <div>
+                            <h2 class="font-bold text-base">Histórico</h2>
+                            <p class="text-sm text-surface-500 mt-1">Os últimos 10 cálculos ficam salvos aqui para consulta rápida.</p>
+                        </div>
+                        <button type="button" class="btn-secondary text-sm" data-calc-history-clear>Limpar</button>
+                    </div>
+                    <ol id="calc-history-list" class="calc-history-list" aria-live="polite"></ol>
+                    <p id="calc-history-empty" class="calc-history-empty text-sm text-surface-500">Seus cálculos mais recentes aparecem aqui conforme você usa a calculadora.</p>
+                </section>
+            </aside>
+
+            <aside class="calculator-side-column calculator-side-column--right">
+                <section class="card p-5">
+                    <h2 class="font-bold text-base mb-3">Modos da calculadora</h2>
+                    <div class="calc-mode-list" aria-label="Modos disponíveis e planejados">
+                        <button type="button" class="calc-mode-button is-active" data-calc-mode-switch="simple">
+                            <span class="calc-mode-button__title">Simples</span>
+                            <span class="calc-mode-button__desc">Operações básicas imediatas.</span>
+                        </button>
+                        <button type="button" class="calc-mode-button" data-calc-mode-switch="financial">
+                            <span class="calc-mode-button__title">Financeira</span>
+                            <span class="calc-mode-button__desc">Juros e parcela.</span>
+                        </button>
+                        <button type="button" class="calc-mode-button" data-calc-mode-switch="scientific">
+                            <span class="calc-mode-button__title">Científica</span>
+                            <span class="calc-mode-button__desc">Potência e trigonometria.</span>
+                        </button>
+                        <button type="button" class="calc-mode-button" data-calc-mode-switch="programmer">
+                            <span class="calc-mode-button__title">Programador</span>
+                            <span class="calc-mode-button__desc">Bases e bits.</span>
+                        </button>
+                        <button type="button" class="calc-mode-button" data-calc-mode-switch="date">
+                            <span class="calc-mode-button__title">Calcular Data</span>
+                            <span class="calc-mode-button__desc">Diferença e projeção.</span>
+                        </button>
+                    </div>
+                    <p class="text-sm text-surface-500 mt-3">Todos os modos desta etapa ficam disponíveis na mesma página, com troca rápida sem recarregar.</p>
+                </section>
+
+                <section class="card p-5">
+                    <h2 class="font-bold text-base mb-3">Dicas rápidas</h2>
+                    <ul class="text-sm space-y-2 text-surface-500">
+                        <li>Use o teclado físico nos modos Simples e Científica para digitar números, operadores e parênteses.</li>
+                        <li>O histórico lateral guarda até 10 cálculos de todos os modos ativos na página.</li>
+                        <li>O modo Programador aceita prefixos como <strong>0x</strong>, <strong>0b</strong> e <strong>0o</strong>.</li>
+                    </ul>
+                </section>
+
+                <div id="ads-sidebar" class="ad-slot ad-slot-sidebar" aria-label="Espaco reservado para anuncios">
+                    <ins class="adsbygoogle" data-ad-client="ca-pub-3377250238500968" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <div data-site-footer></div>
+    <div class="print-footer">
+        <div class="site-credit" data-i18n="print_footer">Gerado por www.datasuteis.com.br - O guia oficial de prazos.</div>
+        <div class="timestamp"></div>
+    </div>
+
+    <script src="/assets/js/app.min.js?v=20260310-1" defer></script>
+    <script src="/assets/js/calculadora.js?v=20260310-2" defer></script>
+
+    <div data-mobile-bottom-nav></div>
+    <div data-help-sheet></div>
+</body>
+
+</html>

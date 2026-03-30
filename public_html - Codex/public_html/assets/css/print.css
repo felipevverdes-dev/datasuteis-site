@@ -1,0 +1,432 @@
+/* Print styles — DataSuteis */
+@page {
+    size: A4 portrait;
+    margin: 14mm 12mm 16mm 12mm;
+}
+
+@media print {
+    nav,
+    footer,
+    .ad-slot,
+    .no-print,
+    #theme-toggle,
+    #mobile-menu-btn,
+    #mobile-menu,
+    .btn,
+    .btn-primary,
+    .btn-secondary,
+    .btn-outline,
+    .btn-print,
+    .toggle-track,
+    .warning-banner,
+    .lang-btn,
+    #fallback-warning,
+    form {
+        display: none !important;
+    }
+
+    svg {
+        width: 6mm;
+        height: 6mm;
+        max-width: 6mm;
+        max-height: 6mm;
+    }
+
+    img {
+        max-height: 18mm;
+        height: auto;
+        width: auto;
+    }
+
+    .icon {
+        width: 6mm !important;
+        height: 6mm !important;
+        max-width: 6mm !important;
+        max-height: 6mm !important;
+    }
+
+    body {
+        background: #fff !important;
+        color: #0f172a !important;
+        font-size: 10.5px;
+        line-height: 1.3;
+    }
+
+    .print-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        margin: 0 0 10px;
+        padding: 0 0 8px;
+        border-bottom: 2px solid #0f172a;
+    }
+
+    .print-header img {
+        height: 34px !important;
+        width: auto !important;
+        max-height: none !important;
+        object-fit: contain;
+    }
+
+    .print-header .print-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .print-footer {
+        display: flex !important;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        justify-content: space-between;
+        border-top: 1px solid #cbd5e1;
+        padding: 4px 10mm;
+        font-size: 8px;
+        color: #64748b;
+        background: #fff;
+    }
+
+    .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3.xl\:grid-cols-4 {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+    }
+
+    .card {
+        border: 1px solid #dbe1e9 !important;
+        border-radius: 6px !important;
+        box-shadow: none !important;
+        padding: 6px !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .cal-cell {
+        width: 19px !important;
+        height: 19px !important;
+        border-radius: 3px !important;
+        font-size: 8.5px !important;
+        line-height: 1 !important;
+    }
+
+    .cal-cell.holiday {
+        background: #fee2e2 !important;
+        color: #991b1b !important;
+        font-weight: 700 !important;
+    }
+
+    .cal-cell.weekend {
+        background: #f8fafc !important;
+        color: #64748b !important;
+    }
+
+    .cal-cell.today {
+        outline: 1.5px solid #1d4ed8 !important;
+        font-weight: 700 !important;
+    }
+
+    #calc-result .card,
+    #scale-result .card {
+        border-left: 4px solid #1d4ed8 !important;
+    }
+
+    .holiday-list-print {
+        font-size: 9px;
+    }
+
+    .holiday-list-print th {
+        border-bottom: 1px solid #1e293b;
+        font-size: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .holiday-list-print td {
+        padding: 3px 6px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .print-legend {
+        display: flex !important;
+        gap: 10px;
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid #e2e8f0;
+        font-size: 8.5px;
+    }
+
+    .print-legend .swatch {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        margin-right: 4px;
+        border-radius: 2px;
+        vertical-align: middle;
+    }
+
+    .print-legend .swatch--holiday {
+        background: #fee2e2;
+        border: 1px solid #b91c1c;
+    }
+
+    .print-legend .swatch--weekend {
+        background: #f1f5f9;
+    }
+
+    .print-legend .swatch--today {
+        border: 1.5px solid #1d4ed8;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    a[href]::after {
+        content: none !important;
+    }
+}
+
+.print-header,
+.print-footer,
+.print-legend {
+    display: none;
+}
+
+@media print {
+    body[data-page="escala"] main > * {
+        display: none !important;
+    }
+
+    body[data-page="escala"] #scale-print-sheet {
+        display: block !important;
+        color: #0f172a !important;
+    }
+
+    body[data-page="escala"] .mobile-bottom-nav,
+    body[data-page="escala"] #help-sheet,
+    body[data-page="escala"] #scale-print-modal,
+    body[data-page="escala"] #adblock-note,
+    body[data-page="escala"] .ad-slot {
+        display: none !important;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .print-header {
+        display: flex !important;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-company-logo {
+        max-width: 110px;
+        max-height: 36px !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-kicker {
+        display: block;
+        margin-bottom: 2px;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #64748b;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-meta,
+    body[data-page="escala"] #scale-print-sheet .scale-print-note {
+        margin: 0;
+        font-size: 10px;
+        line-height: 1.45;
+        color: #334155;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-section {
+        margin-bottom: 10px;
+        padding: 8px 10px;
+        border: 1px solid #dbe5f0;
+        border-radius: 8px;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-section h3 {
+        margin: 0 0 6px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-grid,
+    body[data-page="escala"] #scale-print-sheet .scale-print-compare {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-card {
+        padding: 8px;
+        border: 1px solid #dbe5f0;
+        border-radius: 8px;
+        background: #f8fafc;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-card strong {
+        display: block;
+        margin-top: 2px;
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-card p {
+        margin: 4px 0 0;
+        font-size: 9.5px;
+        line-height: 1.45;
+        color: #475569;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-status {
+        margin: 8px 0 0;
+        font-size: 10px;
+        line-height: 1.45;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-calendar {
+        margin-top: 8px;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-calendar__grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 3px;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-weekday {
+        font-size: 8px;
+        font-weight: 700;
+        text-align: center;
+        text-transform: uppercase;
+        color: #64748b;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-day {
+        min-height: 22px;
+        padding: 3px 2px;
+        border-radius: 5px;
+        background: #f8fafc;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-day strong {
+        display: block;
+        font-size: 9px;
+        line-height: 1.1;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-day span {
+        display: block;
+        margin-top: 1px;
+        font-size: 7.5px;
+        line-height: 1.2;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-day--empty {
+        border-color: transparent;
+        background: transparent;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-day--work {
+        background: #dbeafe;
+        border-color: #bfdbfe;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-day--off {
+        background: #f8fafc;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-day--holiday {
+        background: #fef3c7;
+        border-color: #fde68a;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-day--deficit {
+        background: #fee2e2;
+        border-color: #fca5a5;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 10px;
+        margin-top: 8px;
+        font-size: 8.5px;
+        color: #475569;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-legend__swatch {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        margin-right: 4px;
+        border-radius: 2px;
+        vertical-align: middle;
+        border: 1px solid #cbd5e1;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-legend__swatch--work {
+        background: #dbeafe;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-legend__swatch--off {
+        background: #f8fafc;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-legend__swatch--holiday {
+        background: #fef3c7;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-legend__swatch--deficit {
+        background: #fee2e2;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        font-size: 9px;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-table th,
+    body[data-page="escala"] #scale-print-sheet .scale-print-table td {
+        padding: 4px 6px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-table th {
+        font-size: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #64748b;
+    }
+
+    body[data-page="escala"] #scale-print-sheet .scale-print-list {
+        margin: 0;
+        padding-left: 16px;
+        font-size: 9.5px;
+        line-height: 1.45;
+    }
+}

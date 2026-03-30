@@ -1,0 +1,106 @@
+import { useEffect, useState } from "react";
+import { Link } from "wouter";
+import { useI18n } from "@/contexts/LanguageContext";
+import { trackAnalyticsEvent } from "@/lib/analytics";
+import {
+  type CookieConsentStatus,
+  readStoredCookieConsent,
+  writeStoredCookieConsent,
+} from "@/lib/site";
+
+const COPY = {
+  pt: {
+    message:
+      "Usamos cookies e scripts de medição para Google Analytics e Google AdSense. Você pode aceitar ou recusar esse carregamento.",
+    accept: "Aceitar",
+    reject: "Recusar",
+    privacy: "Privacidade",
+  },
+  en: {
+    message:
+      "We use cookies and measurement scripts for Google Analytics and Google AdSense. You can accept or reject this loading.",
+    accept: "Accept",
+    reject: "Reject",
+    privacy: "Privacy",
+  },
+  es: {
+    message:
+      "Usamos cookies y scripts de medición para Google Analytics y Google AdSense. Puede aceptar o rechazar esta carga.",
+    accept: "Aceptar",
+    reject: "Rechazar",
+    privacy: "Privacidad",
+  },
+} as const;
+
+export default function CookieConsentBanner() {
+  const { language } = useI18n();
+  const copy = COPY[language] ?? COPY.pt;
+  const [consent, setConsent] = useState<CookieConsentStatus | null>(() =>
+    readStoredCookieConsent(),
+  );
+
+  useEffect(() => {
+    function handleConsentUpdate(event: Event) {
+      const detail = (event as CustomEvent<{ status?: CookieConsentStatus }>)
+        .detail;
+      if (detail?.status) {
+        setConsent(detail.status);
+      }
+    }
+
+    window.addEventListener("datasuteis-consent-updated", handleConsentUpdate);
+    return () => {
+      window.removeEventListener(
+        "datasuteis-consent-updated",
+        handleConsentUpdate,
+      );
+    };
+  }, []);
+
+  if (consent) {
+    return null;
+  }
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-border/70 bg-background/95 shadow-lg backdrop-blur">
+      <div
+        className="container mx-auto flex flex-col gap-4 px-6 py-4 md:flex-row md:items-center md:justify-between"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }}
+      >
+        <p className="max-w-4xl text-sm leading-6 text-muted-foreground">
+          {copy.message}{" "}
+          <Link href="/privacidade/" className="font-semibold text-primary">
+            {copy.privacy}
+          </Link>
+        </p>
+
+        <div className="flex shrink-0 flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              trackAnalyticsEvent("cookie_consent_updated", {
+                consent_status: "rejected",
+              });
+              writeStoredCookieConsent("rejected");
+            }}
+            className="btn-outline"
+          >
+            {copy.reject}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              trackAnalyticsEvent("cookie_consent_updated", {
+                consent_status: "accepted",
+              });
+              writeStoredCookieConsent("accepted");
+            }}
+            className="btn-primary"
+          >
+            {copy.accept}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

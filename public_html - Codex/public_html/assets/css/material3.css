@@ -1,0 +1,107 @@
+:root {
+    --md-sys-color-primary: #0b57d0;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #d7e3ff;
+    --md-sys-color-on-primary-container: #001a43;
+    --md-sys-color-surface: #f7f9fc;
+    --md-sys-color-surface-container: #ffffff;
+    --md-sys-color-surface-variant: #e8edf6;
+    --md-sys-color-outline: #c3c9d4;
+    --md-sys-color-on-surface: #1a1c20;
+    --md-sys-color-on-surface-variant: #4a4f58;
+    --md-shape-sm: 12px;
+    --md-shape-md: 16px;
+    --md-elev-1: 0 1px 2px rgba(16, 24, 40, 0.08), 0 1px 3px rgba(16, 24, 40, 0.06);
+    --md-elev-2: 0 4px 10px rgba(16, 24, 40, 0.10), 0 1px 4px rgba(16, 24, 40, 0.08);
+    --md-state-hover: rgba(11, 87, 208, 0.08);
+    --md-state-focus: rgba(11, 87, 208, 0.22);
+}
+
+.dark {
+    --md-sys-color-primary: #abc7ff;
+    --md-sys-color-on-primary: #002c72;
+    --md-sys-color-primary-container: #00419f;
+    --md-sys-color-on-primary-container: #d7e3ff;
+    --md-sys-color-surface: #0f1115;
+    --md-sys-color-surface-container: #171b22;
+    --md-sys-color-surface-variant: #252b35;
+    --md-sys-color-outline: #3d4450;
+    --md-sys-color-on-surface: #e3e8f1;
+    --md-sys-color-on-surface-variant: #c1c7d1;
+    --md-state-hover: rgba(171, 199, 255, 0.12);
+    --md-state-focus: rgba(171, 199, 255, 0.28);
+}
+
+html,
+body {
+    overflow-x: hidden;
+}
+
+body {
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+}
+
+.card {
+    background: var(--md-sys-color-surface-container);
+    border-color: var(--md-sys-color-outline);
+    border-radius: var(--md-shape-md);
+    box-shadow: var(--md-elev-1);
+}
+
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-outline,
+.tab-btn {
+    border-radius: var(--md-shape-sm);
+    min-height: 44px;
+}
+
+.btn-primary {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    box-shadow: var(--md-elev-1);
+}
+
+.btn-primary:hover {
+    filter: brightness(0.96);
+}
+
+.btn-secondary,
+.btn-outline {
+    border-color: var(--md-sys-color-outline);
+}
+
+.input-field,
+select.input-field,
+input.input-field,
+textarea.input-field {
+    min-height: 44px;
+    font-size: 16px;
+    border-radius: var(--md-shape-sm);
+    border-color: var(--md-sys-color-outline);
+    background: var(--md-sys-color-surface-container);
+    color: var(--md-sys-color-on-surface);
+}
+
+.input-field:focus,
+.btn:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-outline:focus-visible,
+.tab-btn:focus-visible,
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--md-state-focus);
+    outline-offset: 2px;
+}
+
+.tab-btn:not(.active):hover,
+.btn-secondary:hover,
+.btn-outline:hover {
+    background: var(--md-state-hover);
+}

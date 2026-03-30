@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /assets/js/app.min.js
+Disallow: /build/
+
+Sitemap: https://datasuteis.com.br/sitemap.xml

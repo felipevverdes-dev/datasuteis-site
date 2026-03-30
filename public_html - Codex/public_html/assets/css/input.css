@@ -1,0 +1,230 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        @apply scroll-smooth;
+    }
+
+    body {
+        @apply font-sans text-surface-900 bg-surface-50 antialiased transition-colors duration-300;
+    }
+
+    .dark body {
+        @apply text-surface-100 bg-surface-950;
+    }
+}
+
+@layer components {
+    .ad-slot {
+        @apply w-full flex items-center justify-center overflow-hidden;
+        min-height: 100px;
+        contain: layout paint style;
+        background: linear-gradient(180deg, rgba(148, 163, 184, 0.06), rgba(148, 163, 184, 0.02));
+        border-radius: 0.75rem;
+    }
+
+    .ad-slot--top {
+        min-height: 90px;
+    }
+
+    .ad-slot--sidebar {
+        min-height: 250px;
+    }
+
+    .ad-slot--result {
+        min-height: 100px;
+    }
+
+    .ad-slot .adsbygoogle {
+        @apply w-full;
+        min-height: inherit;
+    }
+
+    .card {
+        @apply bg-white rounded-2xl shadow-lg border p-6 transition-all duration-300;
+        border-color: rgba(226, 232, 240, 0.6);
+        --tw-shadow-color: rgba(52, 120, 255, 0.05);
+    }
+
+    .dark .card {
+        @apply bg-surface-800;
+        border-color: rgba(51, 65, 85, 0.5);
+        --tw-shadow-color: rgba(52, 120, 255, 0.1);
+    }
+
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl font-semibold text-sm transition-all duration-200 cursor-pointer select-none;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl font-semibold text-sm transition-all duration-200 cursor-pointer select-none bg-brand-600 text-white shadow-md;
+    }
+
+    .btn-primary:hover {
+        @apply bg-brand-700;
+    }
+
+    .btn-primary:active {
+        @apply scale-95;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl font-semibold text-sm transition-all duration-200 cursor-pointer select-none bg-surface-100 text-surface-700;
+    }
+
+    .btn-secondary:hover {
+        @apply bg-surface-200;
+    }
+
+    .btn-secondary:active {
+        @apply scale-95;
+    }
+
+    .dark .btn-secondary {
+        @apply bg-surface-700 text-surface-200;
+    }
+
+    .dark .btn-secondary:hover {
+        @apply bg-surface-600;
+    }
+
+    .btn-outline {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl font-semibold text-sm transition-all duration-200 cursor-pointer select-none border-2 border-brand-500 text-brand-600;
+    }
+
+    .btn-outline:hover {
+        @apply bg-brand-50;
+    }
+
+    .btn-outline:active {
+        @apply scale-95;
+    }
+
+    .dark .btn-outline {
+        @apply border-brand-400 text-brand-400;
+    }
+
+    .dark .btn-outline:hover {
+        @apply bg-brand-950;
+    }
+
+    .input-field {
+        @apply w-full px-4 py-2 rounded-xl border border-surface-200 bg-white text-surface-900 transition-all duration-200;
+    }
+
+    .input-field::placeholder {
+        @apply text-surface-400;
+    }
+
+    .input-field:focus {
+        @apply outline-none ring-2 ring-brand-500 border-brand-500;
+    }
+
+    .dark .input-field {
+        @apply bg-surface-800 border-surface-600 text-surface-100;
+    }
+
+    .dark .input-field::placeholder {
+        @apply text-surface-500;
+    }
+
+    .toggle-track {
+        @apply relative w-11 h-6 rounded-full bg-surface-200 cursor-pointer transition-colors duration-200;
+    }
+
+    .toggle-track.active {
+        @apply bg-brand-600;
+    }
+
+    .toggle-knob {
+        @apply absolute w-5 h-5 rounded-full bg-white shadow transition-transform duration-200;
+        top: 2px;
+        left: 2px;
+    }
+
+    .toggle-track.active .toggle-knob {
+        @apply translate-x-5;
+    }
+
+    .cal-cell {
+        @apply w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-150;
+    }
+
+    .cal-cell.interactive {
+        @apply cursor-pointer;
+    }
+
+    .cal-cell.interactive:hover {
+        @apply bg-brand-50;
+    }
+
+    .dark .cal-cell.interactive:hover {
+        @apply bg-brand-950;
+    }
+
+    .cal-cell.today {
+        @apply ring-2 ring-brand-500 font-bold;
+    }
+
+    .cal-cell.holiday {
+        @apply bg-red-50 text-red-600 font-semibold;
+    }
+
+    .dark .cal-cell.holiday {
+        @apply text-red-400;
+        background: rgba(127, 29, 29, 0.4);
+    }
+
+    .cal-cell.weekend {
+        @apply text-surface-400;
+    }
+
+    .cal-cell.in-range {
+        @apply bg-brand-100 text-brand-800;
+    }
+
+    .dark .cal-cell.in-range {
+        @apply text-brand-300;
+        background: rgba(20, 32, 87, 0.4);
+    }
+
+    .cal-cell.range-start,
+    .cal-cell.range-end {
+        @apply bg-brand-600 text-white font-bold;
+    }
+
+    .tab-btn {
+        @apply px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer;
+    }
+
+    .tab-btn.active {
+        @apply bg-brand-600 text-white shadow-md;
+    }
+
+    .tab-btn:not(.active) {
+        @apply text-surface-500;
+    }
+
+    .tab-btn:not(.active):hover {
+        @apply text-surface-700 bg-surface-100;
+    }
+
+    .dark .tab-btn:not(.active) {
+        @apply text-surface-400;
+    }
+
+    .dark .tab-btn:not(.active):hover {
+        @apply text-surface-200 bg-surface-700;
+    }
+
+    .warning-banner {
+        @apply flex items-center gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm;
+    }
+
+    .dark .warning-banner {
+        @apply border-amber-800 text-amber-300;
+        background: rgba(120, 53, 15, 0.3);
+    }
+}

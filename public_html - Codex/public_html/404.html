@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+        <script>(function () { try { var t = localStorage.getItem('theme') || localStorage.getItem('datasuteis_theme'); if (t === 'dark') document.documentElement.classList.add('dark'); } catch (e) { } })()</script>
+    <script>(function () { try { var l = localStorage.getItem('lang') || localStorage.getItem('datasuteis_lang') || 'pt'; var m = { pt: 'pt-BR', en: 'en', es: 'es' }; if (m[l]) document.documentElement.lang = m[l]; } catch (e) { } })()</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E9198198D5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', 'G-E9198198D5');
+    </script>
+<!-- CLS-FIX-FOUC: apply theme before first paint while supporting legacy keys -->
+    <!-- CLS-FIX-FOUC: apply language before first paint while supporting legacy keys -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Página Não Encontrada | Datas Úteis</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/brand/favicon-16.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/brand/apple-touch-icon.png">
+    <!-- CLS-FIX-FOUC: critical site CSS must block first paint -->
+    <link rel="stylesheet" href="/assets/css/tailwind.css">
+    <link rel="stylesheet" href="/assets/css/material3.css">
+    <link rel="stylesheet" href="/assets/css/components.css?v=20260308-2">
+</head>
+
+<body data-page="404" class="min-h-screen flex flex-col bg-surface-50 dark:bg-surface-900">
+    <div data-site-nav></div>
+
+    <main class="flex-1 flex items-center justify-center px-4 py-16">
+        <div class="text-center max-w-lg">
+            <p class="text-6xl font-extrabold text-brand-600 mb-4">404</p>
+            <h1 class="text-2xl font-bold mb-4 text-surface-900 dark:text-surface-100">Página não encontrada</h1>
+            <p class="text-surface-500 mb-8">A página que você procura não existe ou foi movida. Confira os links abaixo
+                para encontrar o que precisa.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="/" class="btn bg-brand-600 text-white hover:bg-brand-700 px-6 py-3 font-semibold rounded-xl">Ir
+                    para o Início</a>
+                <a href="/calcular/"
+                    class="btn border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-800 px-6 py-3 rounded-xl">Calcular
+                    Dias Úteis</a>
+            </div>
+            <div class="mt-8 flex flex-wrap gap-4 justify-center text-sm">
+                <a href="/calendario/" class="text-brand-600 hover:underline">Calendário</a>
+                <a href="/escala/" class="text-brand-600 hover:underline">Simulador de Escalas</a>
+                <a href="/blog/" class="text-brand-600 hover:underline">Blog</a>
+            </div>
+        </div>
+    </main>
+    <div data-site-footer></div>
+    <script src="/assets/js/app.min.js?v=20260309-2" defer></script>
+    <div data-mobile-bottom-nav></div>
+    <div data-help-sheet></div>
+
+</body>
+
+</html>
