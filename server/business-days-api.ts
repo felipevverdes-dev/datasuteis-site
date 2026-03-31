@@ -124,6 +124,36 @@ interface HolidayLocalityResult {
   isFallback: boolean;
 }
 
+const BRAZIL_STATE_FALLBACKS = [
+  { code: "AC", name: "Acre", region: "Norte", ibgeCode: 12 },
+  { code: "AL", name: "Alagoas", region: "Nordeste", ibgeCode: 27 },
+  { code: "AP", name: "Amapá", region: "Norte", ibgeCode: 16 },
+  { code: "AM", name: "Amazonas", region: "Norte", ibgeCode: 13 },
+  { code: "BA", name: "Bahia", region: "Nordeste", ibgeCode: 29 },
+  { code: "CE", name: "Ceará", region: "Nordeste", ibgeCode: 23 },
+  { code: "DF", name: "Distrito Federal", region: "Centro-Oeste", ibgeCode: 53 },
+  { code: "ES", name: "Espírito Santo", region: "Sudeste", ibgeCode: 32 },
+  { code: "GO", name: "Goiás", region: "Centro-Oeste", ibgeCode: 52 },
+  { code: "MA", name: "Maranhão", region: "Nordeste", ibgeCode: 21 },
+  { code: "MT", name: "Mato Grosso", region: "Centro-Oeste", ibgeCode: 51 },
+  { code: "MS", name: "Mato Grosso do Sul", region: "Centro-Oeste", ibgeCode: 50 },
+  { code: "MG", name: "Minas Gerais", region: "Sudeste", ibgeCode: 31 },
+  { code: "PA", name: "Pará", region: "Norte", ibgeCode: 15 },
+  { code: "PB", name: "Paraíba", region: "Nordeste", ibgeCode: 25 },
+  { code: "PR", name: "Paraná", region: "Sul", ibgeCode: 41 },
+  { code: "PE", name: "Pernambuco", region: "Nordeste", ibgeCode: 26 },
+  { code: "PI", name: "Piauí", region: "Nordeste", ibgeCode: 22 },
+  { code: "RJ", name: "Rio de Janeiro", region: "Sudeste", ibgeCode: 33 },
+  { code: "RN", name: "Rio Grande do Norte", region: "Nordeste", ibgeCode: 24 },
+  { code: "RS", name: "Rio Grande do Sul", region: "Sul", ibgeCode: 43 },
+  { code: "RO", name: "Rondônia", region: "Norte", ibgeCode: 11 },
+  { code: "RR", name: "Roraima", region: "Norte", ibgeCode: 14 },
+  { code: "SC", name: "Santa Catarina", region: "Sul", ibgeCode: 42 },
+  { code: "SP", name: "São Paulo", region: "Sudeste", ibgeCode: 35 },
+  { code: "SE", name: "Sergipe", region: "Nordeste", ibgeCode: 28 },
+  { code: "TO", name: "Tocantins", region: "Norte", ibgeCode: 17 },
+] satisfies BrazilStateOption[];
+
 function setApiCache(res: ApiResponse, maxAgeSeconds: number) {
   res.setHeader("Cache-Control", `public, max-age=${maxAgeSeconds}`);
 }
@@ -422,17 +452,21 @@ async function getBrazilStates() {
     "business-days:states",
     1000 * 60 * 60 * 24 * 7,
     async () => {
-      const data = await fetchJson<IbgeStateResponse[]>(
-        `${IBGE_API_BASE_URL}/estados`
-      );
-      return data
-        .map(item => ({
-          code: item.sigla,
-          name: item.nome,
-          region: item.regiao?.nome ?? "",
-          ibgeCode: item.id,
-        }))
-        .sort((left, right) => left.name.localeCompare(right.name, "pt-BR"));
+      try {
+        const data = await fetchJson<IbgeStateResponse[]>(
+          `${IBGE_API_BASE_URL}/estados`
+        );
+        return data
+          .map(item => ({
+            code: item.sigla,
+            name: item.nome,
+            region: item.regiao?.nome ?? "",
+            ibgeCode: item.id,
+          }))
+          .sort((left, right) => left.name.localeCompare(right.name, "pt-BR"));
+      } catch {
+        return BRAZIL_STATE_FALLBACKS;
+      }
     }
   );
 }

@@ -119,7 +119,12 @@ async function startServer() {
     }
 
     const refererHost = getHostFromReferer(req.get("referer"));
-    if (refererHost && !ALLOWED_ASSET_HOSTS.has(refererHost)) {
+    const requestHost = req.hostname?.toLowerCase();
+    if (
+      refererHost &&
+      refererHost !== requestHost &&
+      !ALLOWED_ASSET_HOSTS.has(refererHost)
+    ) {
       res.status(403).type("text/plain").send("Hotlink blocked.");
       return;
     }
