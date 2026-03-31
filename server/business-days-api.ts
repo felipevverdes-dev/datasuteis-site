@@ -7,6 +7,7 @@ const REQUEST_HEADERS = {
 };
 
 const IBGE_API_BASE_URL = "https://servicodados.ibge.gov.br/api/v1/localidades";
+const BRASIL_API_IBGE_BASE_URL = "https://brasilapi.com.br/api/ibge";
 const BRAZIL_HOLIDAY_DATA_BASE_URL =
   "https://raw.githubusercontent.com/joaopbini/feriados-brasil/master/dados/feriados";
 
@@ -33,6 +34,11 @@ interface IbgeStateResponse {
 interface IbgeMunicipalityResponse {
   id: number;
   nome: string;
+}
+
+interface BrasilApiMunicipalityResponse {
+  nome: string;
+  codigo_ibge: string;
 }
 
 interface ExternalHolidayDatasetItem {
@@ -476,15 +482,28 @@ async function getBrazilMunicipalitiesByState(stateCode: string) {
     `business-days:municipalities:${stateCode}`,
     1000 * 60 * 60 * 24 * 7,
     async () => {
-      const url = `${IBGE_API_BASE_URL}/estados/${stateCode}/municipios`;
-      const data = await fetchJson<IbgeMunicipalityResponse[]>(url);
-      return data
-        .map(item => ({
-          ibgeCode: item.id,
-          name: item.nome,
-          stateCode,
-        }))
-        .sort((left, right) => left.name.localeCompare(right.name, "pt-BR"));
+      try {
+        const url = `${IBGE_API_BASE_URL}/estados/${stateCode}/municipios`;
+        const data = await fetchJson<IbgeMunicipalityResponse[]>(url);
+        return data
+          .map(item => ({
+            ibgeCode: item.id,
+            name: item.nome,
+            stateCode,
+          }))
+          .sort((left, right) => left.name.localeCompare(right.name, "pt-BR"));
+      } catch {
+        const fallbackUrl = `${BRASIL_API_IBGE_BASE_URL}/municipios/v1/${stateCode}`;
+        const data = await fetchJson<BrasilApiMunicipalityResponse[]>(fallbackUrl);
+        return data
+          .map(item => ({
+            ibgeCode: Number(item.codigo_ibge),
+            name: item.nome,
+            stateCode,
+          }))
+          .filter(item => Number.isInteger(item.ibgeCode) && item.ibgeCode > 0)
+          .sort((left, right) => left.name.localeCompare(right.name, "pt-BR"));
+      }
     }
   );
 }
