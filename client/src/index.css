@@ -203,6 +203,105 @@
     @apply text-lg md:text-xl text-muted-foreground leading-relaxed;
   }
 
+  /* ── Conversion-focused hero ── */
+  .hero-conversion {
+    @apply py-10 md:py-16 lg:py-20;
+    background: linear-gradient(135deg, rgba(26, 58, 92, 0.12), var(--background) 55%, var(--background));
+  }
+
+  .dark .hero-conversion {
+    background: linear-gradient(135deg, rgba(26, 58, 92, 0.28), var(--background) 55%, var(--background));
+  }
+
+  .hero-title-conversion {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold leading-tight;
+    font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+  }
+
+  /* ── CTA buttons ── */
+  .btn-cta-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-lg font-bold text-primary-foreground no-underline transition-all;
+    min-height: 52px;
+    box-shadow: 0 4px 14px -3px rgba(26, 58, 92, 0.4);
+  }
+  .btn-cta-primary:hover {
+    @apply bg-primary/85;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px -3px rgba(26, 58, 92, 0.5);
+  }
+  .btn-cta-primary:active {
+    transform: translateY(0);
+  }
+  .btn-cta-primary,
+  .btn-cta-primary:hover,
+  .btn-cta-primary:focus-visible {
+    color: var(--primary-foreground);
+  }
+  .btn-cta-primary :where(span, svg) {
+    color: inherit;
+  }
+
+  .btn-cta-final {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-lg font-bold text-primary no-underline transition-all;
+    min-height: 52px;
+    box-shadow: 0 4px 14px -3px rgba(0, 0, 0, 0.2);
+  }
+  .btn-cta-final:hover {
+    @apply bg-gray-50;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px -3px rgba(0, 0, 0, 0.3);
+  }
+  .btn-cta-final:active {
+    transform: translateY(0);
+  }
+  .btn-cta-final,
+  .btn-cta-final:hover,
+  .btn-cta-final:focus-visible {
+    color: var(--primary);
+  }
+  .btn-cta-final :where(span, svg) {
+    color: inherit;
+  }
+
+  /* ── Calculator card ── */
+  .calculator-card {
+    border: 2px solid var(--primary);
+    box-shadow: 0 10px 40px -12px rgba(26, 58, 92, 0.18);
+  }
+
+  /* ── Result cards ── */
+  .result-card {
+    @apply rounded-2xl bg-secondary p-5;
+  }
+  .result-card-primary {
+    @apply bg-primary/10;
+  }
+
+  /* ── CTA final section ── */
+  .cta-final-section {
+    @apply rounded-2xl px-6 py-12 md:py-16;
+    background: linear-gradient(135deg, var(--primary), #0f2a44);
+  }
+
+  /* ── Touch-friendly inputs ── */
+  .input-touch {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  /* ── Ad slot styles ── */
+  .ad-slot {
+    @apply flex items-center justify-center overflow-hidden;
+  }
+  .ad-slot-placeholder {
+    @apply flex items-center justify-center rounded-lg border border-dashed border-border bg-secondary/30;
+  }
+
+  /* ── Fade in animation ── */
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+
   .card-base {
     @apply rounded-lg border border-border bg-card text-card-foreground shadow-sm transition-[transform,box-shadow,border-color] duration-200;
     box-shadow: 0 10px 30px -22px rgba(15, 23, 42, 0.28);
@@ -216,7 +315,7 @@
   .btn-secondary,
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 rounded-lg font-semibold no-underline transition-colors;
-    min-height: 2.75rem;
+    min-height: 48px;
     text-decoration: none;
   }
 
@@ -257,7 +356,8 @@
   }
 
   .input-base {
-    @apply px-4 py-2 rounded-lg border border-input bg-input text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-[border-color,box-shadow,background-color];
+    @apply px-4 py-3 rounded-lg border border-input bg-input text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-[border-color,box-shadow,background-color];
+    font-size: 16px;
   }
 
   .localized-picker-field {
@@ -446,5 +546,17 @@
   100% {
     opacity: 0;
     transform: translate3d(var(--confetti-x, 0px), 110vh, 0) rotate(680deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

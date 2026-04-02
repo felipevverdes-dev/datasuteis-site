@@ -1,5 +1,6 @@
 import { BriefcaseBusiness, CalendarDays, Cake, Clock3 } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import AdSlot from "@/components/AdSlot";
 import { useI18n } from "@/contexts/LanguageContext";
 
 function normalizePath(path: string) {
@@ -108,8 +109,10 @@ export default function CoreNavigationBlock() {
   ].filter(item => getToolGroup(item.href) !== currentGroup);
 
   return (
-    <section className="section-card">
-      <h2 className="text-3xl font-bold">{copy.title}</h2>
+    <>
+      <AdSlot id="ads-page-bottom" className="my-4" minHeight={100} format="auto" />
+      <section className="section-card">
+        <h2 className="text-3xl font-bold">{copy.title}</h2>
       <p className="mt-3 max-w-3xl text-muted-foreground">{copy.description}</p>
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {items.map(item => {
@@ -134,6 +137,7 @@ export default function CoreNavigationBlock() {
           );
         })}
       </div>
-    </section>
+      </section>
+    </>
   );
 }

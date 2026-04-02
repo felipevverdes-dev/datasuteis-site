@@ -180,6 +180,9 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
       breadcrumbAriaLabel={navigationLabels.breadcrumb}
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle={language === "en" ? "Calculate business days between any dates" : language === "es" ? "Calcule días hábiles entre cualquier fecha" : "Calcule dias úteis entre quaisquer datas"}
+      ctaButtonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
     >
       <section id="ferramenta" className="section-anchor page-stack">
         {month ? (

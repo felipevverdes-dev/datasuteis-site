@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
+import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import type { PrivacySection } from "@/lib/i18n";
@@ -103,6 +104,13 @@ export default function Privacy() {
             </div>
 
             <CoreNavigationBlock />
+
+            <CtaFinalBlock
+              language={language}
+              title={language === "en" ? "Explore our tools" : language === "es" ? "Explore nuestras herramientas" : "Conheça nossas ferramentas"}
+              buttonLabel={language === "en" ? "Open tools" : language === "es" ? "Abrir herramientas" : "Abrir ferramentas"}
+              href="/"
+            />
           </div>
         </section>
       </main>

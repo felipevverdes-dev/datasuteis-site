@@ -1,6 +1,7 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
+import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
@@ -336,6 +337,13 @@ export default function Terms() {
             </section>
 
             <CoreNavigationBlock />
+
+            <CtaFinalBlock
+              language={language}
+              title={language === "en" ? "Explore our tools" : language === "es" ? "Explore nuestras herramientas" : "Conheça nossas ferramentas"}
+              buttonLabel={language === "en" ? "Open tools" : language === "es" ? "Abrir herramientas" : "Abrir ferramentas"}
+              href="/"
+            />
           </div>
         </section>
       </main>

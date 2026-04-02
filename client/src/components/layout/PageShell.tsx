@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
+import AdSlot from "@/components/AdSlot";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
+import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import type { BreadcrumbItem } from "@/lib/navigation";
 import type { PageSectionNavItem } from "@/lib/page-sections";
+import type { SupportedLanguage } from "@/lib/site";
 
 interface PageShellProps {
   eyebrow?: string;
@@ -18,6 +21,18 @@ interface PageShellProps {
   backButtonLabel?: string;
   backButtonAriaLabel?: string;
   children: ReactNode;
+  /** Language for CTA final block — required for i18n CTA text */
+  language?: SupportedLanguage;
+  /** Custom CTA final title override */
+  ctaTitle?: string;
+  /** Custom CTA final button label override */
+  ctaButtonLabel?: string;
+  /** Custom CTA final href override (defaults to /calcular/) */
+  ctaHref?: string;
+  /** Set to true to hide CTA final block */
+  hideCtaFinal?: boolean;
+  /** Show an AdSlot before the CTA final */
+  showBottomAd?: boolean;
 }
 
 export default function PageShell({
@@ -31,6 +46,12 @@ export default function PageShell({
   backButtonLabel,
   backButtonAriaLabel,
   children,
+  language = "pt",
+  ctaTitle,
+  ctaButtonLabel,
+  ctaHref,
+  hideCtaFinal = false,
+  showBottomAd = true,
 }: PageShellProps) {
   return (
     <div className="min-h-screen bg-background">
@@ -68,6 +89,24 @@ export default function PageShell({
             ) : null}
             {children}
             <CoreNavigationBlock />
+
+            {showBottomAd && (
+              <AdSlot
+                id="ads-page-bottom-shell"
+                className="my-4"
+                minHeight={100}
+                format="auto"
+              />
+            )}
+
+            {!hideCtaFinal && (
+              <CtaFinalBlock
+                language={language}
+                title={ctaTitle}
+                buttonLabel={ctaButtonLabel}
+                href={ctaHref}
+              />
+            )}
           </div>
         </section>
       </main>

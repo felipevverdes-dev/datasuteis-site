@@ -211,6 +211,9 @@ export default function BusinessDaysArchive({
       breadcrumbAriaLabel={navigationLabels.breadcrumb}
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle={language === "en" ? "Calculate date intervals with precision" : language === "es" ? "Calcule intervalos de fechas con precisión" : "Calcule intervalos de datas com precisão"}
+      ctaButtonLabel={language === "en" ? "Use the calculator" : language === "es" ? "Usar la calculadora" : "Usar a calculadora"}
     >
       <section id="ferramenta" className="section-anchor page-stack">
         {monthSummary ? (

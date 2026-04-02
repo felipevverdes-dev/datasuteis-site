@@ -516,6 +516,10 @@ export default function Calculator() {
       breadcrumbAriaLabel={navigationLabels.breadcrumb}
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle={t("Precisa do calendário?", "Need the calendar?", "¿Necesita el calendario?")}
+      ctaButtonLabel={t("Ver calendário", "View calendar", "Ver calendario")}
+      ctaHref="/calendario/"
     >
       <section id="ferramenta" className="section-anchor page-stack">
         <form

@@ -1,10 +1,10 @@
 export const SITE_NAME = "Datas Úteis";
 export const SITE_URL = "https://datasuteis.com.br";
 export const INDEXABLE_HOSTS = ["datasuteis.com.br"] as const;
-export const SITE_LAST_MODIFIED_DATE = "2026-03-29";
-export const SITE_LAST_MODIFIED_DATETIME = "2026-03-29T00:00:00-03:00";
+export const SITE_LAST_MODIFIED_DATE = "2026-04-02";
+export const SITE_LAST_MODIFIED_DATETIME = "2026-04-02T00:00:00-03:00";
 export const SITE_DESCRIPTION =
-  "Calcule dias úteis, consulte o calendário com feriados, simule escalas de trabalho e use ferramentas online.";
+  "Calculadora de dias úteis rápida e precisa com feriados nacionais, estaduais e municipais. Calendário, escalas de trabalho, idade e ferramentas online.";
 export const DEFAULT_AUTHOR = SITE_NAME;
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/assets/brand/og-image.png`;
 export const GA_MEASUREMENT_ID = "G-E9198198D5";

@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
@@ -51,6 +52,14 @@ export default function NotFound() {
           <a href="/" className="btn-primary inline-block">
             {t("pages.notFound.backHome")}
           </a>
+        </div>
+
+        <div className="container mx-auto px-4 pb-12">
+          <CtaFinalBlock
+            language={language}
+            title={language === "en" ? "Find what you need" : language === "es" ? "Encuentre lo que necesita" : "Encontre o que você precisa"}
+            buttonLabel={language === "en" ? "Go to calculator" : language === "es" ? "Ir a la calculadora" : "Ir para a calculadora"}
+          />
         </div>
       </main>
 

@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
+import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
@@ -188,6 +189,12 @@ export default function Contact() {
             </div>
 
             <CoreNavigationBlock />
+
+            <CtaFinalBlock
+              language={language}
+              title={language === "en" ? "Need to calculate business days?" : language === "es" ? "¿Necesita calcular días hábiles?" : "Precisa calcular dias úteis?"}
+              buttonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+            />
           </div>
         </section>
       </main>

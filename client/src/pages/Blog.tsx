@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import AdSlot from "@/components/AdSlot";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
+import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
 import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
@@ -76,7 +77,7 @@ export default function Blog() {
       <Header />
 
       <main id="main-content" role="main">
-        <section className="hero bg-gradient-to-br from-primary/10 via-background to-background">
+        <section className="hero border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto">
             <div className="mx-auto max-w-3xl text-center">
               <h1 className="hero-title text-primary">
@@ -154,11 +155,19 @@ export default function Blog() {
                   </div>
                 </div>
 
-                <AdSlot />
+                <AdSlot id="ads-blog-sidebar" minHeight={250} format="rectangle" />
               </aside>
             </div>
 
             <CoreNavigationBlock />
+
+            <AdSlot id="ads-blog-bottom" className="my-4" minHeight={100} format="auto" />
+
+            <CtaFinalBlock
+              language={language}
+              title={language === "en" ? "Ready to calculate business days?" : language === "es" ? "¿Listo para calcular días hábiles?" : "Pronto para calcular dias úteis?"}
+              buttonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+            />
           </div>
         </section>
       </main>
@@ -167,3 +176,4 @@ export default function Blog() {
     </div>
   );
 }
+

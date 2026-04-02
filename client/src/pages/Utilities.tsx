@@ -287,6 +287,9 @@ export default function Utilities() {
       breadcrumbAriaLabel={navigationLabels.breadcrumb}
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle={language === "en" ? "Need to calculate business days?" : language === "es" ? "¿Necesita calcular días hábiles?" : "Precisa calcular dias úteis?"}
+      ctaButtonLabel={language === "en" ? "Use the calculator" : language === "es" ? "Usar la calculadora" : "Usar a calculadora"}
     >
       <section id="ferramenta" className="section-anchor page-stack">
         <div className="section-card">

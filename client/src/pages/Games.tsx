@@ -279,6 +279,10 @@ export default function Games() {
       breadcrumbAriaLabel={navigationLabels.breadcrumb}
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle={language === "en" ? "Discover all Datas Úteis tools" : language === "es" ? "Descubra todas las herramientas de Datas Úteis" : "Conheça todas as ferramentas do Datas Úteis"}
+      ctaButtonLabel={language === "en" ? "Explore tools" : language === "es" ? "Explorar herramientas" : "Explorar ferramentas"}
+      ctaHref="/"
     >
       <section id="ferramenta" className="section-anchor">
         <div className="section-card">

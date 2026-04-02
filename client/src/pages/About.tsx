@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
+import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
 import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
 import { useI18n } from "@/contexts/LanguageContext";
 import { getGamesNavLabel } from "@/lib/games-nav";
@@ -446,14 +447,17 @@ export default function About() {
 
             <section id="faq" className="section-anchor card-base p-6">
               <h2 className="text-2xl font-bold">{copy.faqTitle}</h2>
-              <div className="mt-6 space-y-6">
+              <div className="mt-6 space-y-3">
                 {copy.faq.map((item) => (
-                  <div key={item.question}>
-                    <h3 className="text-base font-semibold">{item.question}</h3>
-                    <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                  <details
+                    key={item.question}
+                    className="rounded-2xl bg-secondary px-5 py-4"
+                  >
+                    <summary className="font-semibold">{item.question}</summary>
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
                       {item.answer}
                     </p>
-                  </div>
+                  </details>
                 ))}
               </div>
             </section>
@@ -495,6 +499,13 @@ export default function About() {
             </section>
 
             <CoreNavigationBlock />
+
+            <CtaFinalBlock
+              language={language}
+              title={language === "en" ? "Explore our tools" : language === "es" ? "Explore nuestras herramientas" : "Conheça nossas ferramentas"}
+              buttonLabel={language === "en" ? "Open tools" : language === "es" ? "Abrir herramientas" : "Abrir ferramentas"}
+              href="/"
+            />
           </div>
         </section>
       </main>

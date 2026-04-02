@@ -454,6 +454,9 @@ export default function Calendar({ params }: CalendarProps) {
       breadcrumbAriaLabel={navigationLabels.breadcrumb}
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle={language === "en" ? "Calculate business-day intervals" : language === "es" ? "Calcule intervalos de días hábiles" : "Calcule intervalos de dias úteis"}
+      ctaButtonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
     >
       <section id="ferramenta" className="section-anchor page-stack">
         <div className="section-card">

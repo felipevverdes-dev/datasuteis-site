@@ -1,7 +1,7 @@
 {
   "name": "Datas Úteis",
   "short_name": "Datas Úteis",
-  "description": "Ferramentas para dias úteis, escalas, calendário, utilitários e jogos leves.",
+  "description": "Calculadora de dias úteis rápida e precisa com feriados nacionais, estaduais e municipais. Calendário, escalas de trabalho, idade e ferramentas online.",
   "lang": "pt-BR",
   "start_url": "/",
   "scope": "/",

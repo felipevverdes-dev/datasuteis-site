@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import AdSlot from "@/components/AdSlot";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
+import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { getLocalizedBlogPostBySlug } from "@/lib/blog";
@@ -122,7 +123,7 @@ export default function BlogPost({ params }: BlogPostPageProps) {
                   />
                 </section>
 
-                <AdSlot />
+                <AdSlot id="ads-blogpost-content" minHeight={100} format="auto" />
               </div>
 
               <aside className="space-y-6">
@@ -175,6 +176,14 @@ export default function BlogPost({ params }: BlogPostPageProps) {
             </article>
 
             <CoreNavigationBlock />
+
+            <AdSlot id="ads-blogpost-bottom" className="my-4" minHeight={100} format="auto" />
+
+            <CtaFinalBlock
+              language={language}
+              title={language === "en" ? "Calculate business days now" : language === "es" ? "Calcule días hábiles ahora" : "Calcule dias úteis agora"}
+              buttonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+            />
           </div>
         </section>
       </main>
