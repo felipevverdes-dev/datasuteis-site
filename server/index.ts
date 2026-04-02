@@ -11,7 +11,7 @@ const IMAGE_REQUEST_PATTERN = /\.(png|jpe?g|webp|gif|svg|ico)$/i;
 const IMAGE_ASSET_PATTERN = /^\/assets\/.+\.(png|jpe?g|webp|gif|svg|ico)$/i;
 const API_WINDOW_MS = 60_000;
 const API_MAX_REQUESTS = 90;
-const SITE_LAST_MODIFIED_HTTP = new Date("2026-03-29T00:00:00-03:00").toUTCString();
+const SITE_LAST_MODIFIED_HTTP = new Date("2026-04-02T00:00:00-03:00").toUTCString();
 const ALLOWED_ASSET_HOSTS = new Set([
   "datasuteis.com.br",
   "www.datasuteis.com.br",
@@ -85,6 +85,12 @@ async function startServer() {
       return res.redirect(301, `${proto}://datasuteis.com.br${req.url}`);
     }
     next();
+  });
+
+  app.get(["/calculadora", "/calculadora/"], (req, res) => {
+    const queryIndex = req.originalUrl.indexOf("?");
+    const suffix = queryIndex >= 0 ? req.originalUrl.slice(queryIndex) : "";
+    res.redirect(301, `/utilitarios/calculadora/${suffix}`);
   });
 
   app.use((req, res, next) => {
@@ -237,10 +243,14 @@ async function startServer() {
     });
   });
 
-  // Handle client-side routing - serve index.html for all routes
-  app.get("*", (_req, res) => {
+  app.get("*", (req, res) => {
+    if (path.extname(req.path) || !req.accepts("html")) {
+      res.status(404).type("text/plain").send("Not found.");
+      return;
+    }
+
     res.setHeader("Last-Modified", SITE_LAST_MODIFIED_HTTP);
-    res.sendFile(path.join(staticPath, "index.html"));
+    res.status(404).sendFile(path.join(staticPath, "404.html"));
   });
 
   const port = process.env.PORT || 3000;

@@ -6,6 +6,7 @@ import {
   buildLocalizedUrl,
   getDefaultRobotsContent,
   HTML_LANG_BY_LANGUAGE,
+  normalizeSitePath,
   SITE_LAST_MODIFIED_DATE,
   SITE_LAST_MODIFIED_DATETIME,
   SITE_NAME,
@@ -56,7 +57,7 @@ function upsertLink(selector: string, attributes: Record<string, string>) {
 }
 
 function getCanonicalUrl(path: string) {
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const normalizedPath = normalizeSitePath(path);
   const requestedLanguage = readRequestedLanguage();
   if (requestedLanguage && requestedLanguage !== "pt") {
     return buildLocalizedUrl(normalizedPath, requestedLanguage);
@@ -131,13 +132,14 @@ export function usePageSeo({
   publishedTime,
   modifiedTime,
 }: SeoConfig) {
+  const normalizedPath = normalizeSitePath(path);
   const keywordsValue = keywords.join(", ");
   const normalizedSchema = enrichSchemaDates(schema);
   const schemaValue = normalizedSchema ? JSON.stringify(normalizedSchema) : "";
   const effectiveModifiedTime = modifiedTime ?? SITE_LAST_MODIFIED_DATETIME;
 
   useEffect(() => {
-    const canonical = getCanonicalUrl(path);
+    const canonical = getCanonicalUrl(normalizedPath);
 
     document.title = title;
 
@@ -212,22 +214,22 @@ export function usePageSeo({
     upsertLink('link[rel="alternate"][hreflang="pt-BR"]', {
       rel: "alternate",
       hreflang: "pt-BR",
-      href: buildLocalizedUrl(path, "pt"),
+      href: buildLocalizedUrl(normalizedPath, "pt"),
     });
     upsertLink('link[rel="alternate"][hreflang="en"]', {
       rel: "alternate",
       hreflang: "en",
-      href: buildLocalizedUrl(path, "en"),
+      href: buildLocalizedUrl(normalizedPath, "en"),
     });
     upsertLink('link[rel="alternate"][hreflang="es"]', {
       rel: "alternate",
       hreflang: "es",
-      href: buildLocalizedUrl(path, "es"),
+      href: buildLocalizedUrl(normalizedPath, "es"),
     });
     upsertLink('link[rel="alternate"][hreflang="x-default"]', {
       rel: "alternate",
       hreflang: "x-default",
-      href: buildLocalizedUrl(path, "pt"),
+      href: buildLocalizedUrl(normalizedPath, "pt"),
     });
 
     const schemaNodeId = "route-schema";
@@ -241,14 +243,14 @@ export function usePageSeo({
       document.head.appendChild(script);
     }
 
-    trackPageView(path, title);
+    trackPageView(normalizedPath, title);
   }, [
     description,
     image,
     imageAlt,
     keywordsValue,
     effectiveModifiedTime,
-    path,
+    normalizedPath,
     publishedTime,
     robots,
     schemaValue,

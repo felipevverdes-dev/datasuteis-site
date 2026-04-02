@@ -15,6 +15,9 @@ export const PT_MONTH_SLUGS = [
   "dezembro",
 ] as const;
 
+export const MIN_SUPPORTED_YEAR = 1900;
+export const MAX_SUPPORTED_YEAR = 2100;
+
 type LocalizedDatePart = "day" | "month" | "year";
 type LocalizedTimePart = "hour" | "minute";
 
@@ -23,7 +26,20 @@ export function clampYear(value: number, fallback = new Date().getFullYear()) {
     return fallback;
   }
 
-  return Math.min(2100, Math.max(1900, Math.trunc(value)));
+  return Math.min(MAX_SUPPORTED_YEAR, Math.max(MIN_SUPPORTED_YEAR, Math.trunc(value)));
+}
+
+export function isSupportedYear(value: number) {
+  return Number.isInteger(value) && value >= MIN_SUPPORTED_YEAR && value <= MAX_SUPPORTED_YEAR;
+}
+
+export function parseRouteYear(value: string | null | undefined) {
+  if (!value || !/^-?\d+$/.test(value)) {
+    return null;
+  }
+
+  const year = Number(value);
+  return isSupportedYear(year) ? year : null;
 }
 
 export function getMonthSlug(month: number) {

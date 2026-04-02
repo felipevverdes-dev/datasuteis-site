@@ -1,3 +1,4 @@
+import { useLocation } from "wouter";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import CtaFinalBlock from "@/components/layout/CtaFinalBlock";
@@ -5,22 +6,31 @@ import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
 import { usePageSeo } from "@/lib/seo";
+import { normalizeSitePath } from "@/lib/site";
 
-export default function NotFound() {
+interface NotFoundProps {
+  seoPath?: string;
+  params?: Record<string, string | undefined>;
+}
+
+export default function NotFound({ seoPath }: NotFoundProps) {
+  const [location] = useLocation();
   const { language, t } = useI18n();
   const navigationLabels = getNavigationLabels(language);
+  const effectiveSeoPath = normalizeSitePath(seoPath ?? location);
   const breadcrumbs = [
     { label: navigationLabels.home, href: "/" },
     { label: "404" },
   ];
+
   usePageSeo({
     title: t("pages.notFound.seoTitle"),
     description: t("pages.notFound.seoDescription"),
-    path: "/404/",
+    path: effectiveSeoPath,
     robots: "noindex, nofollow",
     schema: buildBreadcrumbSchema([
       { label: navigationLabels.home, href: "/" },
-      { label: "404", href: "/404/" },
+      ...(effectiveSeoPath === "/404/" ? [{ label: "404", href: "/404/" }] : [{ label: "404" }]),
     ]),
   });
 

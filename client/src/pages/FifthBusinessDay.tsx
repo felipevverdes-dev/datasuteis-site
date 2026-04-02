@@ -2,7 +2,15 @@ import { Link } from "wouter";
 import PageShell from "@/components/layout/PageShell";
 import { useI18n } from "@/contexts/LanguageContext";
 import { getBusinessDayYearSummary, getFifthBusinessDay } from "@/lib/business-days";
-import { clampYear, getMonthLabel, getMonthNumberFromSlug, getMonthSlug, shiftMonth } from "@/lib/date-utils";
+import {
+  MAX_SUPPORTED_YEAR,
+  MIN_SUPPORTED_YEAR,
+  getMonthLabel,
+  getMonthNumberFromSlug,
+  getMonthSlug,
+  parseRouteYear,
+  shiftMonth,
+} from "@/lib/date-utils";
 import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
@@ -16,14 +24,15 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
   const { language, formatDate } = useI18n();
   const navigationLabels = getNavigationLabels(language);
   const currentYear = new Date().getFullYear();
-  const year = params?.year ? clampYear(Number(params.year), currentYear) : currentYear;
+  const routeYear = parseRouteYear(params?.year);
+  const year = routeYear ?? currentYear;
   const month = params?.month ? getMonthNumberFromSlug(params.month) : null;
   const navItems = getToolPageNavItems(language);
   const topLabel = getBackToTopLabel(language);
   const monthWord = language === "en" ? "Month" : language === "es" ? "Mes" : "Mês";
   const fifthWord = language === "en" ? "Fifth business day" : language === "es" ? "Quinto día hábil" : "5º dia útil";
 
-  if (params?.month && !month) {
+  if ((params?.year && routeYear === null) || (params?.month && !month)) {
     return <NotFound />;
   }
 
@@ -64,7 +73,9 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
           ? "Explore páginas de quinto día hábil por año y mes."
           : "Explore páginas de 5º dia útil por ano e mês.";
   const path = month ? `/quinto-dia-util/${year}/${getMonthSlug(month)}/` : params?.year ? `/quinto-dia-util/${year}/` : "/quinto-dia-util/";
-  const nearbyYears = Array.from({ length: 5 }, (_, index) => year - 2 + index);
+  const nearbyYears = Array.from({ length: 5 }, (_, index) => year - 2 + index).filter(
+    item => item >= MIN_SUPPORTED_YEAR && item <= MAX_SUPPORTED_YEAR
+  );
   const previous = month ? shiftMonth(year, month, -1) : null;
   const next = month ? shiftMonth(year, month, 1) : null;
   const breadcrumbs = [
@@ -206,7 +217,10 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
               <div className="mt-5 space-y-3">
                 {previous ? <Link href={`/quinto-dia-util/${previous.year}/${getMonthSlug(previous.month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{language === "en" ? "Previous month" : language === "es" ? "Mes anterior" : "Mês anterior"}</Link> : null}
                 {next ? <Link href={`/quinto-dia-util/${next.year}/${getMonthSlug(next.month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{language === "en" ? "Next month" : language === "es" ? "Mes siguiente" : "Próximo mês"}</Link> : null}
-                {[-1, 1].map(offset => <Link key={offset} href={`/quinto-dia-util/${year + offset}/${getMonthSlug(month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{getMonthLabel(year + offset, month, language, { includeYear: true })}</Link>)}
+                {[-1, 1]
+                  .map(offset => year + offset)
+                  .filter(item => item >= MIN_SUPPORTED_YEAR && item <= MAX_SUPPORTED_YEAR)
+                  .map(item => <Link key={item} href={`/quinto-dia-util/${item}/${getMonthSlug(month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{getMonthLabel(item, month, language, { includeYear: true })}</Link>)}
               </div>
             </aside>
           </div>

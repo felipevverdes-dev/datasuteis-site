@@ -6,10 +6,12 @@ import {
   getBusinessDayYearSummary,
 } from "@/lib/business-days";
 import {
-  clampYear,
+  MAX_SUPPORTED_YEAR,
+  MIN_SUPPORTED_YEAR,
   getMonthLabel,
   getMonthNumberFromSlug,
   getMonthSlug,
+  parseRouteYear,
   shiftMonth,
 } from "@/lib/date-utils";
 import { getHolidayName } from "@/lib/holidays";
@@ -28,13 +30,14 @@ export default function BusinessDaysArchive({
   const { language, formatDate } = useI18n();
   const navigationLabels = getNavigationLabels(language);
   const currentYear = new Date().getFullYear();
-  const year = params?.year ? clampYear(Number(params.year), currentYear) : currentYear;
+  const routeYear = parseRouteYear(params?.year);
+  const year = routeYear ?? currentYear;
   const month = params?.month ? getMonthNumberFromSlug(params.month) : null;
   const navItems = getToolPageNavItems(language);
   const topLabel = getBackToTopLabel(language);
   const hasMonth = Boolean(params?.month);
 
-  if (hasMonth && !month) {
+  if ((params?.year && routeYear === null) || (hasMonth && !month)) {
     return <NotFound />;
   }
 
@@ -84,7 +87,9 @@ export default function BusinessDaysArchive({
     : params?.year
       ? `/dias-uteis/${year}/`
       : "/dias-uteis/";
-  const nearbyYears = Array.from({ length: 5 }, (_, index) => year - 2 + index);
+  const nearbyYears = Array.from({ length: 5 }, (_, index) => year - 2 + index).filter(
+    item => item >= MIN_SUPPORTED_YEAR && item <= MAX_SUPPORTED_YEAR
+  );
   const monthLinks = yearSummary.months.map(item => ({
     ...item,
     href: `/dias-uteis/${year}/${getMonthSlug(item.month)}/`,
@@ -246,11 +251,14 @@ export default function BusinessDaysArchive({
               <div className="mt-5 space-y-3">
                 {shifted ? <Link href={`/dias-uteis/${shifted.year}/${getMonthSlug(shifted.month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{language === "en" ? "Previous month" : language === "es" ? "Mes anterior" : "Mês anterior"}</Link> : null}
                 {shiftedNext ? <Link href={`/dias-uteis/${shiftedNext.year}/${getMonthSlug(shiftedNext.month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{language === "en" ? "Next month" : language === "es" ? "Mes siguiente" : "Próximo mês"}</Link> : null}
-                {[-1, 1].map(offset => (
-                  <Link key={offset} href={`/dias-uteis/${year + offset}/${getMonthSlug(activeMonth)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">
-                    {getMonthLabel(year + offset, activeMonth, language, { includeYear: true })}
-                  </Link>
-                ))}
+                {[-1, 1]
+                  .map(offset => year + offset)
+                  .filter(item => item >= MIN_SUPPORTED_YEAR && item <= MAX_SUPPORTED_YEAR)
+                  .map(item => (
+                    <Link key={item} href={`/dias-uteis/${item}/${getMonthSlug(activeMonth)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">
+                      {getMonthLabel(item, activeMonth, language, { includeYear: true })}
+                    </Link>
+                  ))}
               </div>
             </aside>
           </div>

@@ -43,7 +43,22 @@ export function getDefaultRobotsContent() {
     return "noindex, nofollow";
   }
 
-  return "index, follow";
+  return isIndexableHost(window.location.hostname) ? "index, follow" : "noindex, nofollow";
+}
+
+export function normalizeSitePath(path: string) {
+  if (!path) {
+    return "/";
+  }
+
+  const [pathname] = path.split(/[?#]/, 1);
+  const normalizedPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
+
+  if (normalizedPath === "/") {
+    return "/";
+  }
+
+  return normalizedPath.endsWith("/") ? normalizedPath : `${normalizedPath}/`;
 }
 
 export function normalizeLanguage(value: string | null | undefined): SupportedLanguage {

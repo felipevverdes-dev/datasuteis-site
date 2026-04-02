@@ -37,6 +37,10 @@ const Terms = lazy(() => import("./pages/Terms"));
 const CalculatorApp = lazy(() => import("./pages/CalculatorApp"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+function RealNotFound() {
+  return <NotFound seoPath="/404/" />;
+}
+
 function RouteFallback() {
   return (
     <div className="min-h-screen bg-background">
@@ -156,7 +160,8 @@ function Router() {
         <Route path={"/termos"} component={Terms} />
         <Route path={"/calculadora/"} component={CalculatorApp} />
         <Route path={"/calculadora"} component={CalculatorApp} />
-        <Route path={"/404"} component={NotFound} />
+        <Route path={"/404/"} component={RealNotFound} />
+        <Route path={"/404"} component={RealNotFound} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

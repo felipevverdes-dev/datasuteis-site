@@ -5,12 +5,14 @@ import PageShell from "@/components/layout/PageShell";
 import { useI18n } from "@/contexts/LanguageContext";
 import { useHolidayLocality } from "@/hooks/useHolidayLocality";
 import {
-  clampYear,
+  MAX_SUPPORTED_YEAR,
+  MIN_SUPPORTED_YEAR,
   formatIsoDate,
   getMonthDays,
   getMonthLabel,
   getMonthNumberFromSlug,
   getMonthSlug,
+  parseRouteYear,
 } from "@/lib/date-utils";
 import {
   buildNationalHolidayMonthSnapshot,
@@ -28,7 +30,10 @@ interface CalendarProps {
   params?: { year?: string; month?: string };
 }
 
-const YEARS = Array.from({ length: 201 }, (_, index) => 1900 + index);
+const YEARS = Array.from(
+  { length: MAX_SUPPORTED_YEAR - MIN_SUPPORTED_YEAR + 1 },
+  (_, index) => MIN_SUPPORTED_YEAR + index
+);
 
 function groupHolidaysByDate(items: AppliedHolidayItem[]) {
   const map = new Map<string, AppliedHolidayItem[]>();
@@ -88,17 +93,17 @@ export default function Calendar({ params }: CalendarProps) {
   const { language, formatDate, tm } = useI18n();
   const navigationLabels = getNavigationLabels(language);
   const currentDate = new Date();
-  const year = params?.year
-    ? clampYear(Number(params.year), currentDate.getFullYear())
-    : currentDate.getFullYear();
+  const routeYear = parseRouteYear(params?.year);
+  const year = routeYear ?? currentDate.getFullYear();
   const monthFromRoute = params?.month ? getMonthNumberFromSlug(params.month) : null;
 
-  if (params?.month && !monthFromRoute) {
+  if ((params?.year && routeYear === null) || (params?.month && !monthFromRoute)) {
     return <NotFound />;
   }
 
   const month = monthFromRoute ?? (params?.year ? 1 : currentDate.getMonth() + 1);
   const isLandingPage = !params?.year && !params?.month;
+  const isYearPage = Boolean(params?.year && !params?.month);
   const locality = useHolidayLocality({ autoDetect: true });
   const fallbackSnapshot = useMemo(
     () => buildNationalHolidayMonthSnapshot({ year, month }),
@@ -149,7 +154,7 @@ export default function Calendar({ params }: CalendarProps) {
       label: navigationLabels.calendar,
       ...(isLandingPage ? {} : { href: "/calendario/" }),
     },
-    ...(isLandingPage ? [] : [{ label: monthLabel }]),
+    ...(isLandingPage ? [] : [{ label: isYearPage ? String(year) : monthLabel }]),
   ];
   const pageTitle =
     language === "en"
@@ -164,7 +169,8 @@ export default function Calendar({ params }: CalendarProps) {
         ? "Abra el mes actual por defecto y cambie año, mes y localidad para consultar fines de semana y feriados."
         : "Abra o mês atual por padrão e troque ano, mês e localidade para consultar finais de semana e feriados.";
   const monthPath = `/calendario/${year}/${getMonthSlug(month)}/`;
-  const path = isLandingPage ? "/calendario/" : monthPath;
+  const yearPath = `/calendario/${year}/`;
+  const path = isLandingPage ? "/calendario/" : isYearPage ? yearPath : monthPath;
   const faqItems = [
     {
       question:
@@ -288,6 +294,12 @@ export default function Calendar({ params }: CalendarProps) {
           : language === "es"
             ? "Calendario con fines de semana y feriados | Datas Úteis"
             : "Calendário com fins de semana e feriados | Datas Úteis"
+        : isYearPage
+          ? language === "en"
+            ? `${year} holiday calendar | Datas Úteis`
+            : language === "es"
+              ? `Calendario ${year} con feriados | Datas Úteis`
+              : `Calendário ${year} com feriados | Datas Úteis`
         : language === "en"
           ? `${monthLabel} holiday calendar | Datas Úteis`
           : language === "es"
@@ -296,6 +308,12 @@ export default function Calendar({ params }: CalendarProps) {
     description:
       isLandingPage
         ? pageDescription
+        : isYearPage
+          ? language === "en"
+            ? `Review the ${year} calendar and switch months, weekends and local holidays in one place.`
+            : language === "es"
+              ? `Consulte el calendario de ${year} y cambie meses, fines de semana y feriados locales en un solo lugar.`
+              : `Consulte o calendário de ${year} e navegue por meses, finais de semana e feriados locais em uma única página.`
         : language === "en"
           ? `Review weekends and local holidays for ${monthLabel}.`
           : language === "es"
@@ -308,12 +326,12 @@ export default function Calendar({ params }: CalendarProps) {
       "@graph": [
         {
           "@type": "WebPage",
-          name: isLandingPage ? pageTitle : monthLabel,
+          name: isLandingPage ? pageTitle : isYearPage ? String(year) : monthLabel,
           url: `https://datasuteis.com.br${path}`,
         },
         {
           "@type": "WebApplication",
-          name: isLandingPage ? pageTitle : monthLabel,
+          name: isLandingPage ? pageTitle : isYearPage ? `${year}` : monthLabel,
           applicationCategory: "UtilitiesApplication",
           operatingSystem: "Web",
           url: `https://datasuteis.com.br${path}`,
@@ -325,6 +343,12 @@ export default function Calendar({ params }: CalendarProps) {
                   { label: navigationLabels.home, href: "/" },
                   { label: navigationLabels.calendar, href: "/calendario/" },
                 ]
+              : isYearPage
+                ? [
+                    { label: navigationLabels.home, href: "/" },
+                    { label: navigationLabels.calendar, href: "/calendario/" },
+                    { label: String(year), href: path },
+                  ]
               : [
                   { label: navigationLabels.home, href: "/" },
                   { label: navigationLabels.calendar, href: "/calendario/" },
@@ -438,10 +462,16 @@ export default function Calendar({ params }: CalendarProps) {
   return (
     <PageShell
       eyebrow={language === "en" ? "Calendar" : language === "es" ? "Calendario" : "Calendario"}
-      title={isLandingPage ? pageTitle : monthLabel}
+      title={isLandingPage ? pageTitle : isYearPage ? `${pageTitle} ${year}` : monthLabel}
       description={
         isLandingPage
           ? pageDescription
+          : isYearPage
+            ? language === "en"
+              ? "Open the selected year and use the month selector to review local holidays and weekends."
+              : language === "es"
+                ? "Abra el año seleccionado y use el selector de mes para consultar feriados locales y fines de semana."
+                : "Abra o ano selecionado e use o seletor de mês para consultar feriados locais e finais de semana."
           : language === "en"
             ? "Open the month with local holidays, weekends and weekday rhythm in one view."
             : language === "es"

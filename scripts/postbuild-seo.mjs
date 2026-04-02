@@ -7,10 +7,13 @@ const ROOT = process.cwd();
 const DIST_DIR = path.join(ROOT, "dist", "public");
 const SOURCE_SITEMAP = path.join(ROOT, "client", "public", "sitemap.xml");
 const PRERENDER_BUNDLE = path.join(ROOT, "dist", ".seo-prerender.mjs");
+const BLOG_DATA_BUNDLE = path.join(ROOT, "dist", ".seo-blog-data.mjs");
 const SITE_URL = "https://datasuteis.com.br";
 const SITE_NAME = "Datas Úteis";
-const SITE_LAST_MODIFIED_DATE = "2026-03-29";
-const SITE_LAST_MODIFIED_DATETIME = "2026-03-29T00:00:00-03:00";
+const SITE_LAST_MODIFIED_DATE = "2026-04-02";
+const SITE_LAST_MODIFIED_DATETIME = "2026-04-02T00:00:00-03:00";
+const MIN_SUPPORTED_YEAR = 1900;
+const MAX_SUPPORTED_YEAR = 2100;
 const PRIORITY_PRERENDER_PATHS = new Set([
   "/",
   "/calcular/",
@@ -124,9 +127,6 @@ const GAMES_LABEL = "Jogos";
 const BRAIN_GAMES_LABEL = "Raciocínio";
 const ABOUT_LABEL = "Sobre";
 
-const currentYear = new Date().getFullYear();
-const yearStart = currentYear - 15;
-const yearEnd = currentYear + 15;
 const lastmod = SITE_LAST_MODIFIED_DATE;
 
 function monthLabel(month, year) {
@@ -153,14 +153,31 @@ function route(
     breadcrumbLabel: options.breadcrumbLabel ?? title.replace(/\s+\|\s+Datas Úteis$/, ""),
     priority,
     changefreq,
-    robots: "index, follow",
-    type: "website",
+    robots: options.robots ?? "index, follow",
+    type: options.type ?? "website",
     prerender: PRIORITY_PRERENDER_PATHS.has(pathname),
+    sitemap: options.sitemap ?? true,
     ...options,
   };
 }
 
-function buildRoutes() {
+function buildBlogRoutes(blogPosts) {
+  return blogPosts.map(post =>
+    route(
+      `/blog/${post.slug}/`,
+      `${post.title} | Datas Úteis`,
+      post.description,
+      "0.64",
+      "weekly",
+      {
+        type: "article",
+        breadcrumbLabel: post.title,
+      }
+    )
+  );
+}
+
+function buildRoutes(blogPosts) {
   const routes = [
     route(
       "/",
@@ -316,108 +333,7 @@ function buildRoutes() {
       "weekly",
       { breadcrumbLabel: BLOG_LABEL }
     ),
-    route(
-      "/blog/escalas-de-trabalho-clt/",
-      "Escalas de trabalho CLT | Datas Úteis",
-      "Entenda como funcionam as principais escalas de trabalho CLT.",
-      "0.62"
-    ),
-    route(
-      "/blog/escala-12x36-como-funciona/",
-      "Escala 12x36 como funciona | Datas Úteis",
-      "Entenda como funciona a escala 12x36.",
-      "0.62"
-    ),
-    route(
-      "/blog/escala-6x1-como-funciona/",
-      "Escala 6x1 como funciona | Datas Úteis",
-      "Entenda como funciona a escala 6x1.",
-      "0.62"
-    ),
-    route(
-      "/blog/dias-uteis-o-que-sao/",
-      "Dias úteis: o que são | Datas Úteis",
-      "Entenda o que são dias úteis e como eles afetam prazos.",
-      "0.62"
-    ),
-    route(
-      "/blog/quinto-dia-util/",
-      "Quinto dia útil | Datas Úteis",
-      "Entenda o que é o quinto dia útil e por que ele importa.",
-      "0.62"
-    ),
-    route(
-      "/blog/adicional-noturno/",
-      "Adicional noturno | Datas Úteis",
-      "Entenda como funciona o adicional noturno.",
-      "0.62"
-    ),
-    route(
-      "/blog/quantos-dias-uteis-tem-cada-mes-de-2026/",
-      "Quantos dias úteis tem cada mês de 2026 | Datas Úteis",
-      "Veja um guia rápido com os meses de 2026, dias úteis e impacto dos feriados nacionais.",
-      "0.64"
-    ),
-    route(
-      "/blog/feriados-prolongados-de-2026/",
-      "Feriados prolongados de 2026 | Datas Úteis",
-      "Veja quais feriados de 2026 criam fins de semana prolongados e afetam o planejamento.",
-      "0.64"
-    ),
-    route(
-      "/blog/como-calcular-dias-uteis-no-excel/",
-      "Como calcular dias úteis no Excel | Datas Úteis",
-      "Aprenda fórmulas para calcular dias úteis no Excel e quando validar o resultado online.",
-      "0.64"
-    ),
-    route(
-      "/blog/sabado-conta-como-dia-util/",
-      "Sábado conta como dia útil? | Datas Úteis",
-      "Entenda quando sábado entra ou não entra na contagem de dias úteis.",
-      "0.64"
-    ),
-    route(
-      "/blog/como-contar-prazos-em-dias-uteis/",
-      "Como contar prazos em dias úteis | Datas Úteis",
-      "Aprenda um passo a passo simples para contar prazos em dias úteis sem misturar dias corridos e feriados.",
-      "0.64"
-    ),
-    route(
-      "/blog/como-montar-escala-de-trabalho/",
-      "Como montar escala de trabalho | Datas Úteis",
-      "Veja o que definir antes de montar uma escala de trabalho e como comparar cobertura, folgas e feriados.",
-      "0.64"
-    ),
-    route(
-      "/blog/beneficios-dos-jogos-de-logica/",
-      "Benefícios dos jogos de lógica | Datas Úteis",
-      "Entenda como Sudoku, palavras cruzadas e caça-palavras funcionam como pausas curtas com foco em atenção e leitura.",
-      "0.6"
-    ),
-    route(
-      "/blog/tabela-feriados-2026/",
-      "Tabela de Feriados 2026: Calendário Completo | Datas Úteis",
-      "Veja todos os feriados nacionais de 2026, pontos facultativos, pontes, emendas e fins de semana prolongados em uma tabela completa.",
-      "0.68"
-    ),
-    route(
-      "/blog/quinto-dia-util-2026/",
-      "5º Dia Útil de Cada Mês em 2026 | Datas Úteis",
-      "Consulte a tabela completa do 5º dia útil de cada mês de 2026, com feriados que afetam a contagem e dicas para RH e DP.",
-      "0.68"
-    ),
-    route(
-      "/blog/como-calcular-dias-uteis-entre-duas-datas/",
-      "Como Calcular Dias Úteis Entre Duas Datas | Datas Úteis",
-      "Aprenda o passo a passo para calcular dias úteis entre duas datas, com exemplos práticos e quando usar a calculadora online.",
-      "0.66"
-    ),
-    route(
-      "/blog/diferenca-dias-uteis-corridos-consecutivos/",
-      "Diferença Entre Dias Úteis, Corridos e Consecutivos | Datas Úteis",
-      "Entenda a diferença entre dias úteis, corridos e consecutivos com exemplos práticos de férias, prazos, contratos e logística.",
-      "0.66"
-    ),
+    ...buildBlogRoutes(blogPosts),
     route(
       "/sobre/",
       "Sobre o Datas Úteis | Ferramentas úteis para o dia a dia",
@@ -448,9 +364,21 @@ function buildRoutes() {
       "0.3",
       "yearly"
     ),
+    route(
+      "/404/",
+      "Página não encontrada | Datas Úteis",
+      "A página solicitada não foi encontrada.",
+      "0.0",
+      "never",
+      {
+        robots: "noindex, nofollow",
+        breadcrumbLabel: "404",
+        sitemap: false,
+      }
+    ),
   ];
 
-  for (let year = yearStart; year <= yearEnd; year += 1) {
+  for (let year = MIN_SUPPORTED_YEAR; year <= MAX_SUPPORTED_YEAR; year += 1) {
     routes.push(
       route(
         `/calendario/${year}/`,
@@ -1045,6 +973,37 @@ function optimizeAssetLoading(html, item, assetHints) {
   return nextHtml;
 }
 
+async function loadBlogPosts() {
+  await esbuild.build({
+    entryPoints: [path.join(ROOT, "client", "src", "lib", "blog.ts")],
+    outfile: BLOG_DATA_BUNDLE,
+    bundle: true,
+    platform: "node",
+    packages: "external",
+    format: "esm",
+    target: "node20",
+    alias: {
+      "@": path.join(ROOT, "client", "src"),
+      "@shared": path.join(ROOT, "shared"),
+      "@assets": path.join(ROOT, "attached_assets"),
+    },
+    define: {
+      "import.meta.env.DEV": "false",
+      "import.meta.env.PROD": "true",
+      "import.meta.env.SSR": "true",
+    },
+    logLevel: "silent",
+  });
+
+  const blogModule = await import(
+    `${pathToFileURL(BLOG_DATA_BUNDLE).href}?t=${Date.now()}`
+  );
+
+  return typeof blogModule.getLocalizedBlogPosts === "function"
+    ? blogModule.getLocalizedBlogPosts("pt")
+    : [];
+}
+
 async function buildPrerenderMap(routes) {
   const prerenderable = routes.filter(item => item.prerender);
 
@@ -1086,7 +1045,6 @@ async function buildPrerenderMap(routes) {
     }
   }
 
-  await fs.rm(PRERENDER_BUNDLE, { force: true });
   return map;
 }
 
@@ -1102,6 +1060,12 @@ async function writeRouteHtml(template, item, prerenderMap, assetHints) {
 
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   await fs.writeFile(filePath, content);
+
+  if (item.pathname === "/404/") {
+    await fs.writeFile(path.join(DIST_DIR, "404.html"), content);
+  }
+
+  return content;
 }
 
 function buildSitemap(routes) {
@@ -1110,7 +1074,9 @@ function buildSitemap(routes) {
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
   ];
 
-  routes.forEach(item => {
+  routes
+    .filter(item => item.sitemap !== false)
+    .forEach(item => {
     lines.push("  <url>");
     lines.push(`    <loc>${SITE_URL}${item.pathname}</loc>`);
     lines.push(`    <lastmod>${lastmod}</lastmod>`);
@@ -1129,15 +1095,23 @@ function buildSitemap(routes) {
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${buildLocalizedUrl(item.pathname, "pt")}" />`
     );
     lines.push("  </url>");
-  });
+    });
 
   lines.push("</urlset>");
   return `${lines.join("\n")}\n`;
 }
 
+async function cleanupTempBundles() {
+  await Promise.all([
+    fs.rm(PRERENDER_BUNDLE, { force: true }),
+    fs.rm(BLOG_DATA_BUNDLE, { force: true }),
+  ]);
+}
+
 async function main() {
   const template = await fs.readFile(path.join(DIST_DIR, "index.html"), "utf8");
-  const routes = buildRoutes();
+  const blogPosts = await loadBlogPosts();
+  const routes = buildRoutes(blogPosts);
   const prerenderMap = await buildPrerenderMap(routes);
   const assetHints = await readBuildAssetHints();
 
@@ -1150,13 +1124,19 @@ async function main() {
   await fs.writeFile(SOURCE_SITEMAP, sitemap);
 }
 
-main().catch(async error => {
-  try {
-    await fs.rm(PRERENDER_BUNDLE, { force: true });
-  } catch {
-    // Ignore cleanup failures after a build error.
-  }
+main()
+  .catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    try {
+      await cleanupTempBundles();
+    } catch {
+      // Ignore cleanup failures after a build error.
+    }
 
-  console.error(error);
-  process.exit(1);
-});
+    if (process.exitCode) {
+      process.exit(process.exitCode);
+    }
+  });
