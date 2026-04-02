@@ -763,7 +763,6 @@ function buildRouteSchemas(item) {
         url: `${SITE_URL}/calcular/`,
         description: item.description,
       },
-      serializeFaqSchema(CALCULATOR_FAQ),
     ];
   }
 
@@ -778,7 +777,6 @@ function buildRouteSchemas(item) {
         url: `${SITE_URL}/idade/`,
         description: item.description,
       },
-      serializeFaqSchema(AGE_FAQ),
     ];
   }
 
@@ -793,7 +791,6 @@ function buildRouteSchemas(item) {
         url: `${SITE_URL}/calendario/`,
         description: item.description,
       },
-      serializeFaqSchema(CALENDAR_FAQ),
     ];
   }
 
@@ -808,14 +805,11 @@ function buildRouteSchemas(item) {
         url: `${SITE_URL}/escala/`,
         description: item.description,
       },
-      serializeFaqSchema(SCHEDULE_FAQ),
     ];
   }
 
-  if (item.pathname === "/") {
-    return [serializeFaqSchema(HOME_FAQ)];
-  }
-
+  // FAQPage schemas are injected client-side by usePageSeo to avoid
+  // duplicates between static HTML and React hydration.
   return [];
 }
 

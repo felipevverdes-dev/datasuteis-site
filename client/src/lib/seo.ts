@@ -232,8 +232,30 @@ export function usePageSeo({
       href: buildLocalizedUrl(normalizedPath, "pt"),
     });
 
+    // Remove all JSON-LD scripts injected by the static build (they have no id)
+    // as well as the previous route-schema from a prior navigation.  This
+    // prevents duplicate FAQPage, BreadcrumbList, etc. when the client-side
+    // schema is more complete and i18n-aware.
     const schemaNodeId = "route-schema";
-    document.getElementById(schemaNodeId)?.remove();
+    document.head
+      .querySelectorAll<HTMLScriptElement>('script[type="application/ld+json"]')
+      .forEach(node => {
+        // Keep the global site-level @graph (WebSite + Organization) that
+        // lives in index.html — it contains @id references that should
+        // persist across navigations.  Every other ld+json block was
+        // injected per-route by postbuild-seo.mjs and must be replaced.
+        if (node.id === schemaNodeId || !node.id) {
+          try {
+            const data = JSON.parse(node.textContent ?? "");
+            if (data?.["@graph"]?.[0]?.["@id"]?.endsWith("#website")) {
+              return; // keep global @graph
+            }
+          } catch {
+            // ignore parse errors
+          }
+          node.remove();
+        }
+      });
 
     if (schema) {
       const script = document.createElement("script");
