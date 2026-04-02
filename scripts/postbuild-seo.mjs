@@ -378,25 +378,46 @@ function buildRoutes(blogPosts) {
     ),
   ];
 
+  const currentYear = new Date().getFullYear();
+
+  function yearPriority(year, basePriority) {
+    const distance = Math.abs(year - currentYear);
+    if (distance <= 1) return basePriority;
+    if (distance <= 3) return String(Math.max(0.1, parseFloat(basePriority) - 0.05).toFixed(2));
+    if (distance <= 10) return String(Math.max(0.1, parseFloat(basePriority) - 0.15).toFixed(2));
+    return String(Math.max(0.1, parseFloat(basePriority) - 0.3).toFixed(2));
+  }
+
+  function yearChangefreq(year) {
+    const distance = Math.abs(year - currentYear);
+    if (distance <= 1) return "monthly";
+    if (distance <= 5) return "yearly";
+    return "yearly";
+  }
+
   for (let year = MIN_SUPPORTED_YEAR; year <= MAX_SUPPORTED_YEAR; year += 1) {
+    const cf = yearChangefreq(year);
     routes.push(
       route(
         `/calendario/${year}/`,
         `Calendário ${year} com feriados | Datas Úteis`,
         `Abra o calendário ${year} com leitura de meses, fins de semana e feriados.`,
-        "0.8"
+        yearPriority(year, "0.8"),
+        cf
       ),
       route(
         `/dias-uteis/${year}/`,
         `Dias úteis de cada mês em ${year} | Datas Úteis`,
         `Abra a tabela mensal de dias úteis, finais de semana e feriados de ${year}.`,
-        "0.86"
+        yearPriority(year, "0.86"),
+        cf
       ),
       route(
         `/quinto-dia-util/${year}/`,
         `5º dia útil de cada mês em ${year} | Datas Úteis`,
         `Abra a tabela anual com o 5º dia útil de cada mês de ${year}.`,
-        "0.78"
+        yearPriority(year, "0.78"),
+        cf
       )
     );
 
@@ -408,19 +429,22 @@ function buildRoutes(blogPosts) {
           `/calendario/${year}/${slug}/`,
           `Calendário de ${label} | Datas Úteis`,
           `Consulte finais de semana e feriados de ${label}.`,
-          "0.74"
+          yearPriority(year, "0.74"),
+          cf
         ),
         route(
           `/dias-uteis/${year}/${slug}/`,
           `Quantos dias úteis tem ${label} | Datas Úteis`,
           `Consulte dias úteis, finais de semana, feriados e o 5º dia útil de ${label}.`,
-          "0.82"
+          yearPriority(year, "0.82"),
+          cf
         ),
         route(
           `/quinto-dia-util/${year}/${slug}/`,
           `5º dia útil de ${label} | Datas Úteis`,
           `Veja o 5º dia útil de ${label} e compare com meses próximos.`,
-          "0.76"
+          yearPriority(year, "0.76"),
+          cf
         )
       );
     }

@@ -243,6 +243,61 @@ async function startServer() {
     });
   });
 
+  // ── SPA fallback ──
+  //
+  // postbuild-seo.mjs generates a static index.html for every route that
+  // appears in the sitemap (including ~72k year/month pages).  Those files
+  // are served by express.static above with HTTP 200.
+  //
+  // If a request reaches this wildcard, it means there is NO matching
+  // static file.  We need to decide:
+  //   • HTML request to a path that matches the SPA router  → 200 + SPA shell
+  //   • Everything else                                      → 404
+  //
+  // SPA route patterns mirror the <Switch> in client/src/App.tsx.
+  const SPA_ROUTE_PATTERNS: RegExp[] = [
+    /^\/$/,
+    /^\/calcular\/?$/,
+    /^\/calendario\/?$/,
+    /^\/calendario\/\d{4}\/?$/,
+    /^\/calendario\/\d{4}\/[a-z]+\/?$/,
+    /^\/escala\/?$/,
+    /^\/idade\/?$/,
+    /^\/idade\/calcular-idade\/?$/,
+    /^\/idade\/data-de-nascimento\/?$/,
+    /^\/idade\/dia-da-semana-que-nasceu\/?$/,
+    /^\/idade\/quantos-dias-eu-tenho-de-vida\/?$/,
+    /^\/dias-uteis\/?$/,
+    /^\/dias-uteis\/\d{4}\/?$/,
+    /^\/dias-uteis\/\d{4}\/[a-z]+\/?$/,
+    /^\/quinto-dia-util\/?$/,
+    /^\/quinto-dia-util\/\d{4}\/?$/,
+    /^\/quinto-dia-util\/\d{4}\/[a-z]+\/?$/,
+    /^\/utilitarios\/?$/,
+    /^\/utilitarios\/calculadora\/?$/,
+    /^\/utilitarios\/sorteador\/?$/,
+    /^\/utilitarios\/conversor-de-moeda\/?$/,
+    /^\/utilitarios\/clima\/?$/,
+    /^\/jogos\/?$/,
+    /^\/jogos\/sudoku\/?$/,
+    /^\/jogos\/caca-palavras\/?$/,
+    /^\/jogos\/palavras-cruzadas\/?$/,
+    /^\/blog\/?$/,
+    /^\/blog\/[a-z0-9-]+\/?$/,
+    /^\/sobre\/?$/,
+    /^\/contato\/?$/,
+    /^\/privacidade\/?$/,
+    /^\/termos\/?$/,
+    /^\/calculadora\/?$/,
+    /^\/404\/?$/,
+  ];
+
+  function isSpaRoute(pathname: string) {
+    return SPA_ROUTE_PATTERNS.some(pattern => pattern.test(pathname));
+  }
+
+  const spaShellPath = path.join(staticPath, "index.html");
+
   app.get("*", (req, res) => {
     if (path.extname(req.path) || !req.accepts("html")) {
       res.status(404).type("text/plain").send("Not found.");
@@ -250,7 +305,14 @@ async function startServer() {
     }
 
     res.setHeader("Last-Modified", SITE_LAST_MODIFIED_HTTP);
-    res.status(404).sendFile(path.join(staticPath, "404.html"));
+
+    if (isSpaRoute(req.path)) {
+      // Valid SPA route without a pre-rendered file → serve SPA shell with 200
+      res.status(200).sendFile(spaShellPath);
+    } else {
+      // Truly unknown route → 404
+      res.status(404).sendFile(path.join(staticPath, "404.html"));
+    }
   });
 
   const port = process.env.PORT || 3000;
