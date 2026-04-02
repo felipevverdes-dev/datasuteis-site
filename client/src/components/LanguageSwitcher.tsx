@@ -28,6 +28,10 @@ export default function LanguageSwitcher({
     LANGUAGE_OPTIONS.find(o => o.value === language) || LANGUAGE_OPTIONS[0];
 
   useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
     function handleClickOutside(event: MouseEvent) {
       if (
         containerRef.current &&
@@ -49,7 +53,7 @@ export default function LanguageSwitcher({
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
     };
-  }, []);
+  }, [isOpen]);
 
   return (
     <div

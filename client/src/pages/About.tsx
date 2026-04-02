@@ -347,6 +347,18 @@ export default function About() {
         url: "https://datasuteis.com.br/",
         email: "contato@datasuteis.com.br",
       },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: copy.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+          },
+        })),
+      },
     ],
   });
 

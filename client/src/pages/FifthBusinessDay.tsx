@@ -168,14 +168,6 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
           operatingSystem: "Web",
           url: `https://datasuteis.com.br${path}`,
         },
-        {
-          "@type": "FAQPage",
-          mainEntity: faqItems.map(item => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: { "@type": "Answer", text: item.answer },
-          })),
-        },
       ],
     },
   });

@@ -249,18 +249,6 @@ export default function Games() {
           url: `https://datasuteis.com.br${game.href}`,
         })),
       },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: copy.faqItems.map(item => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer,
-          },
-        })),
-      },
       buildBreadcrumbSchema([
         { label: navigationLabels.home, href: "/" },
         { label: navigationLabels.games, href: "/jogos/" },

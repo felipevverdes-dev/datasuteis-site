@@ -209,14 +209,14 @@ export default function Calculator() {
 
   usePageSeo({
     title: t(
-      "Calcular dias úteis, somar e subtrair prazos | Datas Úteis",
-      "Calculate business days, add and subtract deadlines | Datas Úteis",
-      "Calcular días hábiles, sumar y restar plazos | Datas Úteis"
+      "Calculadora de Dias Úteis Online — Some e Subtraia Prazos | Datas Úteis",
+      "Business Day Calculator — Add and Subtract Deadlines | Datas Úteis",
+      "Calculadora de Días Hábiles — Sume y Reste Plazos | Datas Úteis"
     ),
     description: t(
-      "Conte dias úteis entre datas, some dias de trabalho ou subtraia prazos com uma calculadora mais completa.",
-      "Count business days between dates, add working days or subtract deadlines with a faster business-day calculator.",
-      "Cuente días hábiles entre fechas, sume días laborables o reste plazos con una calculadora rápida."
+      "Calculadora de dias úteis com feriados nacionais, estaduais e municipais. Conte entre datas, some prazos ou subtraia dias de trabalho com precisão.",
+      "Business day calculator with national, state and municipal holidays. Count between dates, add deadlines or subtract working days accurately.",
+      "Calculadora de días hábiles con feriados nacionales, estatales y municipales. Cuente entre fechas, sume plazos o reste días laborables con precisión."
     ),
     path: "/calcular/",
     keywords: [
@@ -245,17 +245,6 @@ export default function Calculator() {
             { label: navigationLabels.simulators },
             { label: navigationLabels.businessDays, href: "/calcular/" },
           ]),
-        },
-        {
-          "@type": "FAQPage",
-          mainEntity: faqItems.map(item => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: item.answer,
-            },
-          })),
         },
       ],
     },

@@ -35,86 +35,6 @@ const MONTHS = [
   "novembro",
   "dezembro",
 ];
-const HOME_FAQ = [
-  {
-    question: "O Datas Úteis é gratuito?",
-    answer:
-      "Sim. As ferramentas principais podem ser usadas gratuitamente e sem cadastro.",
-  },
-  {
-    question: "A calculadora considera feriados?",
-    answer:
-      "Sim. A leitura padrão considera feriados nacionais e permite filtros locais na calculadora.",
-  },
-  {
-    question: "Posso usar o site no celular?",
-    answer:
-      "Sim. As páginas principais foram organizadas para telas menores e toques rápidos.",
-  },
-];
-const CALCULATOR_FAQ = [
-  {
-    question: "A calculadora mostra finais de semana e feriados?",
-    answer:
-      "Sim. O resultado separa dias úteis, dias corridos, finais de semana e os feriados abatidos do cálculo.",
-  },
-  {
-    question: "Quais feriados entram no cálculo?",
-    answer:
-      "Os feriados nacionais sempre entram. Os feriados estaduais e municipais são somados quando você seleciona a localidade.",
-  },
-  {
-    question: "Posso somar e subtrair dias úteis?",
-    answer:
-      "Sim. A ferramenta tem modos separados para contar um intervalo, somar dias de trabalho e subtrair dias úteis.",
-  },
-];
-const AGE_FAQ = [
-  {
-    question: "Posso usar anos passados e futuros?",
-    answer:
-      "Sim. A ferramenta aceita datas antigas, o ano atual e anos futuros para comparação.",
-  },
-  {
-    question: "Funciona no celular?",
-    answer:
-      "Sim. O formulário e os cartões de resultado foram organizados para telas menores.",
-  },
-  {
-    question: "Posso ver o dia do próximo aniversário?",
-    answer:
-      "Sim. O resultado também mostra o dia da semana do próximo aniversário.",
-  },
-];
-const CALENDAR_FAQ = [
-  {
-    question: "Posso trocar a localidade manualmente?",
-    answer:
-      "Sim. Estado e município mudam a base de feriados aplicada ao mês.",
-  },
-  {
-    question: "O que acontece se a localização não for detectada?",
-    answer:
-      "O calendário mantém a base nacional e você pode escolher a localidade manualmente.",
-  },
-];
-const SCHEDULE_FAQ = [
-  {
-    question: "O simulador substitui uma revisão legal?",
-    answer:
-      "Não. Ele ajuda a comparar cenários e cobertura, mas a validação formal depende da operação real.",
-  },
-  {
-    question: "Posso testar cargas diferentes por colaborador?",
-    answer:
-      "Sim. O bloco de ajuste permite alterar a carga considerada e rodar a simulação novamente.",
-  },
-  {
-    question: "Quais escalas posso comparar aqui?",
-    answer:
-      "O simulador ajuda a comparar arranjos comuns como 5x2, 6x1 e 12x36 antes de levar isso para uma operação real.",
-  },
-];
 const HOME_LABEL = "Início";
 const SIMULATORS_LABEL = "Simuladores";
 const BUSINESS_DAYS_LABEL = "Dias Úteis";
@@ -181,32 +101,32 @@ function buildRoutes(blogPosts) {
   const routes = [
     route(
       "/",
-      "Datas Úteis: dias úteis, calendário, feriados, ferramentas",
-      "Calcule dias úteis, consulte o calendário com feriados, simule escalas de trabalho, descubra sua idade exata, jogue e use ferramentas online grátis.",
+      "Calcule dias úteis em segundos (com feriados automáticos) | Datas Úteis",
+      "Calculadora de dias úteis rápida e precisa com feriados nacionais, estaduais e municipais. Sem erro. Ideal para empresas, prazos e planejamento.",
       "1.0",
       "weekly",
       { breadcrumbLabel: HOME_LABEL }
     ),
     route(
       "/calcular/",
-      "Calcular dias úteis, somar e subtrair prazos | Datas Úteis",
-      "Conte dias úteis entre datas, some dias de trabalho ou subtraia prazos com uma calculadora mais completa.",
+      "Calculadora de Dias Úteis Online — Some e Subtraia Prazos | Datas Úteis",
+      "Calculadora de dias úteis com feriados nacionais, estaduais e municipais. Conte entre datas, some prazos ou subtraia dias de trabalho com precisão.",
       "0.9",
       "monthly",
       { breadcrumbLabel: BUSINESS_DAYS_LABEL }
     ),
     route(
       "/calendario/",
-      "Calendário com fins de semana e feriados | Datas Úteis",
-      "Abra o calendário principal com leitura rápida de meses, finais de semana e feriados.",
+      `Calendário ${new Date().getFullYear()} com Feriados e Fins de Semana | Datas Úteis`,
+      `Consulte o calendário ${new Date().getFullYear()} com feriados nacionais, estaduais e municipais. Troque mês e localidade para planejar prazos e verificar fins de semana.`,
       "0.8",
-      "yearly",
+      "monthly",
       { breadcrumbLabel: CALENDAR_LABEL }
     ),
     route(
       "/escala/",
-      "Simulador de escalas de trabalho | Datas Úteis",
-      "Simule escalas de trabalho, cobertura mensal e quadro mínimo em cenários de operação.",
+      "Simulador de Escala de Trabalho Online (5x2, 6x1, 12x36) | Datas Úteis",
+      "Simule escalas 5x2, 6x1, 12x36, 4x2 e 24x48 com cobertura operacional, quadro mínimo e calendário mensal. Grátis e sem cadastro.",
       "0.8",
       "monthly",
       { breadcrumbLabel: WORK_SCHEDULES_LABEL }
@@ -245,16 +165,16 @@ function buildRoutes(blogPosts) {
     ),
     route(
       "/dias-uteis/",
-      "Dias úteis por ano e mês | Datas Úteis",
-      "Explore páginas de dias úteis por ano e mês para comparar períodos e consultar feriados.",
+      `Quantos Dias Úteis Tem Cada Mês em ${new Date().getFullYear()} | Datas Úteis`,
+      `Consulte dias úteis, feriados e finais de semana de cada mês de ${new Date().getFullYear()} e compare com outros anos.`,
       "0.9",
       "monthly",
       { breadcrumbLabel: BUSINESS_DAYS_LABEL }
     ),
     route(
       "/quinto-dia-util/",
-      "5º dia útil por mês e ano | Datas Úteis",
-      "Veja o 5º dia útil de cada mês navegando por anos e meses sem se prender a um único calendário.",
+      `5º Dia Útil de Cada Mês em ${new Date().getFullYear()} | Datas Úteis`,
+      `Veja o quinto dia útil de cada mês de ${new Date().getFullYear()} e navegue por outros anos e meses.`,
       "0.8",
       "monthly",
       { breadcrumbLabel: "5º dia útil" }
@@ -736,20 +656,6 @@ function buildBasePageSchema(item) {
   };
 }
 
-function serializeFaqSchema(items) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: items.map(item => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  };
-}
 
 function buildRouteSchemas(item) {
   if (item.pathname === "/calcular/") {
@@ -808,8 +714,6 @@ function buildRouteSchemas(item) {
     ];
   }
 
-  // FAQPage schemas are injected client-side by usePageSeo to avoid
-  // duplicates between static HTML and React hydration.
   return [];
 }
 

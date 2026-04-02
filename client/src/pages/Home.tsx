@@ -168,14 +168,14 @@ const COPY: Record<
     faqTitle: "Perguntas frequentes",
     faqItems: [
       {
-        question: "O Datas Úteis é totalmente gratuito?",
+        question: "Quais ferramentas o site oferece?",
         answer:
-          "Sim. As ferramentas principais podem ser usadas gratuitamente e sem cadastro.",
+          "Calculadora de dias úteis, calendário com feriados, simulador de escalas de trabalho, calculadora de idade, jogos e utilitários de apoio.",
       },
       {
         question: "A calculadora de dias úteis considera feriados?",
         answer:
-          "Sim. A leitura padrão considera feriados nacionais e ajuda no planejamento de prazos.",
+          "Sim. A leitura padrão considera feriados nacionais e permite filtros por estado e município.",
       },
       {
         question: "Posso calcular datas de anos passados e futuros?",
@@ -188,14 +188,9 @@ const COPY: Record<
           "Você pode simular escalas como 5x2, 6x1, 12x36 e outras variações usadas em operações reais.",
       },
       {
-        question: "Posso usar o site no celular?",
+        question: "O site mostra feriados estaduais e municipais?",
         answer:
-          "Sim. As páginas principais foram organizadas para toque e leitura em telas menores.",
-      },
-      {
-        question: "Sábado conta como dia útil?",
-        answer:
-          "Na leitura padrão do site, sábado não entra como dia útil.",
+          "Na calculadora, você pode selecionar estado e município para incluir feriados locais no cálculo.",
       },
       {
         question: "Como saber em que dia da semana eu nasci?",
@@ -206,12 +201,6 @@ const COPY: Record<
         question: "Como calcular minha idade exata?",
         answer:
           "Na área de idade, a ferramenta mostra anos, meses e dias com base na data informada.",
-      },
-      {
-        question:
-          "O site mostra feriados estaduais e municipais?",
-        answer:
-          "Na calculadora, você pode selecionar estado e município para incluir feriados locais no cálculo.",
       },
       {
         question:
@@ -292,14 +281,14 @@ const COPY: Record<
     faqTitle: "Frequently asked questions",
     faqItems: [
       {
-        question: "Is Datas Úteis completely free?",
+        question: "What tools does the site offer?",
         answer:
-          "Yes. The main tools can be used for free and without sign-up.",
+          "Business day calculator, holiday calendar, work schedule simulator, age calculator, games and support utilities.",
       },
       {
         question: "Does the business-day calculator consider holidays?",
         answer:
-          "Yes. The standard reading considers national holidays and supports deadline planning.",
+          "Yes. The standard reading considers national holidays and allows state and municipality filters.",
       },
       {
         question: "Can I calculate past and future years?",
@@ -312,14 +301,9 @@ const COPY: Record<
           "You can simulate 5x2, 6x1, 12x36 and other work-pattern variations.",
       },
       {
-        question: "Can I use the site on mobile?",
+        question: "Does the site show state and city holidays?",
         answer:
-          "Yes. The main pages were organized for touch and smaller screens.",
-      },
-      {
-        question: "Does Saturday count as a business day?",
-        answer:
-          "In the standard reading of the site, Saturday is not counted as a business day.",
+          "In the calculator, you can select state and municipality to include local holidays in the calculation.",
       },
       {
         question: "How do I find the weekday I was born on?",
@@ -330,11 +314,6 @@ const COPY: Record<
         question: "How do I calculate my exact age?",
         answer:
           "In the age area, the result shows years, months and days from the informed date.",
-      },
-      {
-        question: "Does the site show state and city holidays?",
-        answer:
-          "In the calculator, you can select state and municipality to include local holidays in the calculation.",
       },
       {
         question: "Can I use the tools to plan deadlines?",
@@ -415,15 +394,15 @@ const COPY: Record<
     faqTitle: "Preguntas frecuentes",
     faqItems: [
       {
-        question: "¿Datas Úteis es totalmente gratuito?",
+        question: "¿Qué herramientas ofrece el sitio?",
         answer:
-          "Sí. Las herramientas principales se pueden usar gratis y sin registro.",
+          "Calculadora de días hábiles, calendario con feriados, simulador de escalas de trabajo, calculadora de edad, juegos y utilidades de apoyo.",
       },
       {
         question:
           "¿La calculadora de días hábiles considera feriados?",
         answer:
-          "Sí. La lectura estándar considera feriados nacionales y ayuda con plazos.",
+          "Sí. La lectura estándar considera feriados nacionales y permite filtros por estado y municipio.",
       },
       {
         question: "¿Puedo calcular años pasados y futuros?",
@@ -436,14 +415,10 @@ const COPY: Record<
           "Puede simular 5x2, 6x1, 12x36 y otras variaciones de jornada.",
       },
       {
-        question: "¿Puedo usar el sitio en el celular?",
+        question:
+          "¿El sitio muestra feriados estatales y municipales?",
         answer:
-          "Sí. Las páginas principales fueron organizadas para toque y pantallas menores.",
-      },
-      {
-        question: "¿El sábado cuenta como día hábil?",
-        answer:
-          "En la lectura estándar del sitio, el sábado no cuenta como día hábil.",
+          "En la calculadora, puede seleccionar estado y municipio para incluir feriados locales en el cálculo.",
       },
       {
         question: "¿Cómo saber en qué día nací?",
@@ -454,12 +429,6 @@ const COPY: Record<
         question: "¿Cómo calcular mi edad exacta?",
         answer:
           "En el área de edad, el resultado muestra años, meses y días.",
-      },
-      {
-        question:
-          "¿El sitio muestra feriados estatales y municipales?",
-        answer:
-          "En la calculadora, puede seleccionar estado y municipio para incluir feriados locales en el cálculo.",
       },
       {
         question:
@@ -729,14 +698,6 @@ export default function Home() {
           applicationCategory: "UtilitiesApplication",
           operatingSystem: "Web",
           url: "https://datasuteis.com.br/",
-        },
-        {
-          "@type": "FAQPage",
-          mainEntity: copy.faqItems.map((item) => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: { "@type": "Answer", text: item.answer },
-          })),
         },
       ],
     },

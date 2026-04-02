@@ -234,7 +234,7 @@ export function usePageSeo({
 
     // Remove all JSON-LD scripts injected by the static build (they have no id)
     // as well as the previous route-schema from a prior navigation.  This
-    // prevents duplicate FAQPage, BreadcrumbList, etc. when the client-side
+    // prevents duplicate BreadcrumbList, etc. when the client-side
     // schema is more complete and i18n-aware.
     const schemaNodeId = "route-schema";
     document.head

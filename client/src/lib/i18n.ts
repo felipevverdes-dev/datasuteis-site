@@ -398,9 +398,9 @@ const customTranslations: Record<SupportedLanguage, TranslationMap> = {
         backHome: "Voltar para Início",
       },
       schedule: {
-        seoTitle: "Simulador de Escala de Trabalho | Datas Úteis",
+        seoTitle: "Simulador de Escala de Trabalho Online (5x2, 6x1, 12x36) | Datas Úteis",
         seoDescription:
-          "Simule cobertura operacional, quadro mínimo, horas por colaborador e calendário mensal para escalas 5x2, 6x1, 12x36, 4x2 e 24x48.",
+          "Simule escalas 5x2, 6x1, 12x36, 4x2 e 24x48 com cobertura operacional, quadro mínimo e calendário mensal. Grátis e sem cadastro.",
         autoSuggested: "Sugerida automaticamente",
         simultaneousPosts: "Postos simultâneos",
         operationStart: "Início da operação",
@@ -760,9 +760,9 @@ const customTranslations: Record<SupportedLanguage, TranslationMap> = {
         backHome: "Back to Home",
       },
       schedule: {
-        seoTitle: "Work Schedule Simulator | Datas Úteis",
+        seoTitle: "Work Schedule Simulator Online (5x2, 6x1, 12x36) | Datas Úteis",
         seoDescription:
-          "Simulate operational coverage, minimum headcount, hours per employee and monthly calendar for 5x2, 6x1, 12x36, 4x2 and 24x48 schedules.",
+          "Simulate 5x2, 6x1, 12x36, 4x2 and 24x48 schedules with operational coverage, minimum headcount and monthly calendar. Free and no sign-up.",
         autoSuggested: "Suggested automatically",
         simultaneousPosts: "Simultaneous posts",
         operationStart: "Operation start",
@@ -1120,9 +1120,9 @@ const customTranslations: Record<SupportedLanguage, TranslationMap> = {
         backHome: "Volver al inicio",
       },
       schedule: {
-        seoTitle: "Simulador de Escalas de Trabajo | Datas Úteis",
+        seoTitle: "Simulador de Escalas de Trabajo Online (5x2, 6x1, 12x36) | Datas Úteis",
         seoDescription:
-          "Simule cobertura operativa, dotación mínima, horas por colaborador y calendario mensual para escalas 5x2, 6x1, 12x36, 4x2 y 24x48.",
+          "Simule escalas 5x2, 6x1, 12x36, 4x2 y 24x48 con cobertura operativa, dotación mínima y calendario mensual. Gratis y sin registro.",
         autoSuggested: "Sugerida automáticamente",
         simultaneousPosts: "Puestos simultáneos",
         operationStart: "Inicio de la operación",

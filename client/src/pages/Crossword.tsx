@@ -254,15 +254,6 @@ export default function Crossword() {
           "Palavras cruzadas com dicas, teclado virtual, ranking local e quatro níveis de dificuldade.",
       },
       {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: FAQ_ITEMS.map(item => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: { "@type": "Answer", text: item.answer },
-        })),
-      },
-      {
         ...buildBreadcrumbSchema([
           { label: navigationLabels.home, href: "/" },
           { label: navigationLabels.games },

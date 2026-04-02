@@ -70,18 +70,6 @@ export default function BlogPost({ params }: BlogPostPageProps) {
             { label: post.title, href: `/blog/${post.slug}/` },
           ]),
         },
-        ...(post.faqs.length
-          ? [
-              {
-                "@type": "FAQPage",
-                mainEntity: post.faqs.map(faq => ({
-                  "@type": "Question",
-                  name: faq.question,
-                  acceptedAnswer: { "@type": "Answer", text: faq.answer },
-                })),
-              },
-            ]
-          : []),
       ],
     },
   });

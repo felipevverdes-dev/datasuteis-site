@@ -559,17 +559,6 @@ export default function AgeExperience({ variant, path }: AgeExperienceProps) {
           operatingSystem: "Web",
           url: `https://datasuteis.com.br${path}`,
         },
-        {
-          "@type": "FAQPage",
-          mainEntity: faqItems.map(item => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: item.answer,
-            },
-          })),
-        },
       ],
     },
   });

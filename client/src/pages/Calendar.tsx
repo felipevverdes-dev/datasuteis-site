@@ -164,10 +164,10 @@ export default function Calendar({ params }: CalendarProps) {
         : "Calendário com feriados";
   const pageDescription =
     language === "en"
-      ? "Open the current month by default and switch year, month and locality to review weekends and holidays."
+      ? `Browse the ${year} calendar with national, state and municipal holidays. Switch months and locality to plan deadlines and check weekends.`
       : language === "es"
-        ? "Abra el mes actual por defecto y cambie año, mes y localidad para consultar fines de semana y feriados."
-        : "Abra o mês atual por padrão e troque ano, mês e localidade para consultar finais de semana e feriados.";
+        ? `Consulte el calendario ${year} con feriados nacionales, estatales y municipales. Cambie mes y localidad para planificar plazos y verificar fines de semana.`
+        : `Consulte o calendário ${year} com feriados nacionais, estaduais e municipais. Troque mês e localidade para planejar prazos e verificar fins de semana.`;
   const monthPath = `/calendario/${year}/${getMonthSlug(month)}/`;
   const yearPath = `/calendario/${year}/`;
   const path = isLandingPage ? "/calendario/" : isYearPage ? yearPath : monthPath;
@@ -290,16 +290,16 @@ export default function Calendar({ params }: CalendarProps) {
     title:
       isLandingPage
         ? language === "en"
-          ? "Holiday calendar with weekends and holidays | Datas Úteis"
+          ? `${year} Calendar with Holidays and Weekends | Datas Úteis`
           : language === "es"
-            ? "Calendario con fines de semana y feriados | Datas Úteis"
-            : "Calendário com fins de semana e feriados | Datas Úteis"
+            ? `Calendario ${year} con Feriados y Fines de Semana | Datas Úteis`
+            : `Calendário ${year} com Feriados e Fins de Semana | Datas Úteis`
         : isYearPage
           ? language === "en"
-            ? `${year} holiday calendar | Datas Úteis`
+            ? `${year} Holiday Calendar | Datas Úteis`
             : language === "es"
-              ? `Calendario ${year} con feriados | Datas Úteis`
-              : `Calendário ${year} com feriados | Datas Úteis`
+              ? `Calendario ${year} con Feriados | Datas Úteis`
+              : `Calendário ${year} com Feriados | Datas Úteis`
         : language === "en"
           ? `${monthLabel} holiday calendar | Datas Úteis`
           : language === "es"
@@ -355,17 +355,6 @@ export default function Calendar({ params }: CalendarProps) {
                   { label: monthLabel, href: path },
                 ]
           ),
-        },
-        {
-          "@type": "FAQPage",
-          mainEntity: faqItems.map(item => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: item.answer,
-            },
-          })),
         },
       ],
     },
