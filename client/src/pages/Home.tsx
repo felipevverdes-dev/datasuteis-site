@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   BriefcaseBusiness,
@@ -15,7 +15,6 @@ import { Link } from "wouter";
 import AdSlot from "@/components/AdSlot";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import HomeMomentSummary from "@/components/home/HomeMomentSummary";
 import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
@@ -36,6 +35,30 @@ import { usePageSeo } from "@/lib/seo";
 import type { SupportedLanguage } from "@/lib/site";
 
 /* ─────────────────────────── i18n copy ─────────────────────────── */
+
+const HomeMomentSummary = lazy(
+  () => import("@/components/home/HomeMomentSummary")
+);
+
+function HomeMomentSummaryFallback() {
+  return (
+    <section
+      id="momento"
+      className="section-anchor min-h-[24rem] rounded-3xl border border-border bg-card p-6 shadow-sm md:min-h-[22rem]"
+      aria-busy="true"
+    >
+      <div className="h-9 w-52 animate-pulse rounded-full bg-secondary" />
+      <div className="mt-6 space-y-4">
+        <div className="h-5 w-2/3 animate-pulse rounded-full bg-secondary" />
+        <div className="h-5 w-1/2 animate-pulse rounded-full bg-secondary" />
+        <div className="h-12 w-full animate-pulse rounded-2xl bg-secondary" />
+        <div className="h-px w-full bg-border" />
+        <div className="h-5 w-1/3 animate-pulse rounded-full bg-secondary" />
+        <div className="h-8 w-24 animate-pulse rounded-full bg-secondary" />
+      </div>
+    </section>
+  );
+}
 
 const COPY: Record<
   SupportedLanguage,
@@ -948,7 +971,9 @@ export default function Home() {
             </section>
 
             {/* ── Moment summary ── */}
-            <HomeMomentSummary />
+            <Suspense fallback={<HomeMomentSummaryFallback />}>
+              <HomeMomentSummary />
+            </Suspense>
 
             {/* ── Support cards ── */}
             <section

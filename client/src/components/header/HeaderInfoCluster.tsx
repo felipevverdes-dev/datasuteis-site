@@ -487,9 +487,9 @@ function LoadingUnifiedInfoCard({ onClick }: { onClick?: () => void }) {
 export function HeaderInfoCluster({ mode, data, onClick }: HeaderInfoClusterProps) {
   const isDesktop = mode === "desktop";
   const visibilityClass = isDesktop
-    ? "flex min-w-0 items-center gap-1.5"
+    ? "grid min-w-0 grid-cols-[minmax(0,15rem)_2rem] items-center gap-1.5"
     : "flex w-full min-w-0 items-center gap-1.5 overflow-x-auto py-1.5 xl:hidden";
-  const desktopCardWidthClassName = "w-fit";
+  const desktopCardWidthClassName = "w-[15rem] max-w-[15rem]";
   const mobileCardWidthClassName = "min-w-[170px] max-w-[calc(100vw-5.5rem)]";
   const weatherIcon = data.weatherSummary?.icon.icon ?? Cloud;
   const weatherIconClass =
@@ -550,7 +550,9 @@ export function HeaderInfoCluster({ mode, data, onClick }: HeaderInfoClusterProp
               : data.copy.usePreciseLocation}
           </span>
         </button>
-      ) : null}
+      ) : (
+        isDesktop ? <span className="block h-8 w-8" aria-hidden="true" /> : null
+      )}
     </div>
   );
 }

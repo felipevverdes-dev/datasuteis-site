@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { Router } from "wouter";
+import CookieConsentBanner from "@/components/CookieConsentBanner";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import Age from "@/pages/Age";
@@ -45,7 +46,10 @@ export function renderPrerenderRoute(pathname: string) {
   return renderToStaticMarkup(
     <Router ssrPath={normalizePath(pathname)}>
       <ThemeProvider defaultTheme="light">
-        <LanguageProvider>{page}</LanguageProvider>
+        <LanguageProvider>
+          {page}
+          <CookieConsentBanner />
+        </LanguageProvider>
       </ThemeProvider>
     </Router>
   );

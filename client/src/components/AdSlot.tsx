@@ -16,12 +16,32 @@ interface AdSlotProps {
 }
 
 const AD_CLIENT = "ca-pub-3377250238500968";
+const DESKTOP_BREAKPOINT = 1024;
 
 const isProductionHost =
   typeof window !== "undefined" &&
   ["datasuteis.com.br", "www.datasuteis.com.br"].includes(
     window.location.hostname
   );
+
+function resolveReservedHeight(
+  format: AdFormat,
+  minHeight: number,
+  viewportWidth: number
+) {
+  const isDesktop = viewportWidth >= DESKTOP_BREAKPOINT;
+
+  const formatBaseline =
+    format === "rectangle"
+      ? 280
+      : format === "vertical"
+        ? (isDesktop ? 600 : 320)
+        : format === "horizontal"
+          ? (isDesktop ? 120 : 100)
+          : (isDesktop ? 180 : 120);
+
+  return Math.max(minHeight, formatBaseline);
+}
 
 /**
  * AdSlot renders a manual AdSense ad unit.
@@ -38,6 +58,10 @@ export default function AdSlot({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const pushedRef = useRef(false);
+  const reservedHeight =
+    typeof window === "undefined"
+      ? minHeight
+      : resolveReservedHeight(format, minHeight, window.innerWidth);
 
   /* Lazy-load: only activate when the slot scrolls into the viewport */
   useEffect(() => {
@@ -78,7 +102,7 @@ export default function AdSlot({
       <div
         id={id}
         className={`ad-slot-placeholder ${className ?? ""}`}
-        style={{ minHeight }}
+        style={{ minHeight: reservedHeight }}
         aria-hidden="true"
       >
         <span className="text-xs text-muted-foreground opacity-50">
@@ -93,13 +117,17 @@ export default function AdSlot({
       ref={containerRef}
       id={id}
       className={`ad-slot ${className ?? ""}`}
-      style={{ minHeight }}
+      style={{
+        minHeight: reservedHeight,
+        overflow: "hidden",
+        contain: "layout paint style",
+      }}
       aria-hidden="true"
     >
       {isVisible && (
         <ins
           className="adsbygoogle"
-          style={{ display: "block", minHeight }}
+          style={{ display: "block", minHeight: reservedHeight, width: "100%" }}
           data-ad-client={AD_CLIENT}
           data-ad-slot={slot ?? ""}
           data-ad-format={format}

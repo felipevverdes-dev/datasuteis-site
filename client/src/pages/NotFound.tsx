@@ -28,10 +28,13 @@ export default function NotFound({ seoPath }: NotFoundProps) {
     description: t("pages.notFound.seoDescription"),
     path: effectiveSeoPath,
     robots: "noindex, nofollow",
-    schema: buildBreadcrumbSchema([
-      { label: navigationLabels.home, href: "/" },
-      ...(effectiveSeoPath === "/404/" ? [{ label: "404", href: "/404/" }] : [{ label: "404" }]),
-    ]),
+    schema: buildBreadcrumbSchema(
+      [
+        { label: navigationLabels.home, href: "/" },
+        ...(effectiveSeoPath === "/404/" ? [{ label: "404", href: "/404/" }] : [{ label: "404" }]),
+      ],
+      effectiveSeoPath
+    ),
   });
 
   return (

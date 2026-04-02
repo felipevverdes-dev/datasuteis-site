@@ -676,23 +676,28 @@ function getBreadcrumbs(item) {
   ];
 }
 
-function serializeBreadcrumbSchema(items) {
+function serializeBreadcrumbSchema(items, currentPath) {
+  const schemaItems = items.flatMap((item, index) => {
+    if (item.href) {
+      return [{ label: item.label, href: item.href }];
+    }
+
+    if (index === items.length - 1) {
+      return [{ label: item.label, href: currentPath }];
+    }
+
+    return [];
+  });
+
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => {
-      const listItem = {
-        "@type": "ListItem",
-        position: index + 1,
-        name: item.label,
-      };
-
-      if (item.href) {
-        listItem.item = `${SITE_URL}${item.href}`;
-      }
-
-      return listItem;
-    }),
+    itemListElement: schemaItems.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.label,
+      item: `${SITE_URL}${item.href}`,
+    })),
   };
 }
 
@@ -795,7 +800,7 @@ function serializeRouteSchemas(item) {
   const schemas = [buildBasePageSchema(item)];
 
   if (breadcrumbs.length) {
-    schemas.push(serializeBreadcrumbSchema(breadcrumbs));
+    schemas.push(serializeBreadcrumbSchema(breadcrumbs, item.pathname));
   }
 
   schemas.push(...buildRouteSchemas(item));
@@ -943,11 +948,7 @@ async function readBuildAssetHints() {
 }
 
 function optimizeAssetLoading(html, item, assetHints) {
-  let nextHtml = html.replace(
-    /<link\s+rel="stylesheet"\s+crossorigin\s+href="([^"]+)"\s*\/?>/i,
-    (_match, href) =>
-      `<link rel="preload" href="${href}" as="style" crossorigin onload="this.onload=null;this.rel='stylesheet'" />\n    <noscript><link rel="stylesheet" href="${href}" crossorigin /></noscript>`
-  );
+  let nextHtml = html;
 
   const modulePreloads = [];
 

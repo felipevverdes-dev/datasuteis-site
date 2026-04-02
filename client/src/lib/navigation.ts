@@ -1,5 +1,5 @@
 import type { SupportedLanguage } from "@/lib/site";
-import { SITE_URL } from "@/lib/site";
+import { normalizeSitePath, SITE_URL } from "@/lib/site";
 
 export interface BreadcrumbItem {
   label: string;
@@ -238,22 +238,53 @@ export function getHeaderNavigation(language: SupportedLanguage) {
   ] satisfies HeaderNavigationItem[];
 }
 
-export function buildBreadcrumbSchema(items: BreadcrumbItem[]) {
+function resolveBreadcrumbSchemaHref(
+  item: BreadcrumbItem,
+  index: number,
+  items: BreadcrumbItem[],
+  currentPath?: string
+) {
+  if (item.href) {
+    return normalizeSitePath(item.href);
+  }
+
+  if (index !== items.length - 1) {
+    return null;
+  }
+
+  if (currentPath) {
+    return normalizeSitePath(currentPath);
+  }
+
+  if (typeof window !== "undefined") {
+    return normalizeSitePath(window.location.pathname);
+  }
+
+  return null;
+}
+
+export function buildBreadcrumbSchema(
+  items: BreadcrumbItem[],
+  currentPath?: string
+) {
+  const schemaItems = items.flatMap((item, index) => {
+    const href = resolveBreadcrumbSchemaHref(item, index, items, currentPath);
+
+    if (!href) {
+      return [];
+    }
+
+    return [{ label: item.label, href }];
+  });
+
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => {
-      const listItem: Record<string, unknown> = {
-        "@type": "ListItem",
-        position: index + 1,
-        name: item.label,
-      };
-
-      if (item.href) {
-        listItem.item = `${SITE_URL}${item.href}`;
-      }
-
-      return listItem;
-    }),
+    itemListElement: schemaItems.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.label,
+      item: `${SITE_URL}${item.href}`,
+    })),
   };
 }

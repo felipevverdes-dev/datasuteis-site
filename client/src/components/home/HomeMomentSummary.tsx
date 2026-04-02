@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BarChart3,
   Calendar,
@@ -131,6 +131,25 @@ function getShortLocalizedDate(
   });
 }
 
+function runWhenIdle(callback: () => void) {
+  const pageWindow = window as Window &
+    typeof globalThis & {
+      requestIdleCallback?: (
+        callback: IdleRequestCallback,
+        options?: IdleRequestOptions
+      ) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+
+  if (typeof pageWindow.requestIdleCallback === "function") {
+    const handle = pageWindow.requestIdleCallback(callback, { timeout: 1200 });
+    return () => pageWindow.cancelIdleCallback?.(handle);
+  }
+
+  const timeout = window.setTimeout(callback, 180);
+  return () => window.clearTimeout(timeout);
+}
+
 export default function HomeMomentSummary() {
   const { language, formatDate } = useI18n();
   const {
@@ -160,12 +179,54 @@ export default function HomeMomentSummary() {
   const todayIsBusinessDay = isBusinessDay(today);
   const [weather, setWeather] = useState<WeatherSnapshotResponse | null>(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
+  const [isActivated, setIsActivated] = useState(false);
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const node = sectionRef.current;
+    if (!node) {
+      return;
+    }
+
+    let cleanupIdle = () => {};
+
+    if (typeof IntersectionObserver !== "function") {
+      cleanupIdle = runWhenIdle(() => {
+        setIsActivated(true);
+      });
+
+      return () => {
+        cleanupIdle();
+      };
+    }
+
+    const observer = new IntersectionObserver(
+      entries => {
+        if (!entries[0]?.isIntersecting) {
+          return;
+        }
+
+        cleanupIdle = runWhenIdle(() => {
+          setIsActivated(true);
+        });
+        observer.disconnect();
+      },
+      { rootMargin: "240px 0px" }
+    );
+
+    observer.observe(node);
+
+    return () => {
+      cleanupIdle();
+      observer.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadWeather() {
-      if (geolocationLoading) {
+      if (!isActivated || geolocationLoading) {
         return;
       }
 
@@ -200,7 +261,7 @@ export default function HomeMomentSummary() {
     return () => {
       cancelled = true;
     };
-  }, [geolocationLoading, language, location.lat, location.lon]);
+  }, [geolocationLoading, isActivated, language, location.lat, location.lon]);
 
   async function handlePreciseLocationRequest() {
     await requestPreciseLocation();
@@ -231,9 +292,10 @@ export default function HomeMomentSummary() {
 
   return (
     <section
+      ref={sectionRef}
       id="momento"
       className="section-anchor min-h-[24rem] rounded-3xl border border-border bg-card p-6 shadow-sm md:min-h-[22rem]"
-      aria-busy={geolocationLoading || loadingWeather}
+      aria-busy={geolocationLoading || (isActivated && loadingWeather)}
     >
       <h2 className="text-3xl font-bold">{copy.title}</h2>
 

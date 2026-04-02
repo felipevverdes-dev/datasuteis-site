@@ -1,9 +1,11 @@
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import { applyDocumentLanguage, readStoredLanguage } from "@/lib/site";
 import App from "./App";
 import "./index.css";
 
-applyDocumentLanguage(readStoredLanguage());
+const initialLanguage = readStoredLanguage();
+
+applyDocumentLanguage(initialLanguage);
 
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -11,4 +13,12 @@ if (import.meta.env.PROD && "serviceWorker" in navigator) {
   });
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+const rootElement = document.getElementById("root");
+
+if (rootElement) {
+  if (rootElement.hasChildNodes() && initialLanguage === "pt") {
+    hydrateRoot(rootElement, <App />);
+  } else {
+    createRoot(rootElement).render(<App />);
+  }
+}
