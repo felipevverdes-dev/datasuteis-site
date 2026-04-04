@@ -71,6 +71,15 @@
   - fecha ao clicar fora
   - prende foco
   - devolve foco ao fechar
+  - mantém a mesma hierarquia:
+    - resumo editorial
+    - visão geral
+    - ficha rápida
+    - contexto cultural
+    - principais características
+    - pontos turísticos
+  - renderiza corretamente um país curado e um país em fallback
+  - nunca exibe `undefined`, `null`, `NaN` ou bloco vazio
 - PT / EN / ES mudam:
   - título
   - descrição

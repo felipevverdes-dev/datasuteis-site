@@ -42,6 +42,10 @@
 - evitar hardcode espalhado no JSX
 - concentrar dados editoriais e catálogos em módulos dedicados
 - dados multilíngues devem ficar fora do componente quando crescerem
+- perfis editoriais de entidades ricas, como países do Horário Mundial, devem ter:
+  - schema único tipado
+  - fonte única de dados
+  - fallback resolvido na camada de domínio, não no JSX
 
 ## Helpers compartilhados
 
@@ -54,6 +58,7 @@ Criar helper compartilhado quando:
 Exemplo recente:
 
 - `client/src/lib/idle.ts`
+- `client/src/lib/world-clock-country-details.ts` como resolvedor único de perfis editoriais
 
 ## Acessibilidade
 

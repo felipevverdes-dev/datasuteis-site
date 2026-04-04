@@ -60,6 +60,14 @@ docs/
 - A feature usa dataset global local por continente em `client/src/lib/world-clock-countries.ts`.
 - `client/src/lib/world-clock-data.ts` concentra formatadores, status de mercado e tipos normalizados da feature.
 - O modal editorial dos países usa `client/src/lib/world-clock-country-details.ts`.
+- Os perfis de países agora seguem um schema único (`CountryProfileContent`) com:
+  - resumo editorial
+  - visão geral
+  - ficha rápida
+  - contexto cultural
+  - características
+  - pontos turísticos
+- Países prioritários têm curadoria direta e o restante usa fallback editorial robusto, sem quebrar o modal.
 - O comparador entre países foi removido; a navegação atual é por continentes com busca por país, capital e aliases.
 - Cotações de mercado usam API interna, cache em memória, reaproveitamento do último snapshot válido e fallback local, sem dependência direta de CORS no frontend.
 

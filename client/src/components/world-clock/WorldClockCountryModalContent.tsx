@@ -1,18 +1,13 @@
 import type { SupportedLanguage } from "@/lib/site";
 import {
-  getLocalizedCountryMeta,
   getWorldClockPageCopy,
 } from "@/lib/world-clock-copy";
-import type { CountryDetailContent } from "@/lib/world-clock-country-details";
-import { formatPopulation } from "@/lib/world-clock-data";
-import type { WorldCountryDefinition } from "@/lib/world-clock-countries";
+import type { CountryProfileContent } from "@/lib/world-clock-country-details";
 
 interface WorldClockCountryModalContentProps {
-  country: WorldCountryDefinition;
   language: SupportedLanguage;
-  dateLocale: string;
   status: "idle" | "loading" | "success" | "error";
-  detail: CountryDetailContent | null | undefined;
+  detail: CountryProfileContent | null | undefined;
 }
 
 function NoticeBanner({ children }: { children: string }) {
@@ -27,14 +22,11 @@ function NoticeBanner({ children }: { children: string }) {
 }
 
 export default function WorldClockCountryModalContent({
-  country,
   language,
-  dateLocale,
   status,
   detail,
 }: WorldClockCountryModalContentProps) {
   const copy = getWorldClockPageCopy(language).modal;
-  const localizedCountry = getLocalizedCountryMeta(country.id, language);
 
   if (status === "loading") {
     return (
@@ -57,8 +49,11 @@ export default function WorldClockCountryModalContent({
     <div className="space-y-5">
       <section className="rounded-2xl bg-primary/10 p-5">
         <h3 className="text-xl font-bold text-primary">{copy.overview}</h3>
+        <p className="mt-2 text-sm font-medium leading-6 text-foreground/90">
+          {detail.editorialSummary}
+        </p>
         <p className="mt-3 text-sm leading-7 text-foreground">
-          {detail.summary}
+          {detail.overview}
         </p>
       </section>
 
@@ -69,7 +64,7 @@ export default function WorldClockCountryModalContent({
             <div>
               <dt className="font-semibold text-foreground">{copy.leader}</dt>
               <dd className="text-muted-foreground">
-                {detail.leader || copy.detailUnavailable}
+                {detail.quickFacts.politicalLeader || copy.detailUnavailable}
               </dd>
             </div>
             <div>
@@ -77,35 +72,28 @@ export default function WorldClockCountryModalContent({
                 {copy.nationalMilestone}
               </dt>
               <dd className="text-muted-foreground">
-                {detail.nationalMilestone || copy.detailUnavailable}
+                {detail.quickFacts.nationalMilestone || copy.detailUnavailable}
               </dd>
             </div>
             <div>
               <dt className="font-semibold text-foreground">
                 {copy.population}
               </dt>
-              <dd className="text-muted-foreground">
-                {formatPopulation(country.population, dateLocale)}
-              </dd>
+              <dd className="text-muted-foreground">{detail.quickFacts.population}</dd>
             </div>
             <div>
               <dt className="font-semibold text-foreground">
                 {copy.languages}
               </dt>
               <dd className="text-muted-foreground">
-                {localizedCountry.languages.join(", ") ||
-                  copy.detailUnavailable}
+                {detail.quickFacts.languages || copy.detailUnavailable}
               </dd>
             </div>
             <div>
               <dt className="font-semibold text-foreground">
                 {copy.capitalAltitude}
               </dt>
-              <dd className="text-muted-foreground">
-                {detail.capitalAltitudeMeters === null
-                  ? copy.altitudeUnavailable
-                  : `${new Intl.NumberFormat(dateLocale).format(detail.capitalAltitudeMeters)} m`}
-              </dd>
+              <dd className="text-muted-foreground">{detail.quickFacts.capitalAltitude}</dd>
             </div>
           </dl>
         </article>
@@ -115,32 +103,34 @@ export default function WorldClockCountryModalContent({
           <dl className="mt-4 space-y-3 text-sm leading-6">
             <div>
               <dt className="font-semibold text-foreground">{copy.seasons}</dt>
-              <dd className="text-muted-foreground">{detail.seasons}</dd>
+              <dd className="text-muted-foreground">
+                {detail.culturalContext.seasons}
+              </dd>
             </div>
             <div>
               <dt className="font-semibold text-foreground">
                 {copy.predominantClimate}
               </dt>
               <dd className="text-muted-foreground">
-                {detail.predominantClimate}
+                {detail.culturalContext.climate}
               </dd>
             </div>
             <div>
               <dt className="font-semibold text-foreground">{copy.religion}</dt>
               <dd className="text-muted-foreground">
-                {detail.religion || copy.detailUnavailable}
+                {detail.culturalContext.religion || copy.detailUnavailable}
               </dd>
             </div>
             <div>
               <dt className="font-semibold text-foreground">{copy.culture}</dt>
               <dd className="text-muted-foreground">
-                {detail.culture || copy.detailUnavailable}
+                {detail.culturalContext.culture || copy.detailUnavailable}
               </dd>
             </div>
             <div>
               <dt className="font-semibold text-foreground">{copy.customs}</dt>
               <dd className="text-muted-foreground">
-                {detail.customs || copy.detailUnavailable}
+                {detail.culturalContext.customs || copy.detailUnavailable}
               </dd>
             </div>
           </dl>
@@ -151,7 +141,7 @@ export default function WorldClockCountryModalContent({
         <article className="rounded-2xl bg-secondary p-5">
           <h3 className="text-lg font-bold">{copy.keyFacts}</h3>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-muted-foreground">
-            {detail.keyFacts.map(item => (
+            {detail.highlights.map(item => (
               <li key={item} className="rounded-xl bg-background px-4 py-3">
                 {item}
               </li>
@@ -162,7 +152,7 @@ export default function WorldClockCountryModalContent({
         <article className="rounded-2xl bg-secondary p-5">
           <h3 className="text-lg font-bold">{copy.touristSpots}</h3>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-muted-foreground">
-            {detail.touristSpots.map(item => (
+            {detail.tourism.map(item => (
               <li key={item} className="rounded-xl bg-background px-4 py-3">
                 {item}
               </li>

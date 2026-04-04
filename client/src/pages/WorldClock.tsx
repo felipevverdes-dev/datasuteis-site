@@ -26,7 +26,7 @@ import {
   getLocalizedCountryMeta,
   getWorldClockPageCopy,
 } from "@/lib/world-clock-copy";
-import type { CountryDetailContent } from "@/lib/world-clock-country-details";
+import type { CountryProfileContent } from "@/lib/world-clock-country-details";
 
 const PAGE_PATH = "/utilitarios/horario-mundial/";
 
@@ -91,7 +91,7 @@ export default function WorldClock() {
   const [modalCountryId, setModalCountryId] = useState<string | null>(null);
   const [modalState, setModalState] = useState<{
     status: "idle" | "loading" | "success" | "error";
-    data?: CountryDetailContent | null;
+    data?: CountryProfileContent | null;
   }>({ status: "idle" });
 
   const activeContinentLabel = copy.continents[activeContinent];
@@ -433,9 +433,7 @@ export default function WorldClock() {
       >
         {modalCountry ? (
           <WorldClockCountryModalContent
-            country={modalCountry}
             language={language}
-            dateLocale={dateLocale}
             status={modalState.status}
             detail={modalState.data}
           />

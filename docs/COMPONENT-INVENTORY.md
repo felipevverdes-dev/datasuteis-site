@@ -63,8 +63,17 @@
   - Card compacto de relógio por país.
 - `WorldClockCountryModalContent`
   - Conteúdo rico do modal sob demanda.
+  - Consome `CountryProfileContent` já resolvido, sem montar fallback na UI.
 - `WorldClockMarketsTable`
   - Tabela compacta desktop + cards mobile para bolsas.
+
+## Fontes de dados do modal
+
+- `client/src/lib/world-clock-countries.ts`
+  - Dataset canônico de países, capitais, fusos, aliases e regime político.
+- `client/src/lib/world-clock-country-details.ts`
+  - Fonte única dos perfis editoriais de países.
+  - Guarda perfis curados dos países prioritários e fallback automático para o restante.
 
 ## O que ainda merece refatoração
 

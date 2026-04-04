@@ -98,6 +98,10 @@ Responsável por:
 - Conteúdo multilíngue e dados editoriais centralizados:
   - `client/src/lib/world-clock-copy.ts`
   - `client/src/lib/world-clock-country-details.ts`
+- `world-clock-country-details.ts` resolve o modal a partir de 3 camadas:
+  - dataset canônico de países em `world-clock-countries.ts`
+  - perfis curados/overrides para países prioritários
+  - fallback editorial automático por continente para cobertura total do modal
 - Comparador entre países removido em favor de:
   - navegação horizontal por continentes
   - busca local por país, capital e aliases
@@ -116,6 +120,15 @@ Responsável por:
   - reaproveitamento do último snapshot válido
   - fallback degradado curto quando o provider falha
   - refresh manual com bypass controlado de cache
+
+## Fluxo do modal de país
+
+1. O usuário clica em um card de país em `/utilitarios/horario-mundial/`.
+2. `WorldClock` faz lazy load de `world-clock-country-details.ts`.
+3. `loadCountryDetailContent(countryId, language)` resolve um `CountryProfileContent`.
+4. Se houver perfil curado, ele é mesclado sobre a base.
+5. Se não houver conteúdo específico, o sistema gera um fallback editorial completo usando capital, idiomas, regime político, fusos e contexto continental.
+6. `WorldClockCountryModalContent` renderiza sempre a mesma hierarquia visual, sem depender de campos opcionais soltos.
 
 ## Pontos de dívida técnica ainda existentes
 

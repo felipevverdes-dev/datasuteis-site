@@ -1,8 +1,19 @@
 import type { SupportedLanguage } from "@/lib/site";
+import {
+  getLocalizedCountryMeta,
+  getWorldClockPageCopy,
+} from "@/lib/world-clock-copy";
+import {
+  getCountryById,
+  type Continent,
+  type WorldCountryDefinition,
+} from "@/lib/world-clock-countries";
 
 type Localized<T> = Record<SupportedLanguage, T>;
+type LocalizedPartial<T> = Partial<Record<SupportedLanguage, T>>;
+type LocalizedValue<T> = T | LocalizedPartial<T>;
 
-export interface CountryDetailContent {
+interface LegacyCountryDetailContent {
   leader: string;
   nationalMilestone: string;
   capitalAltitudeMeters: number | null;
@@ -16,7 +27,53 @@ export interface CountryDetailContent {
   customs: string;
 }
 
-const TOURIST_SPOTS = {
+export interface CountryProfileQuickFacts {
+  politicalLeader: string;
+  nationalMilestone: string;
+  population: string;
+  languages: string;
+  capitalAltitude: string;
+}
+
+export interface CountryProfileCulturalContext {
+  seasons: string;
+  climate: string;
+  religion: string;
+  culture: string;
+  customs: string;
+}
+
+export interface CountryProfileContent {
+  countryId: string;
+  editorialSummary: string;
+  overview: string;
+  quickFacts: CountryProfileQuickFacts;
+  culturalContext: CountryProfileCulturalContext;
+  highlights: string[];
+  tourism: string[];
+  source: "curated" | "fallback";
+}
+
+interface CountryProfileSeed {
+  editorialSummary?: LocalizedValue<string>;
+  overview?: LocalizedValue<string>;
+  quickFacts?: {
+    politicalLeader?: LocalizedValue<string>;
+    nationalMilestone?: LocalizedValue<string>;
+    capitalAltitudeMeters?: number | null;
+  };
+  culturalContext?: {
+    seasons?: LocalizedValue<string>;
+    climate?: LocalizedValue<string>;
+    religion?: LocalizedValue<string>;
+    culture?: LocalizedValue<string>;
+    customs?: LocalizedValue<string>;
+  };
+  highlights?: LocalizedValue<string[]>;
+  tourism?: LocalizedValue<string[]>;
+}
+
+const TOURIST_SPOTS: Partial<Record<string, string[]>> = {
   br: [
     "Cristo Redentor",
     "Lençóis Maranhenses",
@@ -72,12 +129,12 @@ const TOURIST_SPOTS = {
     "Chinatown",
     "Little India",
   ],
-} satisfies Partial<Record<string, string[]>>;
+};
 
 const COUNTRY_DETAILS: Record<
   string,
-  Localized<CountryDetailContent>
-> = {} as Record<string, Localized<CountryDetailContent>>;
+  Localized<LegacyCountryDetailContent>
+> = {} as Record<string, Localized<LegacyCountryDetailContent>>;
 
 Object.assign(COUNTRY_DETAILS, {
   br: {
@@ -315,6 +372,265 @@ Object.assign(COUNTRY_DETAILS, {
     },
   },
 });
+
+const LOCALE_BY_LANGUAGE: Record<SupportedLanguage, string> = {
+  pt: "pt-BR",
+  en: "en-US",
+  es: "es-ES",
+};
+
+const CURATED_PROFILE_SEEDS: Partial<Record<string, CountryProfileSeed>> = {
+  br: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Luiz Inácio Lula da Silva",
+        en: "President: Luiz Inácio Lula da Silva",
+        es: "Presidente: Luiz Inácio Lula da Silva",
+      },
+    },
+  },
+  us: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Donald J. Trump",
+        en: "President: Donald J. Trump",
+        es: "Presidente: Donald J. Trump",
+      },
+    },
+  },
+  gb: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Primeiro-ministro: Keir Starmer",
+        en: "Prime Minister: Keir Starmer",
+        es: "Primer ministro: Keir Starmer",
+      },
+    },
+  },
+  ca: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Primeiro-ministro: Mark Carney",
+        en: "Prime Minister: Mark Carney",
+        es: "Primer ministro: Mark Carney",
+      },
+    },
+  },
+  au: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Primeiro-ministro: Anthony Albanese",
+        en: "Prime Minister: Anthony Albanese",
+        es: "Primer ministro: Anthony Albanese",
+      },
+    },
+  },
+  sg: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Primeiro-ministro: Lawrence Wong",
+        en: "Prime Minister: Lawrence Wong",
+        es: "Primer ministro: Lawrence Wong",
+      },
+    },
+  },
+  jp: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Primeiro-ministro: Shigeru Ishiba",
+        en: "Prime Minister: Shigeru Ishiba",
+        es: "Primer ministro: Shigeru Ishiba",
+      },
+    },
+  },
+  cn: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Xi Jinping",
+        en: "President: Xi Jinping",
+        es: "Presidente: Xi Jinping",
+      },
+    },
+  },
+  in: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Primeiro-ministro: Narendra Modi",
+        en: "Prime Minister: Narendra Modi",
+        es: "Primer ministro: Narendra Modi",
+      },
+    },
+  },
+  fr: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Emmanuel Macron",
+        en: "President: Emmanuel Macron",
+        es: "Presidente: Emmanuel Macron",
+      },
+    },
+  },
+  de: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Chanceler: Friedrich Merz",
+        en: "Chancellor: Friedrich Merz",
+        es: "Canciller: Friedrich Merz",
+      },
+    },
+  },
+  ch: {
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidência anual do Conselho Federal em atualização editorial.",
+        en: "The rotating Federal Council presidency is under editorial review.",
+        es: "La presidencia rotativa del Consejo Federal está en revisión editorial.",
+      },
+    },
+  },
+  it: {
+    editorialSummary:
+      "A Itália combina patrimônio histórico, indústria, gastronomia e centros urbanos que seguem relevantes para turismo, luxo, manufatura e decisões europeias.",
+    overview:
+      "A Itália mantém peso cultural, industrial e diplomático na Europa, com Roma concentrando instituições nacionais e Milão operando como polo financeiro, de moda e de serviços. O país une turismo de escala global, cadeias de manufatura sofisticadas e forte presença regional em design, alimentos e maquinário.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Primeira-ministra: Giorgia Meloni",
+        en: "Prime Minister: Giorgia Meloni",
+        es: "Primera ministra: Giorgia Meloni",
+      },
+      nationalMilestone: "Unificação do Reino da Itália em 17 de março de 1861.",
+      capitalAltitudeMeters: 21,
+    },
+    culturalContext: {
+      seasons:
+        "As quatro estações do hemisfério norte são bem marcadas, com verão intenso em áreas mediterrâneas e inverno mais frio no norte e nas regiões alpinas.",
+      climate:
+        "Predominam climas mediterrâneos, temperados e alpinos, com variações relevantes entre norte, centro e sul.",
+      religion:
+        "O catolicismo tem presença histórica forte, convivendo com diversidade religiosa crescente e maior secularização em centros urbanos.",
+      culture:
+        "Patrimônio artístico, culinária regional, moda, design, ópera e vida urbana em torno de praças e centros históricos marcam a identidade italiana.",
+      customs:
+        "Refeições longas, atenção à convivência presencial, valorização da família e apego a rotinas regionais fazem parte do cotidiano local.",
+    },
+    highlights: [
+      "Roma concentra governo, patrimônio clássico e forte fluxo turístico.",
+      "Milão é referência em finanças, moda, design e feiras de negócios.",
+      "A economia mistura indústria de alta especialização, alimentos, luxo e serviços.",
+      "O país tem forte diversidade regional entre norte industrial, centro histórico e sul mediterrâneo.",
+      "Infraestrutura ferroviária e aeroportuária sustenta deslocamentos internos e internacionais.",
+    ],
+    tourism: ["Coliseu", "Roma histórica", "Veneza", "Florença", "Costa Amalfitana"],
+  },
+  es: {
+    editorialSummary:
+      "A Espanha combina turismo, serviços, logística, energia e grandes centros urbanos, com Madri e Barcelona puxando negócios e conectividade europeia.",
+    overview:
+      "A Espanha reúne peso turístico, infraestrutura moderna, setor de serviços robusto e uma economia integrada à União Europeia. Madri centraliza governo, finanças e conexões corporativas, enquanto outras regiões ganham destaque em indústria, inovação, mobilidade e hospitalidade.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente do Governo: Pedro Sanchez",
+        en: "Prime Minister: Pedro Sanchez",
+        es: "Presidente del Gobierno: Pedro Sanchez",
+      },
+      nationalMilestone:
+        "Constituição de 1978, marco da redemocratização contemporânea.",
+      capitalAltitudeMeters: 667,
+    },
+    culturalContext: {
+      seasons:
+        "As estações do hemisfério norte são bem definidas, com verão quente e seco em grande parte do território e inverno mais rigoroso no interior.",
+      climate:
+        "Predominam climas mediterrâneos, semiáridos e de montanha, com forte contraste entre litoral, interior e arquipélagos.",
+      religion:
+        "O catolicismo segue como referência histórica, convivendo com maior secularização e diversidade religiosa contemporânea.",
+      culture:
+        "Gastronomia, festas regionais, futebol, patrimônio histórico e vida social intensa em ruas e praças definem a experiência cultural espanhola.",
+      customs:
+        "Horários flexíveis para refeições, convivência em grupo, calendário festivo regional e forte uso do espaço público são hábitos frequentes.",
+    },
+    highlights: [
+      "Madri é centro político, financeiro e logístico do país.",
+      "Barcelona amplia o peso espanhol em turismo, design, tecnologia e comércio exterior.",
+      "A Espanha opera com diferenças claras entre península, ilhas e comunidades autônomas.",
+      "Turismo, energia renovável, alimentos e serviços seguem pilares econômicos relevantes.",
+      "O calendário de férias e feriados impacta mobilidade, consumo e sazonalidade de negócios.",
+    ],
+    tourism: ["Museu do Prado", "Sagrada Família", "Sevilha histórica", "Alhambra", "Ilhas Canárias"],
+  },
+  pt: {
+    editorialSummary:
+      "Portugal combina escala compacta, forte vocação atlântica, turismo, serviços e uma leitura de fuso estratégica para quem acompanha Europa continental e Açores.",
+    overview:
+      "Portugal reúne estabilidade institucional, presença europeia, turismo internacional e uma economia aberta em serviços, tecnologia, logística, energia e alimentação. Lisboa concentra governo, negócios e conexões internacionais, enquanto o país preserva forte identidade histórica ligada ao Atlântico.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Primeiro-ministro: Luis Montenegro",
+        en: "Prime Minister: Luis Montenegro",
+        es: "Primer ministro: Luis Montenegro",
+      },
+      nationalMilestone:
+        "Restauração da Independência em 1º de dezembro de 1640 como marco histórico central.",
+      capitalAltitudeMeters: null,
+    },
+    culturalContext: {
+      seasons:
+        "As estações do hemisfério norte são suaves no litoral e mais contrastadas no interior, com verão seco e inverno chuvoso em muitas áreas.",
+      climate:
+        "Predominam climas mediterrâneos e oceânicos, com diferenças entre costa atlântica, interior e arquipélagos.",
+      religion:
+        "O catolicismo tem forte presença histórica, hoje acompanhado por maior diversidade religiosa e secularização gradual.",
+      culture:
+        "Azulejos, literatura, música, gastronomia, tradição marítima e centros históricos compactos marcam a identidade portuguesa.",
+      customs:
+        "Vida urbana de escala humana, refeições valorizadas, trato cordial e forte ligação a datas tradicionais são hábitos recorrentes.",
+    },
+    highlights: [
+      "Lisboa concentra governo, turismo, tecnologia e serviços.",
+      "O país acompanha tanto o fuso continental europeu quanto os Açores.",
+      "Portos, logística atlântica e turismo ampliam sua relevância econômica.",
+      "A escala territorial compacta favorece deslocamentos internos relativamente rápidos.",
+      "O calendário europeu influencia negócios, viagens e temporada turística.",
+    ],
+    tourism: ["Torre de Belem", "Alfama", "Porto histórico", "Sintra", "Açores"],
+  },
+  mx: {
+    editorialSummary:
+      "O México combina escala industrial, integração com os Estados Unidos, turismo e uma leitura de fusos importante para operações nas Américas.",
+    overview:
+      "O México reúne peso demográfico, cadeias industriais integradas à América do Norte, forte presença turística e grande diversidade regional. A Cidade do México concentra governo, serviços e cultura, enquanto zonas industriais e fronteiriças ampliam a importância econômica do país.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidenta: Claudia Sheinbaum",
+        en: "President: Claudia Sheinbaum",
+        es: "Presidenta: Claudia Sheinbaum",
+      },
+      nationalMilestone: "Início da Independência em 16 de setembro de 1810.",
+      capitalAltitudeMeters: 2250,
+    },
+    culturalContext: {
+      seasons:
+        "As estações do hemisfério norte se combinam com períodos secos e chuvosos, especialmente em áreas tropicais e de altitude.",
+      climate:
+        "Há grande variedade entre clima árido, tropical, temperado e de altitude, dependendo da região.",
+      religion:
+        "O catolicismo mantém presença histórica forte, ao lado de crescente pluralidade religiosa e secular.",
+      culture:
+        "Patrimônio indígena e colonial, gastronomia, música, artesanato e forte vida urbana moldam a identidade mexicana.",
+      customs:
+        "Encontros familiares, festividades cívicas e religiosas e comunicação calorosa são traços frequentes do cotidiano.",
+    },
+    highlights: [
+      "A Cidade do México é um dos maiores centros urbanos do mundo hispânico.",
+      "A economia mistura indústria, energia, serviços, logística e turismo.",
+      "O país aparece com múltiplos fusos relevantes no utilitário.",
+      "A integração comercial com os Estados Unidos afeta diretamente calendário e mercado de trabalho.",
+      "Patrimônio arqueológico e cultural amplia a relevância turística internacional.",
+    ],
+    tourism: ["Centro histórico da Cidade do México", "Chichén Itzá", "Oaxaca", "Cancún", "San Miguel de Allende"],
+  },
+};
 
 Object.assign(COUNTRY_DETAILS, {
   ca: {
@@ -1110,14 +1426,711 @@ Object.assign(COUNTRY_DETAILS, {
   },
 });
 
+Object.assign(CURATED_PROFILE_SEEDS, {
+  ar: {
+    editorialSummary:
+      "A Argentina combina peso agroindustrial, serviços, energia e uma capital de forte densidade cultural, política e financeira no Cone Sul.",
+    overview:
+      "A Argentina reúne relevância agrícola, industrial e energética, além de uma vida urbana marcada por cultura, universidades e serviços. Buenos Aires concentra governo, mídia, finanças e conexões internacionais, com forte influência sobre a agenda econômica e política nacional.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Javier Milei",
+        en: "President: Javier Milei",
+        es: "Presidente: Javier Milei",
+      },
+      nationalMilestone: "Independência em 9 de julho de 1816.",
+      capitalAltitudeMeters: 25,
+    },
+    culturalContext: {
+      seasons:
+        "Como o país está no hemisfério sul, o verão vai de dezembro a março e o inverno de junho a setembro, com forte contraste latitudinal.",
+      climate:
+        "Predominam climas temperados, áridos, frios andinos e patagônicos, com variações amplas entre norte e sul.",
+      religion:
+        "O catolicismo tem peso histórico, convivendo com maior pluralidade religiosa e secularização urbana.",
+      culture:
+        "Literatura, tango, futebol, carne bovina, vida urbana e debates públicos intensos marcam a identidade argentina.",
+      customs:
+        "Conversas longas, encontros sociais frequentes, consumo de mate e forte senso de vida coletiva fazem parte da rotina local.",
+    },
+    highlights: [
+      "Buenos Aires concentra política, finanças, universidades e produção cultural.",
+      "O país tem grande presença agroexportadora e cadeias energéticas relevantes.",
+      "A geografia vai do norte subtropical à Patagônia fria e ventosa.",
+      "A agenda econômica costuma repercutir rapidamente no cotidiano urbano e empresarial.",
+      "O fuso nacional facilita a leitura operacional para o restante da América do Sul.",
+    ],
+    tourism: ["Buenos Aires histórica", "Patagônia", "Mendoza", "Bariloche", "Cataratas do Iguaçu lado argentino"],
+  },
+  za: {
+    editorialSummary:
+      "A África do Sul combina peso econômico regional, finanças, mineração, logística e uma capital administrativa em altitude relevante para o sul da África.",
+    overview:
+      "A África do Sul reúne um dos ambientes econômicos mais diversificados do continente africano, com destaque para finanças, mineração, indústria, agricultura e logística. Pretória concentra a administração federal, enquanto Joanesburgo e Cidade do Cabo ampliam o alcance financeiro, turístico e institucional do país.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Cyril Ramaphosa",
+        en: "President: Cyril Ramaphosa",
+        es: "Presidente: Cyril Ramaphosa",
+      },
+      nationalMilestone:
+        "27 de abril de 1994, marco das primeiras eleições democráticas multirraciais.",
+      capitalAltitudeMeters: 1339,
+    },
+    culturalContext: {
+      seasons:
+        "No hemisfério sul, verão e inverno seguem calendário oposto ao da Europa, com diferenças regionais relevantes entre interior e litoral.",
+      climate:
+        "Há predominância de climas semiáridos, subtropicais e mediterrâneos em partes do país, com forte diversidade regional.",
+      religion:
+        "Predomina o cristianismo, com diversidade de tradições africanas, comunidades muçulmanas, hindus e outras expressões religiosas.",
+      culture:
+        "A vida cultural sul-africana combina múltiplas línguas, heranças africanas, europeias e asiáticas, música forte e identidade urbana vibrante.",
+      customs:
+        "Hospitalidade, valorização das comunidades locais e leitura cuidadosa do contexto social e histórico fazem parte da experiência cotidiana.",
+    },
+    highlights: [
+      "Pretória é a capital administrativa usada como referência principal na ferramenta.",
+      "Joanesburgo segue como grande centro financeiro e empresarial.",
+      "O país desempenha papel estratégico em comércio, mineração e infraestrutura regional.",
+      "A diversidade linguística e cultural é uma das marcas institucionais mais fortes da nação.",
+      "A combinação de safáris, litoral e centros urbanos sustenta um turismo relevante.",
+    ],
+    tourism: ["Cidade do Cabo", "Parque Kruger", "Joanesburgo histórica", "Rota Jardim", "Table Mountain"],
+  },
+  ru: {
+    editorialSummary:
+      "A Rússia combina escala territorial, peso geopolítico, energia e uma leitura de múltiplos fusos que exige atenção operacional no dia a dia.",
+    overview:
+      "A Rússia reúne vasta extensão territorial, recursos energéticos, capacidade industrial e influência geopolítica. Moscou concentra poder político, finanças, infraestrutura e decisões estratégicas, enquanto o país exige leitura cuidadosa de deslocamento temporal por operar com muitos fusos internos.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Vladimir Putin",
+        en: "President: Vladimir Putin",
+        es: "Presidente: Vladimir Putin",
+      },
+      nationalMilestone:
+        "Declaração de Soberania Estatal em 12 de junho de 1990 como marco contemporâneo.",
+      capitalAltitudeMeters: 156,
+    },
+    culturalContext: {
+      seasons:
+        "As estações do hemisfério norte são intensas, com invernos longos em muitas áreas e verões curtos em parte do território.",
+      climate:
+        "Predominam climas continentais frios, subárticos e temperados, com diferenças extremas entre oeste, Sibéria e extremo oriente.",
+      religion:
+        "A Igreja Ortodoxa Russa tem grande peso histórico, ao lado de islamismo, budismo e outras tradições regionais.",
+      culture:
+        "Literatura, música erudita, balé, ciência, patrimônio urbano e forte centralidade estatal marcam a identidade cultural russa.",
+      customs:
+        "Formalidade em certos contextos, valorização da história nacional e adaptação às grandes distâncias fazem parte da rotina local.",
+    },
+    highlights: [
+      "Moscou é o centro político, financeiro e logístico mais acompanhado internacionalmente.",
+      "O país opera com vários fusos relevantes no utilitário.",
+      "Energia, defesa, transporte e recursos naturais têm peso estrutural.",
+      "As distâncias internas influenciam fortemente comunicação, viagens e operações.",
+      "A leitura correta do horário é crítica para negociações com Europa e Ásia.",
+    ],
+    tourism: ["Praça Vermelha", "Kremlin", "São Petersburgo", "Lago Baikal", "Anel de Ouro"],
+  },
+});
+
+Object.assign(CURATED_PROFILE_SEEDS, {
+  kr: {
+    editorialSummary:
+      "A Coreia do Sul combina tecnologia, indústria, cultura pop e uma capital de grande densidade econômica no leste asiático.",
+    overview:
+      "A Coreia do Sul reúne indústria avançada, tecnologia, comércio exterior, educação e grande influência cultural contemporânea. Seul concentra governo, inovação, finanças e serviços, sustentando a posição do país como uma das economias mais conectadas da Ásia.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Lee Jae Myung",
+        en: "President: Lee Jae Myung",
+        es: "Presidente: Lee Jae Myung",
+      },
+      nationalMilestone:
+        "Fundação da República da Coreia em 15 de agosto de 1948.",
+      capitalAltitudeMeters: 38,
+    },
+    culturalContext: {
+      seasons:
+        "As quatro estações do hemisfério norte são bem definidas, com verão úmido, outono curto e inverno frio.",
+      climate:
+        "Predomina o clima temperado de monção, com picos de calor e umidade no verão e frio seco no inverno.",
+      religion:
+        "A sociedade é plural, com presença de cristianismo, budismo e uma parcela relevante sem filiação religiosa formal.",
+      culture:
+        "Tecnologia, educação, design, gastronomia, entretenimento e forte vida urbana definem a projeção cultural sul-coreana.",
+      customs:
+        "Respeito à hierarquia, atenção à etiqueta social e forte disciplina em contextos acadêmicos e profissionais são hábitos recorrentes.",
+    },
+    highlights: [
+      "Seul é um dos principais polos urbanos, tecnológicos e culturais da Ásia.",
+      "O país tem alta conectividade digital e infraestrutura urbana densa.",
+      "Eletrônicos, automóveis, semicondutores e entretenimento ampliam seu peso global.",
+      "O calendário de negócios costuma ser acompanhado de perto por empresas de tecnologia e comércio exterior.",
+      "Opera com um único fuso nacional, o que simplifica a leitura operacional.",
+    ],
+    tourism: ["Palácio Gyeongbokgung", "Seul moderna", "Busan", "Ilha de Jeju", "Bukchon Hanok Village"],
+  },
+  ae: {
+    editorialSummary:
+      "Os Emirados Árabes Unidos combinam finanças, logística, aviação, energia e uma agenda de negócios muito conectada entre Abu Dhabi e Dubai.",
+    overview:
+      "Os Emirados Árabes Unidos reúnem alta renda, infraestrutura moderna, hubs globais de aviação, logística, energia e serviços financeiros. Abu Dhabi concentra a capital federal e decisões estratégicas, enquanto Dubai amplia a projeção internacional em turismo, comércio e investimento.",
+    quickFacts: {
+      politicalLeader: {
+        pt: "Presidente: Sheikh Mohamed bin Zayed Al Nahyan",
+        en: "President: Sheikh Mohamed bin Zayed Al Nahyan",
+        es: "Presidente: Sheikh Mohamed bin Zayed Al Nahyan",
+      },
+      nationalMilestone: "Formação da federação em 2 de dezembro de 1971.",
+      capitalAltitudeMeters: 27,
+    },
+    culturalContext: {
+      seasons:
+        "As estações se percebem mais pela intensidade do calor e pela sazonalidade de eventos e turismo do que por grande contraste térmico anual.",
+      climate:
+        "Predomina o clima árido desértico, com verões muito quentes e baixa pluviosidade.",
+      religion:
+        "O islamismo é a principal referência religiosa, convivendo com ampla presença internacional e espaços de diversidade cultural.",
+      culture:
+        "A cultura local combina tradição árabe, hospitalidade, comércio, arquitetura contemporânea e forte presença de expatriados.",
+      customs:
+        "Respeito a costumes locais, atenção a contextos formais de negócio e leitura cuidadosa de feriados religiosos são atitudes importantes.",
+    },
+    highlights: [
+      "Abu Dhabi é a capital federal monitorada como referência principal.",
+      "Dubai amplia o peso do país em finanças, turismo, eventos e logística.",
+      "O país opera como hub aéreo e comercial entre Europa, Ásia e África.",
+      "Energia, construção, serviços e tecnologia convivem com forte presença internacional.",
+      "O fuso único facilita a leitura de janelas de trabalho com Oriente Médio e Ásia.",
+    ],
+    tourism: ["Grande Mesquita Sheikh Zayed", "Dubai Marina", "Louvre Abu Dhabi", "Burj Khalifa", "Deserto de Abu Dhabi"],
+  },
+});
+
+const CONTINENTAL_CONTEXT: Record<
+  Continent,
+  {
+    seasons: LocalizedPartial<string>;
+    climate: LocalizedPartial<string>;
+    culture: LocalizedPartial<string>;
+  }
+> = {
+  america: {
+    seasons: {
+      pt: "As estações variam bastante porque o continente reúne países nos hemisférios norte e sul, além de áreas tropicais com menor contraste térmico.",
+      en: "Seasons vary widely because the continent spans both hemispheres and also includes tropical areas with less thermal contrast.",
+      es: "Las estaciones varían bastante porque el continente reúne países de ambos hemisferios y áreas tropicales con menor contraste térmico.",
+    },
+    climate: {
+      pt: "O continente combina climas equatoriais, tropicais, áridos, temperados e frios, dependendo de latitude, altitude e proximidade do mar.",
+      en: "The continent combines equatorial, tropical, arid, temperate and cold climates depending on latitude, altitude and distance from the sea.",
+      es: "El continente combina climas ecuatoriales, tropicales, áridos, templados y fríos según la latitud, la altitud y la cercanía al mar.",
+    },
+    culture: {
+      pt: "A vida cultural mistura heranças indígenas, europeias, africanas e migratórias, com capitais dinâmicas e identidades regionais marcantes.",
+      en: "Cultural life blends indigenous, European, African and migratory influences, with dynamic capitals and strong regional identities.",
+      es: "La vida cultural mezcla herencias indígenas, europeas, africanas y migratorias, con capitales dinámicas e identidades regionales marcadas.",
+    },
+  },
+  asia: {
+    seasons: {
+      pt: "As estações mudam bastante entre áreas de monção, regiões áridas, latitudes temperadas e grandes altitudes.",
+      en: "Seasons change significantly between monsoon regions, arid zones, temperate latitudes and high-altitude areas.",
+      es: "Las estaciones cambian bastante entre zonas de monzón, regiones áridas, latitudes templadas y áreas de gran altitud.",
+    },
+    climate: {
+      pt: "A Ásia reúne climas de monção, áridos, continentais, alpinos e tropicais, com contrastes fortes ao longo do território.",
+      en: "Asia includes monsoon, arid, continental, alpine and tropical climates, with strong contrasts across the territory.",
+      es: "Asia reúne climas de monzón, áridos, continentales, alpinos y tropicales, con contrastes fuertes en el territorio.",
+    },
+    culture: {
+      pt: "A diversidade cultural combina antigas tradições, grandes metrópoles, religiosidades variadas e intensa vida econômica e tecnológica.",
+      en: "Cultural diversity blends ancient traditions, major metropolitan centers, varied religious life and intense economic and technological activity.",
+      es: "La diversidad cultural combina tradiciones antiguas, grandes metrópolis, religiosidades variadas e intensa vida económica y tecnológica.",
+    },
+  },
+  africa: {
+    seasons: {
+      pt: "Em muitas regiões, a percepção anual mistura estações chuvosas e secas, além de diferenças entre áreas equatoriais, savanas e zonas de altitude.",
+      en: "In many regions, the yearly rhythm mixes rainy and dry seasons as well as differences between equatorial areas, savannas and higher ground.",
+      es: "En muchas regiones, el ritmo anual mezcla estaciones lluviosas y secas, además de diferencias entre áreas ecuatoriales, sabanas y zonas altas.",
+    },
+    climate: {
+      pt: "O continente combina desertos, savanas, zonas tropicais úmidas, áreas mediterrâneas e faixas de altitude com clima mais ameno.",
+      en: "The continent combines deserts, savannas, humid tropical zones, Mediterranean areas and higher-altitude belts with milder weather.",
+      es: "El continente combina desiertos, sabanas, zonas tropicales húmedas, áreas mediterráneas y franjas de altura con clima más templado.",
+    },
+    culture: {
+      pt: "A diversidade cultural africana reúne línguas, religiões, mercados locais, música, oralidade e formas comunitárias muito distintas entre si.",
+      en: "African cultural diversity brings together many languages, religions, local markets, music, oral traditions and varied community structures.",
+      es: "La diversidad cultural africana reúne muchas lenguas, religiones, mercados locales, música, oralidad y formas comunitarias muy distintas.",
+    },
+  },
+  antarctica: {
+    seasons: {
+      pt: "A Antártida vive extremos de luz e escuridão ao longo do ano, com verão curto de operações e inverno severo.",
+      en: "Antarctica experiences extremes of daylight and darkness through the year, with a short operational summer and a severe winter.",
+      es: "La Antártida vive extremos de luz y oscuridad a lo largo del año, con un verano corto de operaciones y un invierno severo.",
+    },
+    climate: {
+      pt: "Predomina o clima polar, com baixíssimas temperaturas, ventos fortes e ambiente orientado por pesquisa científica e logística especializada.",
+      en: "A polar climate prevails, with very low temperatures, strong winds and an environment driven by scientific research and specialized logistics.",
+      es: "Predomina el clima polar, con temperaturas muy bajas, vientos fuertes y un entorno orientado a investigación científica y logística especializada.",
+    },
+    culture: {
+      pt: "A experiência humana na Antártida é ligada a estações científicas, cooperação internacional e rotinas altamente técnicas.",
+      en: "Human activity in Antarctica is tied to scientific stations, international cooperation and highly technical routines.",
+      es: "La experiencia humana en la Antártida está ligada a bases científicas, cooperación internacional y rutinas muy técnicas.",
+    },
+  },
+  europe: {
+    seasons: {
+      pt: "As quatro estações do hemisfério norte costumam ser bem percebidas, com diferenças importantes entre áreas oceânicas, continentais e mediterrâneas.",
+      en: "The four northern-hemisphere seasons are usually well defined, with important differences between oceanic, continental and Mediterranean areas.",
+      es: "Las cuatro estaciones del hemisferio norte suelen percibirse bien, con diferencias importantes entre áreas oceánicas, continentales y mediterráneas.",
+    },
+    climate: {
+      pt: "Predominam climas temperados, continentais e mediterrâneos, com variação relevante entre litoral, interior e regiões de montanha.",
+      en: "Temperate, continental and Mediterranean climates predominate, with relevant variation between coastal, inland and mountain regions.",
+      es: "Predominan climas templados, continentales y mediterráneos, con variación relevante entre litoral, interior y zonas de montaña.",
+    },
+    culture: {
+      pt: "A vida cultural combina patrimônio histórico, instituições antigas, forte mobilidade regional e capitais com intensa atividade econômica e turística.",
+      en: "Cultural life combines historical heritage, long-standing institutions, strong regional mobility and capitals with intense economic and tourist activity.",
+      es: "La vida cultural combina patrimonio histórico, instituciones antiguas, fuerte movilidad regional y capitales con intensa actividad económica y turística.",
+    },
+  },
+  oceania: {
+    seasons: {
+      pt: "As estações seguem majoritariamente o hemisfério sul, com forte influência oceânica e diferenças entre ilhas tropicais e áreas áridas do interior australiano.",
+      en: "Seasons mostly follow the southern hemisphere, with strong oceanic influence and differences between tropical islands and arid inland Australia.",
+      es: "Las estaciones siguen mayormente el hemisferio sur, con fuerte influencia oceánica y diferencias entre islas tropicales y el interior árido australiano.",
+    },
+    climate: {
+      pt: "A região combina climas oceânicos, tropicais, subtropicais e áridos, dependendo do país e da latitude.",
+      en: "The region combines oceanic, tropical, subtropical and arid climates depending on the country and latitude.",
+      es: "La región combina climas oceánicos, tropicales, subtropicales y áridos según el país y la latitud.",
+    },
+    culture: {
+      pt: "A vida cultural une heranças indígenas e oceânicas, influência britânica em vários países e forte relação com natureza, litoral e turismo.",
+      en: "Cultural life joins indigenous and Oceanian heritage, British influence in several countries and a strong relationship with nature, coastlines and tourism.",
+      es: "La vida cultural une herencias indígenas y oceánicas, influencia británica en varios países y una fuerte relación con la naturaleza, el litoral y el turismo.",
+    },
+  },
+};
+
+function resolveLocalizedValue<T>(
+  value: LocalizedValue<T> | undefined,
+  language: SupportedLanguage
+) {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    Array.isArray(value) ||
+    !("pt" in value || "en" in value || "es" in value)
+  ) {
+    return value as T;
+  }
+
+  return (
+    (value[language] as T | undefined) ??
+    (value.pt as T | undefined) ??
+    (value.en as T | undefined) ??
+    (value.es as T | undefined)
+  );
+}
+
+function formatList(items: string[], language: SupportedLanguage) {
+  if (!items.length) {
+    return getWorldClockPageCopy(language).modal.detailUnavailable;
+  }
+
+  return new Intl.ListFormat(LOCALE_BY_LANGUAGE[language], {
+    style: "long",
+    type: "conjunction",
+  }).format(items);
+}
+
+function formatPopulationValue(
+  population: number | null,
+  language: SupportedLanguage
+) {
+  if (population === null) {
+    return getWorldClockPageCopy(language).modal.detailUnavailable;
+  }
+
+  const value = new Intl.NumberFormat(LOCALE_BY_LANGUAGE[language]).format(
+    population
+  );
+
+  if (language === "en") {
+    return `About ${value} people`;
+  }
+
+  return `Aproximadamente ${value} habitantes`;
+}
+
+function formatAltitudeValue(
+  altitudeMeters: number | null | undefined,
+  language: SupportedLanguage
+) {
+  if (altitudeMeters === null || altitudeMeters === undefined) {
+    return getWorldClockPageCopy(language).modal.altitudeUnavailable;
+  }
+
+  return `${new Intl.NumberFormat(LOCALE_BY_LANGUAGE[language]).format(altitudeMeters)} m`;
+}
+
+function getTimezonesLabel(
+  country: WorldCountryDefinition,
+  language: SupportedLanguage
+) {
+  if (country.timezones.length <= 1) {
+    if (language === "en") {
+      return "The tool follows the capital city timezone as the main operational reference.";
+    }
+
+    if (language === "es") {
+      return "La herramienta usa el huso principal de la capital como referencia operativa.";
+    }
+
+    return "A ferramenta acompanha o fuso principal da capital como referência operacional.";
+  }
+
+  if (language === "en") {
+    return `The utility highlights ${country.timezones.length} relevant timezones, using the capital as the main reference.`;
+  }
+
+  if (language === "es") {
+    return `La herramienta destaca ${country.timezones.length} husos relevantes, usando la capital como referencia principal.`;
+  }
+
+  return `A ferramenta destaca ${country.timezones.length} fusos relevantes, usando a capital como referência principal.`;
+}
+
+function buildDefaultEditorialSummary(
+  country: WorldCountryDefinition,
+  language: SupportedLanguage
+) {
+  const localized = getLocalizedCountryMeta(country.id, language);
+
+  if (language === "en") {
+    return `${localized.name} is shown with ${localized.capital} as the main reference, current UTC offset and a quick operational reading of its country profile.`;
+  }
+
+  if (language === "es") {
+    return `${localized.name} aparece con ${localized.capital} como referencia principal, UTC actual y una lectura operativa rápida de su perfil nacional.`;
+  }
+
+  return `${localized.name} aparece com ${localized.capital} como referência principal, UTC atual e uma leitura operacional rápida do seu perfil nacional.`;
+}
+
+function buildDefaultOverview(
+  country: WorldCountryDefinition,
+  language: SupportedLanguage
+) {
+  const localized = getLocalizedCountryMeta(country.id, language);
+  const timezoneSentence = getTimezonesLabel(country, language);
+
+  if (language === "en") {
+    return `${localized.name} is presented from the capital city ${localized.capital}, with attention to its ${localized.politicalRegime.toLowerCase()}, current local time and the practical overlap of schedules for travel, support and international coordination. ${timezoneSentence}`;
+  }
+
+  if (language === "es") {
+    return `${localized.name} se presenta a partir de la capital ${localized.capital}, con foco en su ${localized.politicalRegime.toLowerCase()}, la hora local actual y la superposición práctica de agendas para viajes, soporte y coordinación internacional. ${timezoneSentence}`;
+  }
+
+  return `${localized.name} é apresentado a partir da capital ${localized.capital}, com foco em seu ${localized.politicalRegime.toLowerCase()}, no horário local atual e na sobreposição prática de agendas para viagem, atendimento e coordenação internacional. ${timezoneSentence}`;
+}
+
+function buildDefaultNationalMilestone(
+  country: WorldCountryDefinition,
+  language: SupportedLanguage
+) {
+  const localized = getLocalizedCountryMeta(country.id, language);
+
+  if (language === "en") {
+    return `National milestone for ${localized.name} is under editorial review for a fuller historical note.`;
+  }
+
+  if (language === "es") {
+    return `El hito nacional de ${localized.name} está en revisión editorial para una nota histórica más completa.`;
+  }
+
+  return `O marco nacional de ${localized.name} está em revisão editorial para uma nota histórica mais completa.`;
+}
+
+function buildDefaultLeader(language: SupportedLanguage) {
+  if (language === "en") {
+    return "Political leadership is under editorial review.";
+  }
+
+  if (language === "es") {
+    return "El liderazgo político está en revisión editorial.";
+  }
+
+  return "A liderança política está em revisão editorial.";
+}
+
+function buildDefaultReligion(language: SupportedLanguage) {
+  if (language === "en") {
+    return "Religious life varies by region and history, with room for both longstanding traditions and contemporary plurality.";
+  }
+
+  if (language === "es") {
+    return "La vida religiosa varía según la región y la historia, con espacio para tradiciones consolidadas y pluralidad contemporánea.";
+  }
+
+  return "A vida religiosa varia conforme a região e a história, com espaço para tradições consolidadas e pluralidade contemporânea.";
+}
+
+function buildDefaultCustoms(language: SupportedLanguage) {
+  if (language === "en") {
+    return "Daily customs tend to reflect local rhythms, public calendar habits and social norms shaped by the capital city and regional diversity.";
+  }
+
+  if (language === "es") {
+    return "Las costumbres del día a día suelen reflejar ritmos locales, calendario público y normas sociales marcadas por la capital y la diversidad regional.";
+  }
+
+  return "Os costumes do dia a dia costumam refletir ritmos locais, calendário público e normas sociais marcadas pela capital e pela diversidade regional.";
+}
+
+function buildDefaultHighlights(
+  country: WorldCountryDefinition,
+  language: SupportedLanguage
+) {
+  const localized = getLocalizedCountryMeta(country.id, language);
+  const timezonesSentence = getTimezonesLabel(country, language);
+  const languagesLabel = formatList(localized.languages, language);
+
+  if (language === "en") {
+    return [
+      `${localized.capital} is the capital used as the main reference on the page.`,
+      `Political regime: ${localized.politicalRegime}.`,
+      `Main capital timezone: ${country.capitalTimezone}.`,
+      timezonesSentence,
+      `Most visible languages in the profile: ${languagesLabel}.`,
+    ];
+  }
+
+  if (language === "es") {
+    return [
+      `${localized.capital} es la capital usada como referencia principal en la página.`,
+      `Régimen político: ${localized.politicalRegime}.`,
+      `Timezone principal de la capital: ${country.capitalTimezone}.`,
+      timezonesSentence,
+      `Idiomas más visibles del perfil: ${languagesLabel}.`,
+    ];
+  }
+
+  return [
+    `${localized.capital} é a capital usada como referência principal na página.`,
+    `Regime político: ${localized.politicalRegime}.`,
+    `Timezone principal da capital: ${country.capitalTimezone}.`,
+    timezonesSentence,
+    `Idiomas mais visíveis no perfil: ${languagesLabel}.`,
+  ];
+}
+
+function buildDefaultTourism(
+  country: WorldCountryDefinition,
+  language: SupportedLanguage
+) {
+  const localized = getLocalizedCountryMeta(country.id, language);
+  const curatedSpots = TOURIST_SPOTS[country.id];
+  if (curatedSpots?.length) {
+    return curatedSpots;
+  }
+
+  if (language === "en") {
+    return [
+      `Historic center of ${localized.capital}`,
+      `Museums and civic districts of ${localized.capital}`,
+      "National parks and scenic routes",
+      "Regional food and local markets",
+      "Cultural circuits tied to the country's history",
+    ];
+  }
+
+  if (language === "es") {
+    return [
+      `Centro histórico de ${localized.capital}`,
+      `Museos y barrios cívicos de ${localized.capital}`,
+      "Parques nacionales y rutas escénicas",
+      "Gastronomía regional y mercados locales",
+      "Circuitos culturales ligados a la historia del país",
+    ];
+  }
+
+  return [
+    `Centro histórico de ${localized.capital}`,
+    `Museus e bairros cívicos de ${localized.capital}`,
+    "Parques nacionais e rotas cênicas",
+    "Gastronomia regional e mercados locais",
+    "Circuitos culturais ligados à história do país",
+  ];
+}
+
+function convertLegacyContent(
+  country: WorldCountryDefinition,
+  language: SupportedLanguage,
+  detail: LegacyCountryDetailContent
+): CountryProfileContent {
+  const localized = getLocalizedCountryMeta(country.id, language);
+
+  return {
+    countryId: country.id,
+    editorialSummary: buildDefaultEditorialSummary(country, language),
+    overview: detail.summary,
+    quickFacts: {
+      politicalLeader: detail.leader || buildDefaultLeader(language),
+      nationalMilestone:
+        detail.nationalMilestone ||
+        buildDefaultNationalMilestone(country, language),
+      population: formatPopulationValue(country.population, language),
+      languages: formatList(localized.languages, language),
+      capitalAltitude: formatAltitudeValue(detail.capitalAltitudeMeters, language),
+    },
+    culturalContext: {
+      seasons:
+        detail.seasons ||
+        resolveLocalizedValue(
+          CONTINENTAL_CONTEXT[country.continent].seasons,
+          language
+        )!,
+      climate:
+        detail.predominantClimate ||
+        resolveLocalizedValue(
+          CONTINENTAL_CONTEXT[country.continent].climate,
+          language
+        )!,
+      religion: detail.religion || buildDefaultReligion(language),
+      culture:
+        detail.culture ||
+        resolveLocalizedValue(
+          CONTINENTAL_CONTEXT[country.continent].culture,
+          language
+        )!,
+      customs: detail.customs || buildDefaultCustoms(language),
+    },
+    highlights: detail.keyFacts?.length
+      ? detail.keyFacts
+      : buildDefaultHighlights(country, language),
+    tourism: detail.touristSpots?.length
+      ? detail.touristSpots
+      : buildDefaultTourism(country, language),
+    source: "curated",
+  };
+}
+
+function buildFallbackProfile(
+  country: WorldCountryDefinition,
+  language: SupportedLanguage
+): CountryProfileContent {
+  const localized = getLocalizedCountryMeta(country.id, language);
+  const continentContext = CONTINENTAL_CONTEXT[country.continent];
+
+  return {
+    countryId: country.id,
+    editorialSummary: buildDefaultEditorialSummary(country, language),
+    overview: buildDefaultOverview(country, language),
+    quickFacts: {
+      politicalLeader: buildDefaultLeader(language),
+      nationalMilestone: buildDefaultNationalMilestone(country, language),
+      population: formatPopulationValue(country.population, language),
+      languages: formatList(localized.languages, language),
+      capitalAltitude: formatAltitudeValue(null, language),
+    },
+    culturalContext: {
+      seasons: resolveLocalizedValue(continentContext.seasons, language)!,
+      climate: resolveLocalizedValue(continentContext.climate, language)!,
+      religion: buildDefaultReligion(language),
+      culture: resolveLocalizedValue(continentContext.culture, language)!,
+      customs: buildDefaultCustoms(language),
+    },
+    highlights: buildDefaultHighlights(country, language),
+    tourism: buildDefaultTourism(country, language),
+    source: "fallback",
+  };
+}
+
+function mergeProfileSeed(
+  baseProfile: CountryProfileContent,
+  seed: CountryProfileSeed | undefined,
+  language: SupportedLanguage
+) {
+  if (!seed) {
+    return baseProfile;
+  }
+
+  return {
+    ...baseProfile,
+    editorialSummary:
+      resolveLocalizedValue(seed.editorialSummary, language) ??
+      baseProfile.editorialSummary,
+    overview:
+      resolveLocalizedValue(seed.overview, language) ?? baseProfile.overview,
+    quickFacts: {
+      ...baseProfile.quickFacts,
+      politicalLeader:
+        resolveLocalizedValue(seed.quickFacts?.politicalLeader, language) ??
+        baseProfile.quickFacts.politicalLeader,
+      nationalMilestone:
+        resolveLocalizedValue(seed.quickFacts?.nationalMilestone, language) ??
+        baseProfile.quickFacts.nationalMilestone,
+      capitalAltitude:
+        seed.quickFacts?.capitalAltitudeMeters !== undefined
+          ? formatAltitudeValue(seed.quickFacts.capitalAltitudeMeters, language)
+          : baseProfile.quickFacts.capitalAltitude,
+    },
+    culturalContext: {
+      ...baseProfile.culturalContext,
+      seasons:
+        resolveLocalizedValue(seed.culturalContext?.seasons, language) ??
+        baseProfile.culturalContext.seasons,
+      climate:
+        resolveLocalizedValue(seed.culturalContext?.climate, language) ??
+        baseProfile.culturalContext.climate,
+      religion:
+        resolveLocalizedValue(seed.culturalContext?.religion, language) ??
+        baseProfile.culturalContext.religion,
+      culture:
+        resolveLocalizedValue(seed.culturalContext?.culture, language) ??
+        baseProfile.culturalContext.culture,
+      customs:
+        resolveLocalizedValue(seed.culturalContext?.customs, language) ??
+        baseProfile.culturalContext.customs,
+    },
+    highlights:
+      resolveLocalizedValue(seed.highlights, language) ?? baseProfile.highlights,
+    tourism:
+      resolveLocalizedValue(seed.tourism, language) ?? baseProfile.tourism,
+    source: "curated" as const,
+  };
+}
+
 export async function loadCountryDetailContent(
   countryId: string,
   language: SupportedLanguage
 ) {
-  const content = COUNTRY_DETAILS[countryId];
-  if (!content) {
-    return null;
-  }
+  const country = getCountryById(countryId);
+  const legacyContent =
+    COUNTRY_DETAILS[countryId]?.[language] ?? COUNTRY_DETAILS[countryId]?.pt;
+  const baseProfile = legacyContent
+    ? convertLegacyContent(country, language, legacyContent)
+    : buildFallbackProfile(country, language);
 
-  return content[language] ?? content.pt;
+  return mergeProfileSeed(
+    baseProfile,
+    CURATED_PROFILE_SEEDS[countryId],
+    language
+  );
 }
