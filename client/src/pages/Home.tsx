@@ -27,6 +27,7 @@ import {
 import { formatIsoDate, parseIsoDate } from "@/lib/date-utils";
 import { getGamesNavLabel, getUtilitiesNavLabel } from "@/lib/games-nav";
 import { getHomeBlogTeasers } from "@/lib/home-blog-teasers";
+import { buildFaqPageSchema } from "@/lib/navigation";
 import {
   getBackToTopLabel,
   type PageSectionNavItem,
@@ -699,6 +700,7 @@ export default function Home() {
           operatingSystem: "Web",
           url: "https://datasuteis.com.br/",
         },
+        buildFaqPageSchema(copy.faqItems),
       ],
     },
   });

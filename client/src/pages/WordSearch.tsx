@@ -16,7 +16,7 @@ import GameLanguageNotice from "@/components/layout/GameLanguageNotice";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
-import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import {
@@ -201,6 +201,7 @@ export default function WordSearch() {
         name: "Caça-Palavras Online Grátis",
         url: "https://datasuteis.com.br/jogos/caca-palavras/",
       },
+      buildFaqPageSchema(FAQ_ITEMS),
     ],
   });
 

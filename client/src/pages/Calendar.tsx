@@ -21,7 +21,7 @@ import {
   type HolidayCalculationWarning,
 } from "@/lib/holiday-service";
 import { WidgetApiError } from "@/lib/home-widgets";
-import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import NotFound from "@/pages/NotFound";
@@ -356,6 +356,7 @@ export default function Calendar({ params }: CalendarProps) {
                 ]
           ),
         },
+        buildFaqPageSchema(faqItems),
       ],
     },
   });

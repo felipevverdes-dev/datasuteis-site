@@ -263,6 +263,23 @@ function resolveBreadcrumbSchemaHref(
   return null;
 }
 
+export function buildFaqPageSchema(
+  items: Array<{ question: string; answer: string }>
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+}
+
 export function buildBreadcrumbSchema(
   items: BreadcrumbItem[],
   currentPath?: string

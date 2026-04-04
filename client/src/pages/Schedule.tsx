@@ -14,7 +14,7 @@ import {
   fetchHolidayMonthSnapshot,
   type HolidayCalculationWarning,
 } from "@/lib/holiday-service";
-import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import {
@@ -349,6 +349,7 @@ export default function Schedule() {
             },
           ]),
         },
+        buildFaqPageSchema(faqItems),
       ],
     },
   });

@@ -29,7 +29,7 @@ import {
   sanitizePlayerName,
   validatePlayerName,
 } from "@/lib/game-profile";
-import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -270,6 +270,7 @@ export default function Crossword() {
         name: "Palavras Cruzadas Online Grátis",
         url: "https://datasuteis.com.br/jogos/palavras-cruzadas/",
       },
+      buildFaqPageSchema(FAQ_ITEMS),
     ],
   });
 

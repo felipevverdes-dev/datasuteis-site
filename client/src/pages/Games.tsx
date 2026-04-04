@@ -2,7 +2,7 @@ import { ArrowRight, BookOpen, Grid3X3, Search } from "lucide-react";
 import { Link } from "wouter";
 import PageShell from "@/components/layout/PageShell";
 import { useI18n } from "@/contexts/LanguageContext";
-import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import type { SupportedLanguage } from "@/lib/site";
@@ -253,6 +253,7 @@ export default function Games() {
         { label: navigationLabels.home, href: "/" },
         { label: navigationLabels.games, href: "/jogos/" },
       ]),
+      buildFaqPageSchema(copy.faqItems),
     ],
   });
 

@@ -7,7 +7,7 @@ import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
 import { useI18n } from "@/contexts/LanguageContext";
 import { getGamesNavLabel } from "@/lib/games-nav";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
-import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import type { SupportedLanguage } from "@/lib/site";
@@ -347,18 +347,7 @@ export default function About() {
         url: "https://datasuteis.com.br/",
         email: "contato@datasuteis.com.br",
       },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: copy.faq.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer,
-          },
-        })),
-      },
+      buildFaqPageSchema(copy.faq),
     ],
   });
 

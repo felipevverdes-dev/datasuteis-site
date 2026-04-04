@@ -16,7 +16,7 @@ import {
   type BusinessDayStateOption,
 } from "@/lib/business-day-service";
 import { formatIsoDate, parseIsoDate } from "@/lib/date-utils";
-import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 
@@ -246,6 +246,7 @@ export default function Calculator() {
             { label: navigationLabels.businessDays, href: "/calcular/" },
           ]),
         },
+        buildFaqPageSchema(faqItems),
       ],
     },
   });

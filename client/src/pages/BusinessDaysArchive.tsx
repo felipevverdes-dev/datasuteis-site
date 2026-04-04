@@ -15,7 +15,7 @@ import {
   shiftMonth,
 } from "@/lib/date-utils";
 import { getHolidayName } from "@/lib/holidays";
-import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import NotFound from "@/pages/NotFound";
@@ -193,6 +193,7 @@ export default function BusinessDaysArchive({
                 ]
           ),
         },
+        buildFaqPageSchema(faqItems),
       ],
     },
   });
