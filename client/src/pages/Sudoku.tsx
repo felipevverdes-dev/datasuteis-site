@@ -11,7 +11,11 @@ import GameLanguageNotice from "@/components/layout/GameLanguageNotice";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
-import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  getNavigationLabels,
+} from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import {
@@ -191,12 +195,15 @@ export default function Sudoku() {
         playMode: "SinglePlayer",
       },
       {
-        ...buildBreadcrumbSchema([
-          { label: navigationLabels.home, href: "/" },
-          { label: navigationLabels.games },
-          { label: navigationLabels.brainGames, href: "/jogos/" },
-          { label: "Sudoku", href: "/jogos/sudoku/" },
-        ]),
+        ...buildBreadcrumbSchema(
+          [
+            { label: navigationLabels.home, href: "/" },
+            { label: navigationLabels.games, href: "/jogos/" },
+            { label: navigationLabels.brainGames, href: "/jogos/" },
+            { label: "Sudoku", href: "/jogos/sudoku/" },
+          ],
+          "/jogos/sudoku/"
+        ),
       },
       {
         "@context": "https://schema.org",

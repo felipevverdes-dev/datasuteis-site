@@ -217,8 +217,7 @@ export function getHeaderNavigation(language: SupportedLanguage) {
       id: "utilities",
       label: labels.utilities,
       href: "/utilitarios/",
-      match: path =>
-        startsWithAny(path, ["/utilitarios/", "/calculadora/"]),
+      match: path => startsWithAny(path, ["/utilitarios/", "/calculadora/"]),
     },
     {
       type: "link",
@@ -233,7 +232,12 @@ export function getHeaderNavigation(language: SupportedLanguage) {
       label: labels.about,
       href: "/sobre/",
       match: path =>
-        startsWithAny(path, ["/sobre/", "/contato/", "/privacidade/", "/termos/"]),
+        startsWithAny(path, [
+          "/sobre/",
+          "/contato/",
+          "/privacidade/",
+          "/termos/",
+        ]),
     },
   ] satisfies HeaderNavigationItem[];
 }
@@ -248,8 +252,11 @@ function resolveBreadcrumbSchemaHref(
     return normalizeSitePath(item.href);
   }
 
-  if (index !== items.length - 1) {
-    return null;
+  for (let nextIndex = index + 1; nextIndex < items.length; nextIndex += 1) {
+    const nextItem = items[nextIndex];
+    if (nextItem?.href) {
+      return normalizeSitePath(nextItem.href);
+    }
   }
 
   if (currentPath) {
@@ -269,7 +276,7 @@ export function buildFaqPageSchema(
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: items.map((item) => ({
+    mainEntity: items.map(item => ({
       "@type": "Question",
       name: item.question,
       acceptedAnswer: {
@@ -301,7 +308,10 @@ export function buildBreadcrumbSchema(
       "@type": "ListItem",
       position: index + 1,
       name: item.label,
-      item: `${SITE_URL}${item.href}`,
+      item: {
+        "@type": "Thing",
+        "@id": `${SITE_URL}${item.href}`,
+      },
     })),
   };
 }

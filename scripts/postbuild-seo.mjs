@@ -70,7 +70,8 @@ function route(
     pathname,
     title,
     description,
-    breadcrumbLabel: options.breadcrumbLabel ?? title.replace(/\s+\|\s+Datas Úteis$/, ""),
+    breadcrumbLabel:
+      options.breadcrumbLabel ?? title.replace(/\s+\|\s+Datas Úteis$/, ""),
     priority,
     changefreq,
     robots: options.robots ?? "index, follow",
@@ -303,8 +304,10 @@ function buildRoutes(blogPosts) {
   function yearPriority(year, basePriority) {
     const distance = Math.abs(year - currentYear);
     if (distance <= 1) return basePriority;
-    if (distance <= 3) return String(Math.max(0.1, parseFloat(basePriority) - 0.05).toFixed(2));
-    if (distance <= 10) return String(Math.max(0.1, parseFloat(basePriority) - 0.15).toFixed(2));
+    if (distance <= 3)
+      return String(Math.max(0.1, parseFloat(basePriority) - 0.05).toFixed(2));
+    if (distance <= 10)
+      return String(Math.max(0.1, parseFloat(basePriority) - 0.15).toFixed(2));
     return String(Math.max(0.1, parseFloat(basePriority) - 0.3).toFixed(2));
   }
 
@@ -370,7 +373,9 @@ function buildRoutes(blogPosts) {
     }
   }
 
-  return Array.from(new Map(routes.map(item => [item.pathname, item])).values());
+  return Array.from(
+    new Map(routes.map(item => [item.pathname, item])).values()
+  );
 }
 
 function escapeHtml(value) {
@@ -412,7 +417,9 @@ function enrichSchemaDates(value) {
         return [
           key,
           itemValue.map(entry =>
-            typeof entry === "object" && entry ? enrichSchemaDates(entry) : entry
+            typeof entry === "object" && entry
+              ? enrichSchemaDates(entry)
+              : entry
           ),
         ];
       }
@@ -614,23 +621,33 @@ function getBreadcrumbs(item) {
     ];
   }
 
-  return [
-    { label: HOME_LABEL, href: "/" },
-    { label },
-  ];
+  return [{ label: HOME_LABEL, href: "/" }, { label }];
+}
+
+function resolveBreadcrumbSchemaHref(items, index, currentPath) {
+  const currentItem = items[index];
+  if (currentItem?.href) {
+    return currentItem.href;
+  }
+
+  for (let nextIndex = index + 1; nextIndex < items.length; nextIndex += 1) {
+    const nextItem = items[nextIndex];
+    if (nextItem?.href) {
+      return nextItem.href;
+    }
+  }
+
+  return currentPath;
 }
 
 function serializeBreadcrumbSchema(items, currentPath) {
   const schemaItems = items.flatMap((item, index) => {
-    if (item.href) {
-      return [{ label: item.label, href: item.href }];
+    const href = resolveBreadcrumbSchemaHref(items, index, currentPath);
+    if (!href) {
+      return [];
     }
 
-    if (index === items.length - 1) {
-      return [{ label: item.label, href: currentPath }];
-    }
-
-    return [];
+    return [{ label: item.label, href }];
   });
 
   return {
@@ -640,7 +657,10 @@ function serializeBreadcrumbSchema(items, currentPath) {
       "@type": "ListItem",
       position: index + 1,
       name: item.label,
-      item: `${SITE_URL}${item.href}`,
+      item: {
+        "@type": "Thing",
+        "@id": `${SITE_URL}${item.href}`,
+      },
     })),
   };
 }
@@ -655,7 +675,6 @@ function buildBasePageSchema(item) {
     dateModified: SITE_LAST_MODIFIED_DATE,
   };
 }
-
 
 function buildRouteSchemas(item) {
   if (item.pathname === "/calcular/") {
@@ -860,8 +879,12 @@ function injectPrerenderMarkup(html, prerenderMarkup) {
 async function readBuildAssetHints() {
   const assetsDir = path.join(DIST_DIR, "assets");
   const files = await fs.readdir(assetsDir);
-  const mainModule = files.find(fileName => /^main-[A-Za-z0-9_-]+\.js$/i.test(fileName));
-  const homeModule = files.find(fileName => /^Home-[A-Za-z0-9_-]+\.js$/i.test(fileName));
+  const mainModule = files.find(fileName =>
+    /^main-[A-Za-z0-9_-]+\.js$/i.test(fileName)
+  );
+  const homeModule = files.find(fileName =>
+    /^Home-[A-Za-z0-9_-]+\.js$/i.test(fileName)
+  );
 
   return {
     mainModuleHref: mainModule ? `/assets/${mainModule}` : null,
@@ -974,7 +997,10 @@ async function buildPrerenderMap(routes) {
 async function writeRouteHtml(template, item, prerenderMap, assetHints) {
   let content = applyMetadata(template, item);
   content = optimizeAssetLoading(content, item, assetHints);
-  content = injectPrerenderMarkup(content, prerenderMap.get(item.pathname) ?? "");
+  content = injectPrerenderMarkup(
+    content,
+    prerenderMap.get(item.pathname) ?? ""
+  );
 
   const filePath =
     item.pathname === "/"
@@ -1000,24 +1026,24 @@ function buildSitemap(routes) {
   routes
     .filter(item => item.sitemap !== false)
     .forEach(item => {
-    lines.push("  <url>");
-    lines.push(`    <loc>${SITE_URL}${item.pathname}</loc>`);
-    lines.push(`    <lastmod>${lastmod}</lastmod>`);
-    lines.push(`    <changefreq>${item.changefreq}</changefreq>`);
-    lines.push(`    <priority>${item.priority}</priority>`);
-    lines.push(
-      `    <xhtml:link rel="alternate" hreflang="pt-BR" href="${buildLocalizedUrl(item.pathname, "pt")}" />`
-    );
-    lines.push(
-      `    <xhtml:link rel="alternate" hreflang="en" href="${buildLocalizedUrl(item.pathname, "en")}" />`
-    );
-    lines.push(
-      `    <xhtml:link rel="alternate" hreflang="es" href="${buildLocalizedUrl(item.pathname, "es")}" />`
-    );
-    lines.push(
-      `    <xhtml:link rel="alternate" hreflang="x-default" href="${buildLocalizedUrl(item.pathname, "pt")}" />`
-    );
-    lines.push("  </url>");
+      lines.push("  <url>");
+      lines.push(`    <loc>${SITE_URL}${item.pathname}</loc>`);
+      lines.push(`    <lastmod>${lastmod}</lastmod>`);
+      lines.push(`    <changefreq>${item.changefreq}</changefreq>`);
+      lines.push(`    <priority>${item.priority}</priority>`);
+      lines.push(
+        `    <xhtml:link rel="alternate" hreflang="pt-BR" href="${buildLocalizedUrl(item.pathname, "pt")}" />`
+      );
+      lines.push(
+        `    <xhtml:link rel="alternate" hreflang="en" href="${buildLocalizedUrl(item.pathname, "en")}" />`
+      );
+      lines.push(
+        `    <xhtml:link rel="alternate" hreflang="es" href="${buildLocalizedUrl(item.pathname, "es")}" />`
+      );
+      lines.push(
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${buildLocalizedUrl(item.pathname, "pt")}" />`
+      );
+      lines.push("  </url>");
     });
 
   lines.push("</urlset>");
