@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { type CookieConsentStatus, readStoredCookieConsent } from "@/lib/site";
 
 type AdFormat = "auto" | "rectangle" | "horizontal" | "vertical";
 
@@ -35,10 +36,16 @@ function resolveReservedHeight(
     format === "rectangle"
       ? 280
       : format === "vertical"
-        ? (isDesktop ? 600 : 320)
+        ? isDesktop
+          ? 600
+          : 320
         : format === "horizontal"
-          ? (isDesktop ? 120 : 100)
-          : (isDesktop ? 180 : 120);
+          ? isDesktop
+            ? 120
+            : 100
+          : isDesktop
+            ? 180
+            : 120;
 
   return Math.max(minHeight, formatBaseline);
 }
@@ -57,16 +64,38 @@ export default function AdSlot({
 }: AdSlotProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [consent, setConsent] = useState<CookieConsentStatus | null>(() =>
+    readStoredCookieConsent()
+  );
   const pushedRef = useRef(false);
   const reservedHeight =
     typeof window === "undefined"
       ? minHeight
       : resolveReservedHeight(format, minHeight, window.innerWidth);
+  const canRequestAds = isProductionHost && consent === "accepted";
+
+  useEffect(() => {
+    function handleConsentUpdate(event: Event) {
+      const detail = (event as CustomEvent<{ status?: CookieConsentStatus }>)
+        .detail;
+      if (detail?.status) {
+        setConsent(detail.status);
+      }
+    }
+
+    window.addEventListener("datasuteis-consent-updated", handleConsentUpdate);
+    return () => {
+      window.removeEventListener(
+        "datasuteis-consent-updated",
+        handleConsentUpdate
+      );
+    };
+  }, []);
 
   /* Lazy-load: only activate when the slot scrolls into the viewport */
   useEffect(() => {
     const node = containerRef.current;
-    if (!node || !isProductionHost) return;
+    if (!node || !canRequestAds) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -80,11 +109,11 @@ export default function AdSlot({
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, []);
+  }, [canRequestAds]);
 
   /* Push adsbygoogle once visible */
   useEffect(() => {
-    if (!isVisible || pushedRef.current || !isProductionHost) return;
+    if (!isVisible || pushedRef.current || !canRequestAds) return;
     pushedRef.current = true;
 
     try {
@@ -94,7 +123,7 @@ export default function AdSlot({
     } catch {
       /* AdSense not loaded yet – Auto Ads will fill if available */
     }
-  }, [isVisible]);
+  }, [canRequestAds, isVisible]);
 
   /* In dev/staging, show a placeholder so layout is still visible */
   if (!isProductionHost) {

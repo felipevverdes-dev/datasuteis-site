@@ -1,12 +1,8 @@
 User-agent: *
+Allow: /
 Disallow: /404
 Disallow: /404/
+Disallow: /404.html
 Disallow: /api/
-
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
 
 Sitemap: https://datasuteis.com.br/sitemap.xml
