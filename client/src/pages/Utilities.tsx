@@ -1,4 +1,11 @@
-import { Calculator, CloudSun, Coins, Dices, Sparkles } from "lucide-react";
+import {
+  Calculator,
+  Clock3,
+  CloudSun,
+  Coins,
+  Dices,
+  Sparkles,
+} from "lucide-react";
 import { Link } from "wouter";
 import PageShell from "@/components/layout/PageShell";
 import { useI18n } from "@/contexts/LanguageContext";
@@ -34,11 +41,11 @@ const COPY: Record<
     eyebrow: "Utilitários",
     title: "Utilitários de apoio para tarefas rápidas",
     description:
-      "Calculadora, sorteador, conversor de moeda e clima para tarefas rápidas do dia a dia.",
+      "Calculadora, sorteador, conversor de moeda, clima e relógio mundial para tarefas rápidas do dia a dia.",
     seoTitle:
-      "Utilitários Online | Calculadora, Sorteador, Câmbio e Clima | Datas Úteis",
+      "Utilitários Online | Calculadora, Sorteador, Câmbio, Clima e Relógio Mundial | Datas Úteis",
     seoDescription:
-      "Acesse calculadora, sorteador, conversor de moeda e clima em uma área de utilitários organizada para rotinas rápidas do dia a dia.",
+      "Acesse calculadora, sorteador, conversor de moeda, clima e relógio mundial em uma área de utilitários organizada para rotinas rápidas do dia a dia.",
     sectionLabel: "Área de ferramentas rápidas",
     cards: [
       {
@@ -69,23 +76,31 @@ const COPY: Record<
           "Consulte a temperatura atual e a previsão curta para apoiar deslocamentos e agenda externa.",
         cta: "Abrir utilitário",
       },
+      {
+        href: "/utilitarios/horario-mundial/",
+        title: "Horário mundial",
+        description:
+          "Compare fusos, acompanhe relógios internacionais e veja o horário das principais bolsas do mundo.",
+        cta: "Abrir utilitário",
+      },
     ],
     explanationTitle: "Ferramentas simples para tarefas rápidas",
     explanationText:
-      "Escolha a ferramenta que precisa para fazer contas, sortear nomes, converter valores ou checar o clima em poucos passos.",
+      "Escolha a ferramenta que precisa para fazer contas, sortear nomes, converter valores, checar o clima ou comparar horários internacionais em poucos passos.",
     examplesTitle: "Quando usar",
     examples: [
       "Use a calculadora para contas rápidas ligadas a orçamento, reajuste, porcentagem e conferência diária.",
       "Use o sorteador para definir ordem de atendimento, rodízio interno, brindes ou seleção simples de nomes.",
       "Use o conversor para checar valores em dólar, euro, libra e real antes de aprovar compras ou comparar custos.",
       "Use o clima para ajustar deslocamentos, visitas, entregas e rotinas externas com uma leitura rápida da previsão.",
+      "Use o horário mundial para comparar fusos entre países, reuniões remotas e janelas de mercado internacional.",
     ],
     faqTitle: "Perguntas frequentes",
     faqItems: [
       {
         question: "Os utilitários são gratuitos?",
         answer:
-          "Sim. Você pode usar calculadora, sorteador, conversor de moeda e clima sem pagar.",
+          "Sim. Você pode usar calculadora, sorteador, conversor de moeda, clima e horário mundial sem pagar.",
       },
       {
         question: "As páginas funcionam no celular?",
@@ -102,11 +117,11 @@ const COPY: Record<
     eyebrow: "Utilities",
     title: "Support utilities for quick tasks",
     description:
-      "Calculator, random picker, currency converter and weather for quick daily tasks.",
+      "Calculator, random picker, currency converter, weather and world clock for quick daily tasks.",
     seoTitle:
-      "Utilities | Calculator, Random Picker, Weather and Currency | Datas Úteis",
+      "Utilities | Calculator, Random Picker, Weather, Currency and World Clock | Datas Úteis",
     seoDescription:
-      "Open calculator, random picker, currency conversion and weather tools in one utility area for quick daily tasks.",
+      "Open calculator, random picker, currency conversion, weather and world clock tools in one utility area for quick daily tasks.",
     sectionLabel: "Quick tools area",
     cards: [
       {
@@ -137,23 +152,31 @@ const COPY: Record<
           "Check current temperature and a short forecast for visits and outdoor routines.",
         cta: "Open utility",
       },
+      {
+        href: "/utilitarios/horario-mundial/",
+        title: "World clock",
+        description:
+          "Compare timezones, international clocks and leading stock market hours in one place.",
+        cta: "Open utility",
+      },
     ],
     explanationTitle: "Simple tools for quick tasks",
     explanationText:
-      "Choose the tool you need to calculate, draw names, convert values or check the weather in a few steps.",
+      "Choose the tool you need to calculate, draw names, convert values, check weather or compare international timezones in a few steps.",
     examplesTitle: "When to use it",
     examples: [
       "Use the calculator for quick percentage, budget and daily checking tasks.",
       "Use the random picker for rotation order, internal draws or simple name selection.",
       "Use the currency converter before comparing costs in USD, EUR, GBP and BRL.",
       "Use the weather page to adjust visits, deliveries and outdoor routines quickly.",
+      "Use the world clock to compare countries, meeting slots and global market windows.",
     ],
     faqTitle: "Frequently asked questions",
     faqItems: [
       {
         question: "Are these utilities free?",
         answer:
-          "Yes. You can use the calculator, random picker, currency converter and weather tool without paying.",
+          "Yes. You can use the calculator, random picker, currency converter, weather tool and world clock without paying.",
       },
       {
         question: "Do these pages work on mobile?",
@@ -170,11 +193,11 @@ const COPY: Record<
     eyebrow: "Utilidades",
     title: "Utilidades de apoyo para tareas rápidas",
     description:
-      "Calculadora, sorteador, conversor de moneda y clima para tareas rápidas del día a día.",
+      "Calculadora, sorteador, conversor de moneda, clima y reloj mundial para tareas rápidas del día a día.",
     seoTitle:
-      "Utilidades | Calculadora, Sorteador, Cambio y Clima | Datas Úteis",
+      "Utilidades | Calculadora, Sorteador, Cambio, Clima y Reloj Mundial | Datas Úteis",
     seoDescription:
-      "Acceda a calculadora, sorteador, conversor de moneda y clima en una sección de utilidades organizada para tareas rápidas.",
+      "Acceda a calculadora, sorteador, conversor de moneda, clima y reloj mundial en una sección de utilidades organizada para tareas rápidas.",
     sectionLabel: "Área de herramientas rápidas",
     cards: [
       {
@@ -205,23 +228,31 @@ const COPY: Record<
           "Consulte la temperatura actual y una previsión corta para apoyar desplazamientos y agenda externa.",
         cta: "Abrir utilidad",
       },
+      {
+        href: "/utilitarios/horario-mundial/",
+        title: "Reloj mundial",
+        description:
+          "Compare husos horarios, relojes internacionales y horarios de las principales bolsas del mundo.",
+        cta: "Abrir utilidad",
+      },
     ],
     explanationTitle: "Herramientas simples para tareas rápidas",
     explanationText:
-      "Elija la herramienta que necesita para hacer cuentas, sortear nombres, convertir valores o consultar el clima en pocos pasos.",
+      "Elija la herramienta que necesita para hacer cuentas, sortear nombres, convertir valores, consultar el clima o comparar horarios internacionales en pocos pasos.",
     examplesTitle: "Cuándo usar",
     examples: [
       "Use la calculadora para porcentajes, presupuesto y conferencias rápidas.",
       "Use el sorteador para orden de atención, rotación interna o selección simple de nombres.",
       "Use el conversor para comparar valores en USD, EUR, GBP y BRL.",
       "Use el clima para ajustar visitas, entregas y rutinas externas rápidamente.",
+      "Use el reloj mundial para comparar países, reuniones remotas y ventanas de mercado global.",
     ],
     faqTitle: "Preguntas frecuentes",
     faqItems: [
       {
         question: "¿Estas utilidades son gratuitas?",
         answer:
-          "Sí. Puede usar la calculadora, el sorteador, el conversor y el clima sin pagar.",
+          "Sí. Puede usar la calculadora, el sorteador, el conversor, el clima y el reloj mundial sin pagar.",
       },
       {
         question: "¿Funcionan en el celular?",
@@ -288,8 +319,20 @@ export default function Utilities() {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
       language={language}
-      ctaTitle={language === "en" ? "Need to calculate business days?" : language === "es" ? "¿Necesita calcular días hábiles?" : "Precisa calcular dias úteis?"}
-      ctaButtonLabel={language === "en" ? "Use the calculator" : language === "es" ? "Usar la calculadora" : "Usar a calculadora"}
+      ctaTitle={
+        language === "en"
+          ? "Need to calculate business days?"
+          : language === "es"
+            ? "¿Necesita calcular días hábiles?"
+            : "Precisa calcular dias úteis?"
+      }
+      ctaButtonLabel={
+        language === "en"
+          ? "Use the calculator"
+          : language === "es"
+            ? "Usar la calculadora"
+            : "Usar a calculadora"
+      }
     >
       <section id="ferramenta" className="section-anchor page-stack">
         <div className="section-card">
@@ -306,7 +349,9 @@ export default function Utilities() {
                     ? Dices
                     : card.href === "/utilitarios/conversor-de-moeda/"
                       ? Coins
-                      : CloudSun;
+                      : card.href === "/utilitarios/horario-mundial/"
+                        ? Clock3
+                        : CloudSun;
 
               return (
                 <Link

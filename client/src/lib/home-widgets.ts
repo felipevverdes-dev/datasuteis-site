@@ -642,90 +642,31 @@ async function fetchWeatherDirect(
   }
 }
 
-async function fetchMarketOverviewFromFrankfurter() {
-  const url = new URL("https://api.frankfurter.app/latest");
-  url.searchParams.set("from", "USD");
-  url.searchParams.set("to", "BRL,EUR,GBP");
-
-  const payload = await fetchJson<{
-    amount?: number;
-    base?: string;
-    date?: string;
-    rates?: Record<string, number>;
-  }>(url.toString());
+async function fetchMarketOverviewFromApi(
+  origin = window.location.origin
+) {
+  const url = new URL("/api/widgets/overview", origin);
+  const payload = await fetchJson<Partial<MarketOverviewResponse>>(url.toString());
 
   if (
-    !payload.rates ||
-    typeof payload.rates.BRL !== "number" ||
-    typeof payload.rates.EUR !== "number" ||
-    typeof payload.rates.GBP !== "number"
+    typeof payload.updatedAt !== "string" ||
+    !Array.isArray(payload.crypto) ||
+    !Array.isArray(payload.indices) ||
+    (payload.currencies !== null &&
+      (!isRecord(payload.currencies) ||
+        payload.currencies.base !== "USD" ||
+        !isRecord(payload.currencies.rates)))
   ) {
-    throw new WidgetApiError("A resposta do câmbio veio incompleta.", {
-      code: "market_rates_incomplete",
+    throw new WidgetApiError("A resposta do overview veio incompleta.", {
+      code: "market_overview_incomplete",
       details: {
         url: url.toString(),
-        provider: "frankfurter.app",
+        provider: "datasuteis-api",
       },
     });
   }
 
-  return {
-    updatedAt: payload.date ?? new Date().toISOString(),
-    currencies: {
-      base: "USD" as const,
-      rates: {
-        USD: 1,
-        BRL: payload.rates.BRL,
-        EUR: payload.rates.EUR,
-        GBP: payload.rates.GBP,
-      },
-    },
-    crypto: [],
-    indices: [],
-  } satisfies MarketOverviewResponse;
-}
-
-async function fetchMarketOverviewFromOpenErApi() {
-  const url = "https://open.er-api.com/v6/latest/USD";
-  const payload = await fetchJson<{
-    result?: string;
-    time_last_update_utc?: string;
-    rates?: Record<string, number>;
-  }>(url);
-
-  if (
-    payload.result !== "success" ||
-    !payload.rates ||
-    typeof payload.rates.BRL !== "number" ||
-    typeof payload.rates.EUR !== "number" ||
-    typeof payload.rates.GBP !== "number"
-  ) {
-    throw new WidgetApiError(
-      "A resposta alternativa do câmbio veio incompleta.",
-      {
-        code: "market_alt_rates_incomplete",
-        details: {
-          url,
-          provider: "open.er-api.com",
-        },
-      }
-    );
-  }
-
-  return {
-    updatedAt: payload.time_last_update_utc ?? new Date().toISOString(),
-    currencies: {
-      base: "USD" as const,
-      rates: {
-        USD: 1,
-        BRL: payload.rates.BRL,
-        EUR: payload.rates.EUR,
-        GBP: payload.rates.GBP,
-      },
-    },
-    crypto: [],
-    indices: [],
-  } satisfies MarketOverviewResponse;
+  return payload as MarketOverviewResponse;
 }
 
 export async function fetchMarketOverviewSnapshot(
@@ -737,24 +678,9 @@ export async function fetchMarketOverviewSnapshot(
   }
 
   try {
-    const providers = [
-      fetchMarketOverviewFromFrankfurter,
-      fetchMarketOverviewFromOpenErApi,
-    ] as const;
-
-    for (const loadProvider of providers) {
-      try {
-        const response = await loadProvider();
-        writeWidgetCache("market-overview", response);
-        return response;
-      } catch {
-        // Try the next public provider.
-      }
-    }
-
-    throw new WidgetApiError("Não foi possível carregar o câmbio.", {
-      code: "market_overview_unavailable",
-    });
+    const response = await fetchMarketOverviewFromApi(_origin);
+    writeWidgetCache("market-overview", response);
+    return response;
   } catch (apiError) {
     throw apiError instanceof WidgetApiError
       ? apiError

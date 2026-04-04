@@ -11,6 +11,7 @@ import {
   type MarketOverviewResponse,
   type WeatherSnapshotResponse,
 } from "@/lib/home-widgets";
+import { scheduleWhenIdle } from "@/lib/idle";
 import { useI18n } from "@/contexts/LanguageContext";
 import { getWeatherIcon, getWeatherLabel } from "@/lib/weather-display";
 import type { SupportedLanguage } from "@/lib/site";
@@ -114,10 +115,15 @@ function isBrazilCountry(value: string | undefined) {
     .trim()
     .toLowerCase();
 
-  return normalized === "brasil" || normalized === "brazil" || normalized === "br";
+  return (
+    normalized === "brasil" || normalized === "brazil" || normalized === "br"
+  );
 }
 
-function abbreviateRegionLabel(region: string | undefined, country: string | undefined) {
+function abbreviateRegionLabel(
+  region: string | undefined,
+  country: string | undefined
+) {
   const trimmedRegion = region?.trim() ?? "";
   if (!trimmedRegion) {
     return "";
@@ -137,10 +143,7 @@ function abbreviateRegionLabel(region: string | undefined, country: string | und
   );
 }
 
-function getCompactLocationLabel(
-  location: GeoLocation,
-  fallback: string
-) {
+function getCompactLocationLabel(location: GeoLocation, fallback: string) {
   const city = location.city.trim();
   const region = abbreviateRegionLabel(location.region, location.country);
 
@@ -157,25 +160,6 @@ function getCompactLocationLabel(
   }
 
   return location.country.trim() || fallback;
-}
-
-function runWhenIdle(callback: () => void) {
-  const pageWindow = window as Window &
-    typeof globalThis & {
-      requestIdleCallback?: (
-        callback: IdleRequestCallback,
-        options?: IdleRequestOptions
-      ) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-
-  if (typeof pageWindow.requestIdleCallback === "function") {
-    const handle = pageWindow.requestIdleCallback(callback, { timeout: 1200 });
-    return () => pageWindow.cancelIdleCallback?.(handle);
-  }
-
-  const timeout = window.setTimeout(callback, 180);
-  return () => window.clearTimeout(timeout);
 }
 
 function getTimezone() {
@@ -251,7 +235,7 @@ export function useHeaderInfoClusterData() {
       }
     }
 
-    const cleanup = runWhenIdle(() => {
+    const cleanup = scheduleWhenIdle(() => {
       void loadOverview();
     });
     const intervalId = window.setInterval(
@@ -302,7 +286,7 @@ export function useHeaderInfoClusterData() {
       void loadWeather();
     }
 
-    const cleanup = runWhenIdle(() => {
+    const cleanup = scheduleWhenIdle(() => {
       triggerLoad();
     });
     const intervalId = window.setInterval(
@@ -370,8 +354,7 @@ export function useHeaderInfoClusterData() {
     const weatherTemperature =
       weatherSummary?.temperature ?? copy.weatherFallbackValue;
     const weatherCondition = weatherSummary?.label ?? copy.weatherUnavailable;
-    const ratesTitleText =
-      currencySummary?.text ?? copy.exchangeUnavailable;
+    const ratesTitleText = currencySummary?.text ?? copy.exchangeUnavailable;
     const ratesSpeechText =
       currencySummary?.speechText ?? copy.exchangeUnavailable;
 
@@ -484,7 +467,11 @@ function LoadingUnifiedInfoCard({ onClick }: { onClick?: () => void }) {
   );
 }
 
-export function HeaderInfoCluster({ mode, data, onClick }: HeaderInfoClusterProps) {
+export function HeaderInfoCluster({
+  mode,
+  data,
+  onClick,
+}: HeaderInfoClusterProps) {
   const isDesktop = mode === "desktop";
   const visibilityClass = isDesktop
     ? "grid min-w-0 grid-cols-[minmax(0,15rem)_2rem] items-center gap-1.5"
@@ -550,9 +537,9 @@ export function HeaderInfoCluster({ mode, data, onClick }: HeaderInfoClusterProp
               : data.copy.usePreciseLocation}
           </span>
         </button>
-      ) : (
-        isDesktop ? <span className="block h-8 w-8" aria-hidden="true" /> : null
-      )}
+      ) : isDesktop ? (
+        <span className="block h-8 w-8" aria-hidden="true" />
+      ) : null}
     </div>
   );
 }

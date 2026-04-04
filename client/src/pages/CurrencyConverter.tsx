@@ -10,6 +10,7 @@ import {
   getBrlPairRate,
   type MarketOverviewResponse,
 } from "@/lib/home-widgets";
+import { scheduleWhenIdle } from "@/lib/idle";
 import { buildBreadcrumbSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
@@ -193,25 +194,6 @@ const COPY: Record<
   },
 };
 
-function runWhenIdle(callback: () => void) {
-  const pageWindow = window as Window &
-    typeof globalThis & {
-      requestIdleCallback?: (
-        callback: IdleRequestCallback,
-        options?: IdleRequestOptions
-      ) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-
-  if (typeof pageWindow.requestIdleCallback === "function") {
-    const handle = pageWindow.requestIdleCallback(callback, { timeout: 1500 });
-    return () => pageWindow.cancelIdleCallback?.(handle);
-  }
-
-  const timeout = window.setTimeout(callback, 250);
-  return () => window.clearTimeout(timeout);
-}
-
 export default function CurrencyConverter() {
   const { language } = useI18n();
   const copy = COPY[language] ?? COPY.pt;
@@ -254,27 +236,30 @@ export default function CurrencyConverter() {
   useEffect(() => {
     let cancelled = false;
 
-    const cleanup = runWhenIdle(() => {
-      void (async () => {
-        setLoading(true);
-        setError("");
-        try {
-          const payload = await fetchMarketOverviewSnapshot();
-          if (!cancelled) {
-            setOverview(payload);
+    const cleanup = scheduleWhenIdle(
+      () => {
+        void (async () => {
+          setLoading(true);
+          setError("");
+          try {
+            const payload = await fetchMarketOverviewSnapshot();
+            if (!cancelled) {
+              setOverview(payload);
+            }
+          } catch {
+            if (!cancelled) {
+              setOverview(null);
+              setError(copy.errorLoad);
+            }
+          } finally {
+            if (!cancelled) {
+              setLoading(false);
+            }
           }
-        } catch {
-          if (!cancelled) {
-            setOverview(null);
-            setError(copy.errorLoad);
-          }
-        } finally {
-          if (!cancelled) {
-            setLoading(false);
-          }
-        }
-      })();
-    });
+        })();
+      },
+      { timeout: 1500, fallbackDelay: 250 }
+    );
 
     return () => {
       cancelled = true;

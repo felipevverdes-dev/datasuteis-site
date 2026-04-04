@@ -1,8 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Express } from "express";
+import { GLOBAL_MARKETS } from "../shared/global-markets";
 
 const REQUEST_HEADERS = {
-  "user-agent": "Mozilla/5.0 (compatible; DatasUteis/1.0; +https://datasuteis.com.br)",
+  "user-agent":
+    "Mozilla/5.0 (compatible; DatasUteis/1.0; +https://datasuteis.com.br)",
 };
 
 const DEFAULT_TIMEZONE = "UTC";
@@ -114,7 +116,11 @@ function getQueryParam(req: ApiRequest, key: string) {
   return getRequestUrl(req).searchParams.get(key) ?? undefined;
 }
 
-async function getCached<T>(key: string, ttlMs: number, loader: () => Promise<T>) {
+async function getCached<T>(
+  key: string,
+  ttlMs: number,
+  loader: () => Promise<T>
+) {
   const current = cache.get(key);
   if (current && current.expiresAt > Date.now()) {
     return current.value as T;
@@ -157,7 +163,10 @@ function parseNumber(value: unknown) {
 function decodeHtmlEntities(value: string) {
   let current = value;
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    current = current.replace(/&[a-z0-9#]+;/gi, entity => HTML_ENTITY_MAP[entity] ?? entity);
+    current = current.replace(
+      /&[a-z0-9#]+;/gi,
+      entity => HTML_ENTITY_MAP[entity] ?? entity
+    );
   }
   return current;
 }
@@ -197,9 +206,7 @@ function sanitizeTimezone(value: string | undefined) {
     return DEFAULT_TIMEZONE;
   }
 
-  const normalized = value
-    .replace(/[^A-Za-z0-9_+\-/:]/g, "")
-    .slice(0, 64);
+  const normalized = value.replace(/[^A-Za-z0-9_+\-/:]/g, "").slice(0, 64);
   return normalized || DEFAULT_TIMEZONE;
 }
 
@@ -208,9 +215,7 @@ function sanitizeLanguage(value: string | undefined) {
     return "pt-BR";
   }
 
-  const normalized = value
-    .replace(/[^A-Za-z0-9,-]/g, "")
-    .slice(0, 24);
+  const normalized = value.replace(/[^A-Za-z0-9,-]/g, "").slice(0, 24);
   return normalized || "pt-BR";
 }
 
@@ -259,7 +264,10 @@ function normalizeIpAddress(value: string | undefined) {
     return null;
   }
 
-  const normalized = value.replace(/^::ffff:/, "").trim().toLowerCase();
+  const normalized = value
+    .replace(/^::ffff:/, "")
+    .trim()
+    .toLowerCase();
   return normalized || null;
 }
 
@@ -341,11 +349,11 @@ function buildGeoLocationLabel(
   city: string,
   region: string,
   country: string,
-  fallback = DEFAULT_GEOLOCATION.label,
+  fallback = DEFAULT_GEOLOCATION.label
 ) {
   return sanitizeLabel(
     [city, region].filter(Boolean).join(", "),
-    sanitizeLabel(country, fallback),
+    sanitizeLabel(country, fallback)
   );
 }
 
@@ -415,7 +423,7 @@ type IpApiResponse = {
 async function reverseGeocodeLocationDetails(
   latitude: number,
   longitude: number,
-  language: string,
+  language: string
 ) {
   const cacheKey = `widgets:geo:reverse:${latitude}:${longitude}:${language}`;
   return getCached<GeoLocationResponse | null>(
@@ -440,10 +448,13 @@ async function reverseGeocodeLocationDetails(
             address.municipality ??
             address.suburb ??
             address.county,
-          "",
+          ""
         );
         const region = sanitizeLabel(address.state ?? address.region, "");
-        const country = sanitizeLabel(address.country, DEFAULT_GEOLOCATION.country);
+        const country = sanitizeLabel(
+          address.country,
+          DEFAULT_GEOLOCATION.country
+        );
 
         if (city || region) {
           return buildGeoLocationResponse({
@@ -456,7 +467,10 @@ async function reverseGeocodeLocationDetails(
           });
         }
 
-        const label = sanitizeLabel(data.display_name, DEFAULT_GEOLOCATION.label);
+        const label = sanitizeLabel(
+          data.display_name,
+          DEFAULT_GEOLOCATION.label
+        );
         if (label) {
           return {
             ...DEFAULT_GEOLOCATION,
@@ -472,18 +486,20 @@ async function reverseGeocodeLocationDetails(
 
       try {
         const url = new URL(
-          "https://api.bigdatacloud.net/data/reverse-geocode-client",
+          "https://api.bigdatacloud.net/data/reverse-geocode-client"
         );
         url.searchParams.set("latitude", String(latitude));
         url.searchParams.set("longitude", String(longitude));
         url.searchParams.set("localityLanguage", language.slice(0, 2));
 
-        const data = await fetchJson<BigDataCloudReverseGeoResponse>(url.toString());
+        const data = await fetchJson<BigDataCloudReverseGeoResponse>(
+          url.toString()
+        );
         const city = sanitizeLabel(data.city ?? data.locality, "");
         const region = sanitizeLabel(data.principalSubdivision, "");
         const country = sanitizeLabel(
           data.countryName,
-          DEFAULT_GEOLOCATION.country,
+          DEFAULT_GEOLOCATION.country
         );
 
         if (city || region) {
@@ -501,28 +517,28 @@ async function reverseGeocodeLocationDetails(
       }
 
       return null;
-    },
+    }
   );
 }
 
 function resolveVercelGeoLocation(req: ApiRequest) {
   const city = sanitizeLabel(
     decodeHeaderValue(readHeaderValue(req, "x-vercel-ip-city")),
-    "",
+    ""
   );
   const region = sanitizeLabel(
     decodeHeaderValue(readHeaderValue(req, "x-vercel-ip-country-region")),
-    "",
+    ""
   );
   const country = sanitizeLabel(
     decodeHeaderValue(readHeaderValue(req, "x-vercel-ip-country")),
-    DEFAULT_GEOLOCATION.country,
+    DEFAULT_GEOLOCATION.country
   );
   const latitude = parseOptionalCoordinate(
-    readHeaderValue(req, "x-vercel-ip-latitude"),
+    readHeaderValue(req, "x-vercel-ip-latitude")
   );
   const longitude = parseOptionalCoordinate(
-    readHeaderValue(req, "x-vercel-ip-longitude"),
+    readHeaderValue(req, "x-vercel-ip-longitude")
   );
 
   if (latitude === null || longitude === null) {
@@ -546,7 +562,7 @@ function resolveVercelGeoLocation(req: ApiRequest) {
 async function resolveIpLocationFromProviders(ip: string) {
   try {
     const response = await fetchJson<IpApiCoResponse>(
-      `https://ipapi.co/${encodeURIComponent(ip)}/json/`,
+      `https://ipapi.co/${encodeURIComponent(ip)}/json/`
     );
     if (
       !response.error &&
@@ -570,8 +586,8 @@ async function resolveIpLocationFromProviders(ip: string) {
   try {
     const response = await fetchJson<IpApiResponse>(
       `http://ip-api.com/json/${encodeURIComponent(
-        ip,
-      )}?fields=status,city,regionName,country,lat,lon`,
+        ip
+      )}?fields=status,city,regionName,country,lat,lon`
     );
     if (
       response.status === "success" &&
@@ -594,7 +610,7 @@ async function resolveIpLocationFromProviders(ip: string) {
 
   try {
     const response = await fetchJson<any>(
-      `https://ipwho.is/${encodeURIComponent(ip)}`,
+      `https://ipwho.is/${encodeURIComponent(ip)}`
     );
     if (
       response?.success &&
@@ -618,41 +634,43 @@ async function resolveIpLocationFromProviders(ip: string) {
   return null;
 }
 
-async function resolveApproximateGeoLocation(req: ApiRequest, language: string) {
+async function resolveApproximateGeoLocation(
+  req: ApiRequest,
+  language: string
+) {
   const vercelGeoLocation = resolveVercelGeoLocation(req);
   const clientIp = getClientIp(req);
   const cacheKey = `widgets:geo:auto:${vercelGeoLocation?.label ?? "no-edge"}:${
     clientIp ?? "unknown"
   }:${language}`;
 
-  return getCached<GeoLocationResponse>(
-    cacheKey,
-    1000 * 60 * 30,
-    async () => {
-      if (vercelGeoLocation) {
-        return vercelGeoLocation;
-      }
+  return getCached<GeoLocationResponse>(cacheKey, 1000 * 60 * 30, async () => {
+    if (vercelGeoLocation) {
+      return vercelGeoLocation;
+    }
 
-      if (clientIp) {
-        const ipLocation = await resolveIpLocationFromProviders(clientIp);
-        if (ipLocation) {
-          return ipLocation;
-        }
+    if (clientIp) {
+      const ipLocation = await resolveIpLocationFromProviders(clientIp);
+      if (ipLocation) {
+        return ipLocation;
       }
+    }
 
-      return DEFAULT_GEOLOCATION;
-    },
-  );
+    return DEFAULT_GEOLOCATION;
+  });
 }
 
 function toIsoDate(value: string) {
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+  return Number.isNaN(date.getTime())
+    ? new Date().toISOString()
+    : date.toISOString();
 }
 
 function summarizeNews(title: string, description: string) {
   const cleanTitle = title.replace(/\s+-\s+[^-]+$/, "").trim();
-  const base = description && description !== cleanTitle ? description : cleanTitle;
+  const base =
+    description && description !== cleanTitle ? description : cleanTitle;
   return base.length > 170 ? `${base.slice(0, 167).trim()}...` : base;
 }
 
@@ -665,19 +683,33 @@ function parseNewsFeed(xml: string) {
   return items
     .map(match => {
       const item = match[1];
-      const title = stripHtml(item.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "");
-      const link = stripHtml(item.match(/<link>([\s\S]*?)<\/link>/i)?.[1] ?? "");
-      const description = stripHtml(item.match(/<description>([\s\S]*?)<\/description>/i)?.[1] ?? "");
-      const source = stripHtml(item.match(/<source[^>]*>([\s\S]*?)<\/source>/i)?.[1] ?? "");
-      const sourceUrl = stripHtml(item.match(/<source[^>]*url="([^"]+)"/i)?.[1] ?? "");
-      const publishedAt = stripHtml(item.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)?.[1] ?? "");
+      const title = stripHtml(
+        item.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? ""
+      );
+      const link = stripHtml(
+        item.match(/<link>([\s\S]*?)<\/link>/i)?.[1] ?? ""
+      );
+      const description = stripHtml(
+        item.match(/<description>([\s\S]*?)<\/description>/i)?.[1] ?? ""
+      );
+      const source = stripHtml(
+        item.match(/<source[^>]*>([\s\S]*?)<\/source>/i)?.[1] ?? ""
+      );
+      const sourceUrl = stripHtml(
+        item.match(/<source[^>]*url="([^"]+)"/i)?.[1] ?? ""
+      );
+      const publishedAt = stripHtml(
+        item.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)?.[1] ?? ""
+      );
 
       if (!title || !link) {
         return null;
       }
 
       const normalizedDescription = source
-        ? description.replace(new RegExp(`${escapeRegExp(source)}$`, "i"), "").trim()
+        ? description
+            .replace(new RegExp(`${escapeRegExp(source)}$`, "i"), "")
+            .trim()
         : description;
 
       return {
@@ -737,12 +769,12 @@ async function reverseGeocodeLocationLabel(
   latitude: number,
   longitude: number,
   language: string,
-  fallbackLabel: string,
+  fallbackLabel: string
 ) {
   const details = await reverseGeocodeLocationDetails(
     latitude,
     longitude,
-    language,
+    language
   );
   return details?.label ?? fallbackLabel;
 }
@@ -775,7 +807,10 @@ async function resolveWeatherLocation(req: ApiRequest) {
     } satisfies ResolvedWeatherLocation;
   }
 
-  const approximateLocation = await resolveApproximateGeoLocation(req, language);
+  const approximateLocation = await resolveApproximateGeoLocation(
+    req,
+    language
+  );
 
   return {
     latitude: approximateLocation.lat,
@@ -794,10 +829,14 @@ function parseYahooIndex(
   const result = data?.chart?.result?.[0];
   const meta = result?.meta;
   const closes = Array.isArray(result?.indicators?.quote?.[0]?.close)
-    ? result.indicators.quote[0].close.filter((value: unknown) => typeof value === "number")
+    ? result.indicators.quote[0].close.filter(
+        (value: unknown) => typeof value === "number"
+      )
     : [];
-  const price = parseNumber(meta?.regularMarketPrice) ?? parseNumber(closes.at(-1));
-  const previousClose = parseNumber(meta?.previousClose) ?? parseNumber(closes.at(-2));
+  const price =
+    parseNumber(meta?.regularMarketPrice) ?? parseNumber(closes.at(-1));
+  const previousClose =
+    parseNumber(meta?.previousClose) ?? parseNumber(closes.at(-2));
 
   if (price === null || previousClose === null || previousClose === 0) {
     return null;
@@ -809,6 +848,54 @@ function parseYahooIndex(
     currency: meta?.currency ?? "USD",
     price,
     changePercent: ((price - previousClose) / previousClose) * 100,
+  };
+}
+
+function parseYahooMarketQuote(marketId: string, symbol: string, data: any) {
+  const result = data?.chart?.result?.[0];
+  const meta = result?.meta;
+  const closes = Array.isArray(result?.indicators?.quote?.[0]?.close)
+    ? result.indicators.quote[0].close.filter(
+        (value: unknown) => typeof value === "number"
+      )
+    : [];
+  const price =
+    parseNumber(meta?.regularMarketPrice) ?? parseNumber(closes.at(-1));
+  const previousClose =
+    parseNumber(meta?.previousClose) ?? parseNumber(closes.at(-2));
+  const quoteCurrency =
+    typeof meta?.currency === "string" && meta.currency.trim()
+      ? meta.currency
+      : null;
+  const updatedAt =
+    typeof meta?.regularMarketTime === "number"
+      ? new Date(meta.regularMarketTime * 1000).toISOString()
+      : new Date().toISOString();
+
+  if (price === null || previousClose === null || previousClose === 0) {
+    return {
+      marketId,
+      symbol,
+      currency: quoteCurrency,
+      price: null,
+      previousClose,
+      changeAbsolute: null,
+      changePercent: null,
+      updatedAt,
+      source: "unavailable" as const,
+    };
+  }
+
+  return {
+    marketId,
+    symbol,
+    currency: quoteCurrency,
+    price,
+    previousClose,
+    changeAbsolute: price - previousClose,
+    changePercent: ((price - previousClose) / previousClose) * 100,
+    updatedAt,
+    source: "yahoo" as const,
   };
 }
 
@@ -858,27 +945,30 @@ async function fetchCurrencyRates() {
 }
 
 async function buildMarketOverview() {
-  const [currenciesResult, cryptoResult, ibovResult, nasdaqResult, sp500Result] =
-    await Promise.allSettled([
-      fetchCurrencyRates(),
-      fetchJson<Record<string, { brl?: number; brl_24h_change?: number }>>(
-        "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=brl&include_24hr_change=true"
-      ),
-      fetchJson<any>(
-        "https://query1.finance.yahoo.com/v8/finance/chart/%5EBVSP?interval=1d&range=5d"
-      ),
-      fetchJson<any>(
-        "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?interval=1d&range=5d"
-      ),
-      fetchJson<any>(
-        "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=5d"
-      ),
-    ]);
+  const [
+    currenciesResult,
+    cryptoResult,
+    ibovResult,
+    nasdaqResult,
+    sp500Result,
+  ] = await Promise.allSettled([
+    fetchCurrencyRates(),
+    fetchJson<Record<string, { brl?: number; brl_24h_change?: number }>>(
+      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=brl&include_24hr_change=true"
+    ),
+    fetchJson<any>(
+      "https://query1.finance.yahoo.com/v8/finance/chart/%5EBVSP?interval=1d&range=5d"
+    ),
+    fetchJson<any>(
+      "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?interval=1d&range=5d"
+    ),
+    fetchJson<any>(
+      "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?interval=1d&range=5d"
+    ),
+  ]);
 
   const currencies =
-    currenciesResult.status === "fulfilled"
-      ? currenciesResult.value
-      : null;
+    currenciesResult.status === "fulfilled" ? currenciesResult.value : null;
 
   const crypto =
     cryptoResult.status === "fulfilled"
@@ -887,19 +977,25 @@ async function buildMarketOverview() {
             symbol: "BTC",
             name: "Bitcoin",
             priceBRL: parseNumber(cryptoResult.value.bitcoin?.brl),
-            changePercent24h: parseNumber(cryptoResult.value.bitcoin?.brl_24h_change),
+            changePercent24h: parseNumber(
+              cryptoResult.value.bitcoin?.brl_24h_change
+            ),
           },
           {
             symbol: "ETH",
             name: "Ethereum",
             priceBRL: parseNumber(cryptoResult.value.ethereum?.brl),
-            changePercent24h: parseNumber(cryptoResult.value.ethereum?.brl_24h_change),
+            changePercent24h: parseNumber(
+              cryptoResult.value.ethereum?.brl_24h_change
+            ),
           },
           {
             symbol: "SOL",
             name: "Solana",
             priceBRL: parseNumber(cryptoResult.value.solana?.brl),
-            changePercent24h: parseNumber(cryptoResult.value.solana?.brl_24h_change),
+            changePercent24h: parseNumber(
+              cryptoResult.value.solana?.brl_24h_change
+            ),
           },
         ].filter(item => item.priceBRL !== null)
       : [];
@@ -941,6 +1037,45 @@ async function buildMarketOverview() {
   };
 }
 
+async function buildGlobalMarketsSnapshot() {
+  const quoteRequests = await Promise.allSettled(
+    GLOBAL_MARKETS.map(market =>
+      fetchJson<any>(
+        `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
+          market.index.symbol
+        )}?interval=1d&range=5d`
+      )
+    )
+  );
+
+  return {
+    ok: true,
+    updatedAt: new Date().toISOString(),
+    items: GLOBAL_MARKETS.map((market, index) => {
+      const request = quoteRequests[index];
+      if (request.status === "fulfilled") {
+        return parseYahooMarketQuote(
+          market.id,
+          market.index.symbol,
+          request.value
+        );
+      }
+
+      return {
+        marketId: market.id,
+        symbol: market.index.symbol,
+        currency: market.index.currency,
+        price: null,
+        previousClose: null,
+        changeAbsolute: null,
+        changePercent: null,
+        updatedAt: null,
+        source: "unavailable" as const,
+      };
+    }),
+  };
+}
+
 async function buildWeatherSnapshot(req: ApiRequest) {
   const language = sanitizeLanguage(getQueryParam(req, "lang"));
   const resolvedLocation = await resolveWeatherLocation(req);
@@ -969,14 +1104,17 @@ async function buildWeatherSnapshot(req: ApiRequest) {
     resolvedLocation.latitude,
     resolvedLocation.longitude,
     language,
-    resolvedLocation.label,
+    resolvedLocation.label
   );
 
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(resolvedLocation.latitude));
   url.searchParams.set("longitude", String(resolvedLocation.longitude));
   url.searchParams.set("current", "temperature_2m,weather_code,wind_speed_10m");
-  url.searchParams.set("daily", "temperature_2m_max,temperature_2m_min,weather_code");
+  url.searchParams.set(
+    "daily",
+    "temperature_2m_max,temperature_2m_min,weather_code"
+  );
   url.searchParams.set("forecast_days", "3");
   url.searchParams.set("timezone", resolvedLocation.timezone);
 
@@ -1026,7 +1164,11 @@ async function buildNewsSnapshot(topic: string) {
 
 async function handleOverviewRequest(res: ApiResponse) {
   try {
-    const data = await getCached("widgets:overview", 1000 * 60 * 10, buildMarketOverview);
+    const data = await getCached(
+      "widgets:overview",
+      1000 * 60 * 10,
+      buildMarketOverview
+    );
     setApiCache(res, 300);
     sendJson(res, 200, data);
   } catch {
@@ -1035,6 +1177,25 @@ async function handleOverviewRequest(res: ApiResponse) {
       502,
       "overview_unavailable",
       "Não foi possível carregar cotações e indicadores agora."
+    );
+  }
+}
+
+async function handleGlobalMarketsRequest(res: ApiResponse) {
+  try {
+    const data = await getCached(
+      "widgets:global-markets",
+      1000 * 60 * 5,
+      buildGlobalMarketsSnapshot
+    );
+    setApiCache(res, 300);
+    sendJson(res, 200, data);
+  } catch {
+    sendJsonError(
+      res,
+      502,
+      "global_markets_unavailable",
+      "Não foi possível carregar os mercados globais agora."
     );
   }
 }
@@ -1054,7 +1215,11 @@ async function handleGeoRequest(req: ApiRequest, res: ApiResponse) {
     const data = await getCached(cacheKey, 1000 * 60 * 30, async () => {
       if (latitude !== null && longitude !== null) {
         return (
-          (await reverseGeocodeLocationDetails(latitude, longitude, language)) ??
+          (await reverseGeocodeLocationDetails(
+            latitude,
+            longitude,
+            language
+          )) ??
           buildGeoLocationResponse({
             city: "",
             region: "",
@@ -1076,7 +1241,7 @@ async function handleGeoRequest(req: ApiRequest, res: ApiResponse) {
       res,
       502,
       "geo_unavailable",
-      "Não foi possível carregar a localização agora.",
+      "Não foi possível carregar a localização agora."
     );
   }
 }
@@ -1091,7 +1256,9 @@ async function handleWeatherRequest(req: ApiRequest, res: ApiResponse) {
       latitude !== null && longitude !== null
         ? `widgets:weather:coords:${latitude}:${longitude}:${timezone}:${language}`
         : `widgets:weather:auto:${getClientIp(req) ?? "unknown"}:${timezone}:${language}`;
-    const data = await getCached(cacheKey, 1000 * 60 * 30, () => buildWeatherSnapshot(req));
+    const data = await getCached(cacheKey, 1000 * 60 * 30, () =>
+      buildWeatherSnapshot(req)
+    );
     setApiCache(res, 900);
     sendJson(res, 200, data);
   } catch {
@@ -1117,8 +1284,10 @@ async function handleNewsRequest(req: ApiRequest, res: ApiResponse) {
   }
 
   try {
-    const data = await getCached(`widgets:news:${topic.toLowerCase()}`, 1000 * 60 * 15, () =>
-      buildNewsSnapshot(topic)
+    const data = await getCached(
+      `widgets:news:${topic.toLowerCase()}`,
+      1000 * 60 * 15,
+      () => buildNewsSnapshot(topic)
     );
     setApiCache(res, 300);
     sendJson(res, 200, data);
@@ -1156,11 +1325,13 @@ async function handleExternalDataRequest(req: ApiRequest, res: ApiResponse) {
     return true;
   }
 
-  if (
-    pathname === "/api/widgets/weather" ||
-    pathname === "/widgets/weather"
-  ) {
+  if (pathname === "/api/widgets/weather" || pathname === "/widgets/weather") {
     await handleWeatherRequest(req, res);
+    return true;
+  }
+
+  if (pathname === "/api/markets/global") {
+    await handleGlobalMarketsRequest(res);
     return true;
   }
 
@@ -1174,17 +1345,16 @@ async function handleExternalDataRequest(req: ApiRequest, res: ApiResponse) {
     return true;
   }
 
-  sendJsonError(
-    res,
-    404,
-    "api_not_found",
-    "Rota de API não encontrada."
-  );
+  sendJsonError(res, 404, "api_not_found", "Rota de API não encontrada.");
   return true;
 }
 
 export function createExternalDataMiddleware() {
-  return (req: ApiRequest, res: ApiResponse, next: (error?: unknown) => void) => {
+  return (
+    req: ApiRequest,
+    res: ApiResponse,
+    next: (error?: unknown) => void
+  ) => {
     void handleExternalDataRequest(req, res)
       .then(handled => {
         if (!handled) {

@@ -20,6 +20,7 @@ const PRIORITY_PRERENDER_PATHS = new Set([
   "/idade/",
   "/calendario/",
   "/escala/",
+  "/utilitarios/horario-mundial/",
 ]);
 const MONTHS = [
   "janeiro",
@@ -213,6 +214,14 @@ function buildRoutes(blogPosts) {
       "Veja a temperatura atual e uma previsão curta para apoiar deslocamentos, visitas, entregas e rotinas externas.",
       "0.6",
       "daily"
+    ),
+    route(
+      "/utilitarios/horario-mundial/",
+      "Horário Mundial e Horário dos Principais Mercados do Mundo | Datas Úteis",
+      "Compare fusos em tempo real, veja clima e distância entre capitais e acompanhe o horário das principais bolsas globais em uma única página.",
+      "0.68",
+      "daily",
+      { breadcrumbLabel: "Horário Mundial" }
     ),
     route(
       "/jogos/",

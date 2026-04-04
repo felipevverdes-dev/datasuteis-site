@@ -206,11 +206,21 @@
   /* ── Conversion-focused hero ── */
   .hero-conversion {
     @apply py-10 md:py-16 lg:py-20;
-    background: linear-gradient(135deg, rgba(26, 58, 92, 0.12), var(--background) 55%, var(--background));
+    background: linear-gradient(
+      135deg,
+      rgba(26, 58, 92, 0.12),
+      var(--background) 55%,
+      var(--background)
+    );
   }
 
   .dark .hero-conversion {
-    background: linear-gradient(135deg, rgba(26, 58, 92, 0.28), var(--background) 55%, var(--background));
+    background: linear-gradient(
+      135deg,
+      rgba(26, 58, 92, 0.28),
+      var(--background) 55%,
+      var(--background)
+    );
   }
 
   .hero-title-conversion {
@@ -409,6 +419,168 @@
     @apply rounded-lg border border-border bg-card p-6 text-card-foreground shadow-sm transition-[box-shadow,border-color] duration-200 md:p-8;
   }
 
+  .world-clock-section-card {
+    @apply p-4 md:p-5;
+  }
+
+  .compact-stat {
+    @apply rounded-2xl border border-border/80 bg-secondary/55 p-3;
+  }
+
+  .compact-stat-tight {
+    @apply p-2.5;
+  }
+
+  .compact-stat-label {
+    @apply block text-[11px] font-semibold uppercase tracking-wide text-muted-foreground;
+  }
+
+  .compact-stat-value {
+    @apply mt-2 block text-sm font-semibold leading-5 text-foreground;
+  }
+
+  .compact-stat-note {
+    @apply mt-1 block text-xs leading-5 text-muted-foreground;
+  }
+
+  .status-chip {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold;
+  }
+
+  .table-wrap {
+    @apply overflow-x-auto rounded-2xl border border-border bg-card;
+  }
+
+  .compact-table {
+    @apply rounded-2xl bg-card;
+  }
+
+  .data-table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+  }
+
+  .data-table thead th {
+    @apply border-b border-border bg-secondary/75 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-muted-foreground;
+  }
+
+  .data-table tbody td {
+    @apply border-b border-border/70 px-4 py-3 align-top text-sm text-foreground;
+  }
+
+  .data-table.data-table-compact thead th {
+    @apply px-3 py-2 text-[10px];
+  }
+
+  .data-table.data-table-compact tbody td {
+    @apply px-3 py-2 text-[13px];
+  }
+
+  .data-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .data-table tbody tr:hover {
+    background: color-mix(in srgb, var(--primary) 4%, var(--card) 96%);
+  }
+
+  .continent-watermark {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: calc(var(--radius) + 0.35rem);
+    padding: 0.5rem;
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--secondary) 72%, transparent),
+        transparent 58%
+      );
+  }
+
+  .continent-watermark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-position: right -0.75rem center;
+    background-size: clamp(260px, 42vw, 540px) auto;
+    opacity: 0.075;
+    transform: translateZ(0);
+  }
+
+  .continent-watermark-grid,
+  .continent-watermark > :not(style) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dark .continent-watermark::before {
+    opacity: 0.11;
+  }
+
+  .continent-watermark[data-continent="america"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M176 18c-15 8-24 19-28 34-4 17 2 31 16 43 9 8 12 17 8 28l-9 22c-4 10-2 20 6 28l16 15c8 8 10 20 4 30l-9 17 18-11 12-22c5-11 5-23 0-34l-10-20c-5-11-4-22 2-32l13-20c10-15 12-32 7-48-6-20-21-33-46-38z' stroke='%231a3a5c' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M130 53l16 19m-2 28l15 10m-10 60l12 13' stroke='%231a3a5c' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .continent-watermark[data-continent="asia"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M50 120c5-32 29-57 63-66 31-8 63-6 88 5 15 7 31 9 47 7l22-3-9 18c-5 10-4 22 4 31l13 15-24 2c-14 2-26 8-35 18l-18 18-26-11c-12-5-26-5-38 0l-34 15-15-20c-6-8-15-14-24-18l-22-10 8-1z' stroke='%231a3a5c' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M235 145l23 13m-145-48l24-15m45 56l19 7' stroke='%231a3a5c' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .continent-watermark[data-continent="africa"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M170 26l28 24c13 11 20 28 18 45l-2 19c-1 12 3 24 11 33l18 20-24 2c-12 1-22 8-27 19l-13 28-21-15c-11-8-26-10-39-6l-25 9 7-29c3-13-1-27-11-37l-19-19 20-13c11-7 18-18 21-31l7-32 29-17z' stroke='%231a3a5c' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M156 74l19 18m-32 38l18 14m7 33l11 18' stroke='%231a3a5c' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .continent-watermark[data-continent="antarctica"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M28 128c22-13 47-20 74-22l35-3 31-15 24 14 39 4c21 2 41 10 58 24l-24 9c-14 5-30 7-46 5l-43-6-32 15-34-10-39 3c-19 2-38-3-54-14l11-4z' stroke='%231a3a5c' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M70 125l18 8m43-7l16 7m41-2l21 7m45-5l16 4' stroke='%231a3a5c' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .continent-watermark[data-continent="europe"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M67 113l24-24 27 2 17-14 22 7 16-9 23 10 25-1 19 18-21 12-4 16-19 3-13 19-29-5-15 13-23-13-21 3-15-16-25-9 12-12z' stroke='%231a3a5c' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M229 141l18 10M104 71l10 10m64 56l14 10m-74-24l13 9' stroke='%231a3a5c' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .continent-watermark[data-continent="oceania"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M106 142l22-23 29-4 15-15 28 7 11 24-18 19-31 5-17 18-27-9-12-22z' stroke='%231a3a5c' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M241 89l11-8m15 26l13-8m-33 35l9 5M62 110l8-6m15 20l10-5' stroke='%231a3a5c' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='86' cy='79' r='7' stroke='%231a3a5c' stroke-width='4'/%3E%3C/svg%3E");
+  }
+
+  .dark .continent-watermark[data-continent="america"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M176 18c-15 8-24 19-28 34-4 17 2 31 16 43 9 8 12 17 8 28l-9 22c-4 10-2 20 6 28l16 15c8 8 10 20 4 30l-9 17 18-11 12-22c5-11 5-23 0-34l-10-20c-5-11-4-22 2-32l13-20c10-15 12-32 7-48-6-20-21-33-46-38z' stroke='%23ffffff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M130 53l16 19m-2 28l15 10m-10 60l12 13' stroke='%23ffffff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .dark .continent-watermark[data-continent="asia"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M50 120c5-32 29-57 63-66 31-8 63-6 88 5 15 7 31 9 47 7l22-3-9 18c-5 10-4 22 4 31l13 15-24 2c-14 2-26 8-35 18l-18 18-26-11c-12-5-26-5-38 0l-34 15-15-20c-6-8-15-14-24-18l-22-10 8-1z' stroke='%23ffffff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M235 145l23 13m-145-48l24-15m45 56l19 7' stroke='%23ffffff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .dark .continent-watermark[data-continent="africa"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M170 26l28 24c13 11 20 28 18 45l-2 19c-1 12 3 24 11 33l18 20-24 2c-12 1-22 8-27 19l-13 28-21-15c-11-8-26-10-39-6l-25 9 7-29c3-13-1-27-11-37l-19-19 20-13c11-7 18-18 21-31l7-32 29-17z' stroke='%23ffffff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M156 74l19 18m-32 38l18 14m7 33l11 18' stroke='%23ffffff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .dark .continent-watermark[data-continent="antarctica"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M28 128c22-13 47-20 74-22l35-3 31-15 24 14 39 4c21 2 41 10 58 24l-24 9c-14 5-30 7-46 5l-43-6-32 15-34-10-39 3c-19 2-38-3-54-14l11-4z' stroke='%23ffffff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M70 125l18 8m43-7l16 7m41-2l21 7m45-5l16 4' stroke='%23ffffff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .dark .continent-watermark[data-continent="europe"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M67 113l24-24 27 2 17-14 22 7 16-9 23 10 25-1 19 18-21 12-4 16-19 3-13 19-29-5-15 13-23-13-21 3-15-16-25-9 12-12z' stroke='%23ffffff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M229 141l18 10M104 71l10 10m64 56l14 10m-74-24l13 9' stroke='%23ffffff' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+
+  .dark .continent-watermark[data-continent="oceania"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 220' fill='none'%3E%3Cpath d='M106 142l22-23 29-4 15-15 28 7 11 24-18 19-31 5-17 18-27-9-12-22z' stroke='%23ffffff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M241 89l11-8m15 26l13-8m-33 35l9 5M62 110l8-6m15 20l10-5' stroke='%23ffffff' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='86' cy='79' r='7' stroke='%23ffffff' stroke-width='4'/%3E%3C/svg%3E");
+  }
+
+  @media (max-width: 768px) {
+    .continent-watermark {
+      padding: 0.35rem;
+    }
+
+    .continent-watermark::before {
+      background-position: center top 0.75rem;
+      background-size: min(78vw, 360px) auto;
+    }
+  }
+
   .game-theme-chip {
     @apply mx-auto inline-flex max-w-fit items-center justify-center rounded-full bg-primary/10 px-4 py-2 text-center text-sm font-semibold text-primary;
   }
@@ -460,7 +632,8 @@
     overflow: hidden;
     border-radius: 0.2rem;
     object-fit: cover;
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border) 65%, transparent);
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--border) 65%, transparent);
   }
 
   .game-interactive-area {

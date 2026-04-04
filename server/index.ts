@@ -11,7 +11,9 @@ const IMAGE_REQUEST_PATTERN = /\.(png|jpe?g|webp|gif|svg|ico)$/i;
 const IMAGE_ASSET_PATTERN = /^\/assets\/.+\.(png|jpe?g|webp|gif|svg|ico)$/i;
 const API_WINDOW_MS = 60_000;
 const API_MAX_REQUESTS = 90;
-const SITE_LAST_MODIFIED_HTTP = new Date("2026-04-02T00:00:00-03:00").toUTCString();
+const SITE_LAST_MODIFIED_HTTP = new Date(
+  "2026-04-02T00:00:00-03:00"
+).toUTCString();
 const ALLOWED_ASSET_HOSTS = new Set([
   "datasuteis.com.br",
   "www.datasuteis.com.br",
@@ -97,7 +99,7 @@ async function startServer() {
     if (isSecureRequest(req)) {
       res.setHeader(
         "Strict-Transport-Security",
-        "max-age=63072000; includeSubDomains; preload",
+        "max-age=63072000; includeSubDomains; preload"
       );
     }
 
@@ -108,18 +110,21 @@ async function startServer() {
     res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
     res.setHeader(
       "Permissions-Policy",
-      "geolocation=(self), camera=(), microphone=(), payment=()",
+      "geolocation=(self), camera=(), microphone=(), payment=()"
     );
     res.setHeader("Cross-Origin-Resource-Policy", "same-site");
     res.setHeader(
       "X-Robots-Tag",
-      shouldAllowIndexing(req.hostname) ? "index, follow" : "noindex, nofollow",
+      shouldAllowIndexing(req.hostname) ? "index, follow" : "noindex, nofollow"
     );
     next();
   });
 
   app.use((req, res, next) => {
-    if (!IMAGE_ASSET_PATTERN.test(req.path) || !IMAGE_REQUEST_PATTERN.test(req.path)) {
+    if (
+      !IMAGE_ASSET_PATTERN.test(req.path) ||
+      !IMAGE_REQUEST_PATTERN.test(req.path)
+    ) {
       next();
       return;
     }
@@ -165,7 +170,8 @@ async function startServer() {
       res.status(429).json({
         ok: false,
         error: "rate_limited",
-        message: "Muitas requisições em pouco tempo. Tente novamente em instantes.",
+        message:
+          "Muitas requisições em pouco tempo. Tente novamente em instantes.",
         retryAfterSeconds: retryAfter,
       });
       return;
@@ -175,11 +181,11 @@ async function startServer() {
     res.setHeader("RateLimit-Limit", String(API_MAX_REQUESTS));
     res.setHeader(
       "RateLimit-Remaining",
-      String(Math.max(0, API_MAX_REQUESTS - bucket.count)),
+      String(Math.max(0, API_MAX_REQUESTS - bucket.count))
     );
     res.setHeader(
       "RateLimit-Reset",
-      String(Math.max(1, Math.ceil((bucket.resetAt - now) / 1000))),
+      String(Math.max(1, Math.ceil((bucket.resetAt - now) / 1000)))
     );
     next();
   });
@@ -199,10 +205,7 @@ async function startServer() {
       return;
     }
 
-    res
-      .status(200)
-      .type("text/plain")
-      .send("User-agent: *\nDisallow: /\n");
+    res.status(200).type("text/plain").send("User-agent: *\nDisallow: /\n");
   });
 
   app.use(
@@ -232,7 +235,7 @@ async function startServer() {
           res.setHeader("Cache-Control", "public, max-age=604800");
         }
       },
-    }),
+    })
   );
 
   app.use("/api", (_req, res) => {
@@ -278,6 +281,7 @@ async function startServer() {
     /^\/utilitarios\/sorteador\/?$/,
     /^\/utilitarios\/conversor-de-moeda\/?$/,
     /^\/utilitarios\/clima\/?$/,
+    /^\/utilitarios\/horario-mundial\/?$/,
     /^\/jogos\/?$/,
     /^\/jogos\/sudoku\/?$/,
     /^\/jogos\/caca-palavras\/?$/,

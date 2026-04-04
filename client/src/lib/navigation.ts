@@ -271,7 +271,7 @@ function resolveBreadcrumbSchemaHref(
 }
 
 export function buildFaqPageSchema(
-  items: Array<{ question: string; answer: string }>
+  items: ReadonlyArray<{ question: string; answer: string }>
 ) {
   return {
     "@context": "https://schema.org",

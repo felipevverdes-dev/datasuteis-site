@@ -18,6 +18,7 @@ import {
   type WeatherSnapshotResponse,
 } from "@/lib/home-widgets";
 import { getHolidayName, getNextNationalHoliday } from "@/lib/holidays";
+import { scheduleWhenIdle } from "@/lib/idle";
 import { getWeatherIcon, getWeatherLabel } from "@/lib/weather-display";
 import { useI18n } from "@/contexts/LanguageContext";
 import type { SupportedLanguage } from "@/lib/site";
@@ -131,25 +132,6 @@ function getShortLocalizedDate(
   });
 }
 
-function runWhenIdle(callback: () => void) {
-  const pageWindow = window as Window &
-    typeof globalThis & {
-      requestIdleCallback?: (
-        callback: IdleRequestCallback,
-        options?: IdleRequestOptions
-      ) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-
-  if (typeof pageWindow.requestIdleCallback === "function") {
-    const handle = pageWindow.requestIdleCallback(callback, { timeout: 1200 });
-    return () => pageWindow.cancelIdleCallback?.(handle);
-  }
-
-  const timeout = window.setTimeout(callback, 180);
-  return () => window.clearTimeout(timeout);
-}
-
 export default function HomeMomentSummary() {
   const { language, formatDate } = useI18n();
   const {
@@ -191,7 +173,7 @@ export default function HomeMomentSummary() {
     let cleanupIdle = () => {};
 
     if (typeof IntersectionObserver !== "function") {
-      cleanupIdle = runWhenIdle(() => {
+      cleanupIdle = scheduleWhenIdle(() => {
         setIsActivated(true);
       });
 
@@ -206,7 +188,7 @@ export default function HomeMomentSummary() {
           return;
         }
 
-        cleanupIdle = runWhenIdle(() => {
+        cleanupIdle = scheduleWhenIdle(() => {
           setIsActivated(true);
         });
         observer.disconnect();
@@ -286,7 +268,9 @@ export default function HomeMomentSummary() {
   const canUsePreciseLocation =
     typeof navigator !== "undefined" && "geolocation" in navigator;
   const showUseLocationAction =
-    canUsePreciseLocation && !geolocationLoading && location.source !== "browser";
+    canUsePreciseLocation &&
+    !geolocationLoading &&
+    location.source !== "browser";
   const showLocationError =
     geolocationError !== null && !requestingPreciseLocation;
 
@@ -356,7 +340,9 @@ export default function HomeMomentSummary() {
           </div>
 
           <div className="flex min-h-6 items-center gap-3 text-sm leading-6 text-foreground">
-            <WeatherIcon className={`h-4 w-4 shrink-0 ${weatherIcon.className}`} />
+            <WeatherIcon
+              className={`h-4 w-4 shrink-0 ${weatherIcon.className}`}
+            />
             <span>{weatherLabel}</span>
           </div>
 
@@ -381,7 +367,9 @@ export default function HomeMomentSummary() {
           </div>
 
           {showLocationError ? (
-            <p className="text-xs text-muted-foreground">{copy.locationError}</p>
+            <p className="text-xs text-muted-foreground">
+              {copy.locationError}
+            </p>
           ) : null}
         </div>
       </div>

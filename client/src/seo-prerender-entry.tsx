@@ -8,6 +8,7 @@ import Calculator from "@/pages/Calculator";
 import Calendar from "@/pages/Calendar";
 import Home from "@/pages/Home";
 import Schedule from "@/pages/Schedule";
+import WorldClockMarkets from "@/pages/WorldClockMarkets";
 
 function normalizePath(pathname: string) {
   if (pathname === "/") {
@@ -31,6 +32,8 @@ function getPage(pathname: string) {
       return <Calendar />;
     case "/escala/":
       return <Schedule />;
+    case "/utilitarios/horario-mundial/":
+      return <WorldClockMarkets />;
     default:
       return null;
   }
