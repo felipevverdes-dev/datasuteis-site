@@ -62,7 +62,7 @@ export default function WorldClockCountryCard({
 
       <div className="mt-2.5 flex items-end justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[1.35rem] font-bold leading-none text-foreground">
+          <p className="tabular-nums text-[1.35rem] font-bold leading-none text-foreground">
             {formatZonedTime(now, timezone.timezone, dateLocale)}
           </p>
           <p className="mt-0.5 truncate text-[10px] leading-4 text-muted-foreground">

@@ -19,6 +19,7 @@
 - incluir no sitemap via `scripts/postbuild-seo.mjs`
 - incluir no `seo-prerender-entry.tsx` se for rota prioritária
 - validar arquivo gerado em `dist/public/.../index.html`
+- evitar tratar query param como página principal quando o conteúdo merece URL própria
 
 ## Schema
 

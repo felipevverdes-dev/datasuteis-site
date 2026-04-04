@@ -1,20 +1,12 @@
-import {
-  startTransition,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { Clock3, Globe2, Landmark, RefreshCw, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Clock3, Landmark, RefreshCw } from "lucide-react";
+import AdSlot from "@/components/AdSlot";
 import PageShell from "@/components/layout/PageShell";
-import ModalDialog from "@/components/ui/ModalDialog";
-import WorldClockCountryCard from "@/components/world-clock/WorldClockCountryCard";
-import WorldClockContinentNav from "@/components/world-clock/WorldClockContinentNav";
-import WorldClockCountryModalContent from "@/components/world-clock/WorldClockCountryModalContent";
 import WorldClockMarketsTable from "@/components/world-clock/WorldClockMarketsTable";
+import WorldClockToolSwitcher from "@/components/world-clock/WorldClockToolSwitcher";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
-import { scheduleWhenIdle } from "@/lib/idle";
+import { getMarketHoursPageCopy } from "@/lib/market-hours-copy";
 import {
   buildBreadcrumbSchema,
   buildFaqPageSchema,
@@ -27,54 +19,14 @@ import {
   fetchGlobalMarketsSnapshot,
 } from "@/lib/world-clock-api";
 import {
-  COUNTRIES_BY_CONTINENT,
-  getCountryById,
-  type Continent,
-  type CountryTimezoneOption,
-  type WorldCountryDefinition,
-} from "@/lib/world-clock-countries";
-import {
-  getLocalizedCountryMeta,
-  getWorldClockPageCopy,
-} from "@/lib/world-clock-copy";
-import type { CountryDetailContent } from "@/lib/world-clock-country-details";
-import {
   type GlobalMarketQuote,
   type GlobalMarketsSnapshotResponse,
 } from "@/lib/world-clock-data";
+import { getWorldClockPageCopy } from "@/lib/world-clock-copy";
 
-type UtilityTab = "mundo" | "mercados";
-type AsyncStatus = "idle" | "loading" | "success" | "error";
+type AsyncStatus = "idle" | "loading" | "success";
 
-const PAGE_PATH = "/utilitarios/horario-mundial/";
-
-function readRequestedTab(): UtilityTab {
-  if (typeof window === "undefined") {
-    return "mundo";
-  }
-
-  return new URLSearchParams(window.location.search).get("tab") === "mercados"
-    ? "mercados"
-    : "mundo";
-}
-
-function writeTabToUrl(nextTab: UtilityTab) {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  const url = new URL(window.location.href);
-  if (nextTab === "mercados") {
-    url.searchParams.set("tab", "mercados");
-  } else {
-    url.searchParams.delete("tab");
-  }
-  window.history.replaceState(
-    {},
-    "",
-    `${url.pathname}${url.search}${url.hash}`
-  );
-}
+const PAGE_PATH = "/utilitarios/horario-mercados/";
 
 function getStatusNotice(message: string) {
   return (
@@ -84,106 +36,26 @@ function getStatusNotice(message: string) {
   );
 }
 
-function getTimezoneLabel(
-  timezone: CountryTimezoneOption,
-  localizedCapital: string
-) {
-  if (timezone.id !== "capital") {
-    return timezone.label;
-  }
-
-  const zoneCode = /\(([^)]+)\)$/.exec(timezone.label)?.[1];
-  return zoneCode ? `${localizedCapital} (${zoneCode})` : localizedCapital;
-}
-
-function normalizeSearchText(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-}
-
 export default function WorldClockMarkets() {
   const { language, dateLocale } = useI18n();
-  const copy = getWorldClockPageCopy(language);
+  const pageCopy = getMarketHoursPageCopy(language);
+  const worldClockCopy = getWorldClockPageCopy(language);
+  const marketLabels = worldClockCopy.markets;
   const navigationLabels = getNavigationLabels(language);
   const navItems = getToolPageNavItems(language);
   const topLabel = getBackToTopLabel(language);
   const breadcrumbs = [
     { label: navigationLabels.home, href: "/" },
     { label: navigationLabels.utilities, href: "/utilitarios/" },
-    { label: copy.title },
+    { label: pageCopy.title },
   ];
 
-  const [activeTab, setActiveTab] = useState<UtilityTab>(() =>
-    readRequestedTab()
-  );
-  const [activeContinent, setActiveContinent] = useState<Continent>("america");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isClientReady, setIsClientReady] = useState(false);
   const [now, setNow] = useState(() => new Date());
   const [marketsState, setMarketsState] = useState<{
     status: AsyncStatus;
     data?: GlobalMarketsSnapshotResponse;
-    notice?: string;
   }>({ status: "idle" });
-  const [modalCountryId, setModalCountryId] = useState<string | null>(null);
-  const [modalState, setModalState] = useState<{
-    status: AsyncStatus;
-    data?: CountryDetailContent | null;
-  }>({ status: "idle" });
-
-  const deferredSearch = useDeferredValue(searchQuery);
-  const activeContinentLabel = copy.continents[activeContinent];
-
-  const localizedCountries = useMemo(
-    () => {
-      const uniqueCountries = new Map<
-        WorldCountryDefinition["id"],
-        {
-          country: WorldCountryDefinition;
-          localized: ReturnType<typeof getLocalizedCountryMeta>;
-        }
-      >();
-
-      COUNTRIES_BY_CONTINENT[activeContinent].forEach(country => {
-        if (!uniqueCountries.has(country.id)) {
-          uniqueCountries.set(country.id, {
-            country,
-            localized: getLocalizedCountryMeta(country.id, language),
-          });
-        }
-      });
-
-      return Array.from(uniqueCountries.values());
-    },
-    [activeContinent, language]
-  );
-
-  const filteredCountries = useMemo(() => {
-    const normalizedQuery = normalizeSearchText(deferredSearch);
-    if (!normalizedQuery) {
-      return localizedCountries;
-    }
-
-    return localizedCountries.filter(({ country, localized }) => {
-      const searchableText = [
-        localized.name,
-        localized.capital,
-        country.name,
-        country.capital,
-        ...(country.aliases ?? []),
-        ...country.timezones.map(option =>
-          getTimezoneLabel(option, localized.capital)
-        ),
-        ...country.timezones.map(option => option.timezone),
-      ]
-        .join(" ")
-        .trim();
-
-      return normalizeSearchText(searchableText).includes(normalizedQuery);
-    });
-  }, [deferredSearch, localizedCountries]);
 
   const marketQuotesById = useMemo(
     () =>
@@ -193,49 +65,67 @@ export default function WorldClockMarkets() {
     [marketsState.data?.items]
   );
 
-  const modalCountry = modalCountryId ? getCountryById(modalCountryId) : null;
-  const modalCountryMeta = modalCountryId
-    ? getLocalizedCountryMeta(modalCountryId, language)
-    : null;
+  const hasAnyFinancialSnapshot = useMemo(
+    () =>
+      (marketsState.data?.items ?? []).some(
+        item =>
+          item.price !== null ||
+          item.previousClose !== null ||
+          item.changeAbsolute !== null
+      ),
+    [marketsState.data?.items]
+  );
+
+  const statusNotice =
+    marketsState.status === "loading"
+      ? marketLabels.updating
+      : marketsState.data?.snapshotStatus === "stale"
+        ? pageCopy.staleNotice
+        : marketsState.data?.snapshotStatus === "fallback"
+          ? pageCopy.fallbackNotice
+          : null;
 
   usePageSeo({
-    title: copy.seoTitle,
-    description: copy.seoDescription,
+    title: pageCopy.seoTitle,
+    description: pageCopy.seoDescription,
     path: PAGE_PATH,
     keywords: [
-      "world clock",
+      "horario da bolsa",
+      "horario da nasdaq",
+      "horario da nyse",
+      "horario da b3",
       "global market hours",
-      "timezones",
-      "horario mundial",
-      "mercados globais",
+      "stock exchange hours",
     ],
     schema: [
       {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        name: copy.title,
+        name: pageCopy.title,
         url: `https://datasuteis.com.br${PAGE_PATH}`,
-        description: copy.description,
+        description: pageCopy.description,
       },
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        name: copy.title,
-        applicationCategory: "UtilitiesApplication",
+        name: pageCopy.title,
+        applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
         url: `https://datasuteis.com.br${PAGE_PATH}`,
-        description: copy.description,
+        description: pageCopy.description,
       },
       buildBreadcrumbSchema([
         { label: navigationLabels.home, href: "/" },
         { label: navigationLabels.utilities, href: "/utilitarios/" },
-        { label: copy.title, href: PAGE_PATH },
+        { label: pageCopy.title, href: PAGE_PATH },
       ]),
-      buildFaqPageSchema(copy.content.faqItems),
+      buildFaqPageSchema(pageCopy.content.faqItems),
     ],
   });
 
   useEffect(() => {
+    setIsClientReady(true);
+
     const interval = window.setInterval(() => {
       setNow(new Date());
     }, 1000);
@@ -244,419 +134,204 @@ export default function WorldClockMarkets() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return undefined;
+    if (!isClientReady || marketsState.status !== "idle") {
+      return;
     }
 
-    function handlePopState() {
-      setActiveTab(readRequestedTab());
-    }
+    void refreshMarkets(false);
+  }, [isClientReady, marketsState.status]);
 
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  useEffect(() => {
-    writeTabToUrl(activeTab);
-  }, [activeTab]);
-
-  useEffect(() => {
-    if (activeTab !== "mercados" || marketsState.status !== "idle") {
-      return undefined;
-    }
-
-    let cancelled = false;
-    const cleanup = scheduleWhenIdle(() => {
-      setMarketsState(previous => ({
-        ...previous,
-        status: "loading",
-        notice: undefined,
-      }));
-      void fetchGlobalMarketsSnapshot()
-        .then(payload => {
-          if (!cancelled) {
-            setMarketsState({ status: "success", data: payload });
-          }
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setMarketsState({
-              status: "success",
-              data: buildFallbackGlobalMarketsSnapshot(),
-              notice: copy.markets.temporaryUnavailable,
-            });
-          }
-        });
-    });
-
-    return () => {
-      cancelled = true;
-      cleanup();
-    };
-  }, [activeTab, copy.markets.sessionOnlyFallback, marketsState.status]);
-
-  useEffect(() => {
-    if (!modalCountryId) {
-      setModalState({ status: "idle" });
-      return undefined;
-    }
-
-    let cancelled = false;
-    setModalState({ status: "loading" });
-    void import("@/lib/world-clock-country-details")
-      .then(module => module.loadCountryDetailContent(modalCountryId, language))
-      .then(detail => {
-        if (!cancelled) {
-          setModalState({ status: "success", data: detail });
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setModalState({ status: "error" });
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [language, modalCountryId]);
-
-  function changeTab(nextTab: UtilityTab) {
-    startTransition(() => setActiveTab(nextTab));
-    trackAnalyticsEvent("utility_world_clock_tab_changed", { tab: nextTab });
-  }
-
-  function changeContinent(continent: Continent) {
-    setActiveContinent(continent);
-    trackAnalyticsEvent("utility_world_clock_continent_changed", {
-      continent,
-    });
-  }
-
-  function openCountryModal(countryId: string) {
-    setModalCountryId(countryId);
-    trackAnalyticsEvent("utility_world_clock_country_modal_opened", {
-      country_code: countryId,
-    });
-  }
-
-  async function refreshMarkets() {
+  async function refreshMarkets(forceRefresh: boolean) {
     setMarketsState(previous => ({
       ...previous,
       status: "loading",
-      notice: undefined,
     }));
+
     try {
-      const payload = await fetchGlobalMarketsSnapshot();
-      setMarketsState({ status: "success", data: payload });
+      const payload = await fetchGlobalMarketsSnapshot({
+        force: forceRefresh,
+      });
+      setMarketsState({
+        status: "success",
+        data: payload,
+      });
+      trackAnalyticsEvent("utility_global_markets_refreshed", {
+        force_refresh: forceRefresh,
+        snapshot_status: payload.snapshotStatus,
+      });
     } catch {
       setMarketsState({
         status: "success",
         data: buildFallbackGlobalMarketsSnapshot(),
-        notice: copy.markets.temporaryUnavailable,
       });
     }
   }
 
   return (
-    <>
-      <PageShell
-        eyebrow={copy.eyebrow}
-        title={copy.title}
-        description={copy.description}
-        navItems={navItems}
-        topLabel={topLabel}
-        breadcrumbs={breadcrumbs}
-        breadcrumbAriaLabel={navigationLabels.breadcrumb}
-        backButtonLabel={navigationLabels.back}
-        backButtonAriaLabel={navigationLabels.backAria}
-        language={language}
-        ctaTitle={copy.ctaTitle}
-        ctaButtonLabel={copy.ctaButton}
-      >
-        <section id="ferramenta" className="section-anchor">
-          <div className="section-card world-clock-section-card">
-            <div className="flex flex-wrap items-center justify-between gap-2.5">
-              <div className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                <Landmark className="h-4 w-4" />
-                {copy.toolLabel}
-              </div>
-              <div
-                className="inline-flex flex-wrap gap-1.5"
-                role="tablist"
-                aria-label={copy.tabListLabel}
-              >
-                <button
-                  id="tab-mundo"
-                  type="button"
-                  role="tab"
-                  aria-selected={activeTab === "mundo"}
-                  aria-controls="painel-mundo"
-                  className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
-                    activeTab === "mundo"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  }`}
-                  onClick={() => changeTab("mundo")}
-                >
-                  <Globe2 className="h-3.5 w-3.5" />
-                  {copy.tabs.world}
-                </button>
-                <button
-                  id="tab-mercados"
-                  type="button"
-                  role="tab"
-                  aria-selected={activeTab === "mercados"}
-                  aria-controls="painel-mercados"
-                  className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
-                    activeTab === "mercados"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  }`}
-                  onClick={() => changeTab("mercados")}
-                >
-                  <Clock3 className="h-3.5 w-3.5" />
-                  {copy.tabs.markets}
-                </button>
-              </div>
+    <PageShell
+      eyebrow={pageCopy.eyebrow}
+      title={pageCopy.title}
+      description={pageCopy.description}
+      navItems={navItems}
+      topLabel={topLabel}
+      breadcrumbs={breadcrumbs}
+      breadcrumbAriaLabel={navigationLabels.breadcrumb}
+      backButtonLabel={navigationLabels.back}
+      backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle={pageCopy.ctaTitle}
+      ctaButtonLabel={pageCopy.ctaButton}
+      ctaHref="/utilitarios/horario-mundial/"
+    >
+      <section id="ferramenta" className="section-anchor">
+        <div className="section-card world-clock-section-card">
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
+            <div className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
+              <Landmark className="h-4 w-4" />
+              {marketLabels.title}
+            </div>
+            <WorldClockToolSwitcher
+              activePage="markets"
+              worldLabel={worldClockCopy.tabs.world}
+              marketsLabel={worldClockCopy.tabs.markets}
+            />
+          </div>
+
+          <div className="mt-4 rounded-xl bg-secondary px-3 py-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {pageCopy.content.introTitle}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              {pageCopy.refreshHelp}
+            </p>
+          </div>
+
+          <div className="mt-4">
+            <AdSlot
+              id="ads-markets-top"
+              minHeight={120}
+              format="horizontal"
+              className="rounded-xl"
+            />
+            <span className="sr-only">{pageCopy.adLabel}</span>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-start justify-between gap-3 rounded-xl bg-secondary px-3 py-2.5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {marketLabels.title}
+              </p>
+              <p className="mt-1 text-sm leading-5 text-muted-foreground">
+                {marketLabels.description}
+              </p>
+              {marketsState.data?.updatedAt ? (
+                <p className="mt-1.5 text-[11px] text-muted-foreground">
+                  {marketLabels.updatedAt}{" "}
+                  {new Intl.DateTimeFormat(dateLocale, {
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  }).format(new Date(marketsState.data.updatedAt))}
+                </p>
+              ) : null}
             </div>
 
-            <div
-              id="painel-mundo"
-              role="tabpanel"
-              aria-labelledby="tab-mundo"
-              className={activeTab === "mundo" ? "mt-4 space-y-4" : "hidden"}
+            <button
+              type="button"
+              onClick={() => void refreshMarkets(true)}
+              className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-card px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-background disabled:cursor-not-allowed disabled:opacity-70"
+              disabled={!isClientReady || marketsState.status === "loading"}
+              aria-label={marketLabels.refresh}
             >
-              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_240px]">
-                <label className="space-y-2">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    {copy.controls.searchLabel}
-                  </span>
-                  <div className="relative">
-                    <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      className="input-base min-h-10 w-full px-3 py-2.5 pl-9 text-sm"
-                      value={searchQuery}
-                      onChange={event => setSearchQuery(event.target.value)}
-                      placeholder={copy.controls.searchPlaceholder}
-                    />
-                  </div>
-                  <p className="text-[11px] leading-5 text-muted-foreground">
-                    {copy.controls.searchHint}
-                  </p>
-                </label>
-
-                <div className="rounded-xl bg-secondary px-3 py-2.5">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    {activeContinentLabel}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-foreground">
-                    {filteredCountries.length} {copy.controls.countriesCountLabel}
-                  </p>
-                  <p className="mt-1 text-[11px] leading-5 text-muted-foreground">
-                    {copy.controls.worldGridDescription}
-                  </p>
-                </div>
-              </div>
-
-              <WorldClockContinentNav
-                language={language}
-                activeContinent={activeContinent}
-                onChange={changeContinent}
+              <RefreshCw
+                className={`h-3.5 w-3.5 ${
+                  marketsState.status === "loading" ? "animate-spin" : ""
+                }`}
               />
+              {marketLabels.refresh}
+            </button>
+          </div>
 
-              <div className="flex items-start gap-2.5">
-                <Globe2 className="mt-0.5 h-3.5 w-3.5 text-primary" />
-                <div>
-                  <h2 className="text-lg font-bold leading-6">
-                    {copy.controls.worldGridTitle}
-                  </h2>
-                  <p className="mt-0.5 text-sm leading-5 text-muted-foreground">
-                    {activeContinentLabel}
-                  </p>
-                </div>
-              </div>
+          <div className="mt-3 space-y-3">
+            {!isClientReady ? getStatusNotice(pageCopy.liveLoadNotice) : null}
+            {statusNotice ? getStatusNotice(statusNotice) : null}
 
-              <div
-                className="continent-watermark"
-                data-continent={activeContinent}
-              >
-                {filteredCountries.length ? (
-                  <div
-                    id="world-clock-country-grid"
-                    role="tabpanel"
-                    aria-labelledby={`continent-tab-${activeContinent}`}
-                    className="continent-watermark-grid grid gap-2.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
-                  >
-                    {filteredCountries.map(({ country, localized }) => {
-                      const timezone = country.timezones[0];
-
-                      return (
-                        <WorldClockCountryCard
-                          key={country.id}
-                          country={country}
-                          displayName={localized.name}
-                          displayCapital={localized.capital}
-                          flag={localized.flag}
-                          timezone={timezone}
-                          timezoneLabel={getTimezoneLabel(
-                            timezone,
-                            localized.capital
-                          )}
-                          dateLocale={dateLocale}
-                          now={now}
-                          detailsLabel={copy.modal.titlePrefix}
-                          onClick={() => openCountryModal(country.id)}
-                        />
-                      );
-                    })}
-                  </div>
-                ) : (
-                  getStatusNotice(
-                    `${copy.controls.noSearchResults} ${copy.controls.noSearchResultsHint}`
-                  )
-                )}
-              </div>
-            </div>
-
-            <div
-              id="painel-mercados"
-              role="tabpanel"
-              aria-labelledby="tab-mercados"
-              className={activeTab === "mercados" ? "mt-4 space-y-3" : "hidden"}
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl bg-secondary px-3 py-2.5">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    {copy.markets.title}
-                  </p>
-                  <p className="mt-1 text-sm leading-5 text-muted-foreground">
-                    {copy.markets.description}
-                  </p>
-                  {marketsState.data?.updatedAt ? (
-                    <p className="mt-1.5 text-[11px] text-muted-foreground">
-                      {copy.markets.updatedAt}{" "}
-                      {new Intl.DateTimeFormat(dateLocale, {
-                        dateStyle: "short",
-                        timeStyle: "short",
-                      }).format(new Date(marketsState.data.updatedAt))}
-                    </p>
-                  ) : null}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => void refreshMarkets()}
-                  className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-card px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-background"
-                  disabled={marketsState.status === "loading"}
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  {copy.markets.refresh}
-                </button>
-              </div>
-
-              {marketsState.status === "loading"
-                ? getStatusNotice(copy.markets.updating)
-                : null}
-              {marketsState.notice ? getStatusNotice(marketsState.notice) : null}
-
+            {isClientReady && marketsState.status !== "idle" ? (
               <WorldClockMarketsTable
                 language={language}
                 dateLocale={dateLocale}
                 now={now}
                 quotesById={marketQuotesById}
+                hideQuoteColumns={!hasAnyFinancialSnapshot}
+                compactFallbackNote={
+                  !hasAnyFinancialSnapshot ? pageCopy.fallbackNotice : null
+                }
                 onMarketClick={marketId =>
                   trackAnalyticsEvent("utility_global_market_clicked", {
                     market_id: marketId,
                   })
                 }
               />
-            </div>
+            ) : null}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="explicacao" className="section-anchor">
-          <div className="section-card world-clock-section-card">
-            <h2 className="text-2xl font-bold">{copy.content.timezonesTitle}</h2>
-            <div className="mt-4 page-grid gap-4">
-              {copy.content.timezonesItems.map(item => (
-                <article
-                  key={item}
-                  className="rounded-xl bg-secondary p-4 text-sm leading-6 text-muted-foreground"
-                >
-                  {item}
-                </article>
-              ))}
-            </div>
+      <section id="explicacao" className="section-anchor">
+        <div className="section-card world-clock-section-card">
+          <h2 className="text-2xl font-bold">
+            {pageCopy.content.introTitle}
+          </h2>
+          <div className="mt-4 page-grid gap-4">
+            {pageCopy.content.introItems.map(item => (
+              <article
+                key={item}
+                className="rounded-xl bg-secondary p-4 text-sm leading-6 text-muted-foreground"
+              >
+                {item}
+              </article>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="exemplos" className="section-anchor">
-          <div className="section-card world-clock-section-card">
-            <h2 className="text-2xl font-bold">{copy.content.marketsTitle}</h2>
-            <div className="mt-4 page-grid gap-4">
-              {copy.content.marketsItems.map(item => (
-                <article
-                  key={item}
-                  className="rounded-xl bg-secondary p-4 text-sm leading-6 text-muted-foreground"
-                >
-                  {item}
-                </article>
-              ))}
-            </div>
+      <section id="exemplos" className="section-anchor">
+        <div className="section-card world-clock-section-card">
+          <h2 className="text-2xl font-bold">
+            {pageCopy.content.examplesTitle}
+          </h2>
+          <div className="mt-4 page-grid gap-4">
+            {pageCopy.content.examplesItems.map(item => (
+              <article
+                key={item}
+                className="rounded-xl bg-secondary p-4 text-sm leading-6 text-muted-foreground"
+              >
+                {item}
+              </article>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="faq" className="section-anchor">
-          <div className="section-card world-clock-section-card">
-            <h2 className="text-2xl font-bold">{copy.content.faqTitle}</h2>
-            <div className="mt-4 space-y-2.5">
-              {copy.content.faqItems.map(item => (
-                <details
-                  key={item.question}
-                  className="rounded-xl bg-secondary px-4 py-3.5"
-                >
-                  <summary className="text-sm font-semibold leading-6">
-                    {item.question}
-                  </summary>
-                  <p className="mt-2.5 text-sm leading-6 text-muted-foreground">
-                    {item.answer}
-                  </p>
-                </details>
-              ))}
-            </div>
+      <section id="faq" className="section-anchor">
+        <div className="section-card world-clock-section-card">
+          <h2 className="text-2xl font-bold">{pageCopy.content.faqTitle}</h2>
+          <div className="mt-4 space-y-2.5">
+            {pageCopy.content.faqItems.map(item => (
+              <details
+                key={item.question}
+                className="rounded-xl bg-secondary px-4 py-3.5"
+              >
+                <summary className="text-sm font-semibold leading-6">
+                  {item.question}
+                </summary>
+                <p className="mt-2.5 text-sm leading-6 text-muted-foreground">
+                  {item.answer}
+                </p>
+              </details>
+            ))}
           </div>
-        </section>
-      </PageShell>
-
-      <ModalDialog
-        open={Boolean(modalCountryId)}
-        onOpenChange={open => {
-          if (!open) {
-            setModalCountryId(null);
-          }
-        }}
-        title={
-          modalCountryMeta
-            ? `${copy.modal.titlePrefix} ${modalCountryMeta.name}`
-            : copy.modal.titlePrefix
-        }
-        description={
-          modalCountryMeta
-            ? `${copy.modal.descriptionPrefix} ${modalCountryMeta.name}.`
-            : undefined
-        }
-        closeLabel={copy.modal.close}
-      >
-        {modalCountry ? (
-          <WorldClockCountryModalContent
-            country={modalCountry}
-            language={language}
-            dateLocale={dateLocale}
-            status={modalState.status}
-            detail={modalState.data}
-          />
-        ) : null}
-      </ModalDialog>
-    </>
+        </div>
+      </section>
+    </PageShell>
   );
 }

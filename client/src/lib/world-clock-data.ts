@@ -30,6 +30,8 @@ export interface GlobalMarketQuote {
 export interface GlobalMarketsSnapshotResponse {
   updatedAt: string;
   items: GlobalMarketQuote[];
+  snapshotStatus: "live" | "stale" | "fallback";
+  snapshotNotice?: string | null;
 }
 
 const OFFSET_FORMATTER_CACHE = new Map<string, Intl.DateTimeFormat>();

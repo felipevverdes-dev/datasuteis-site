@@ -57,8 +57,6 @@
 ## Horário Mundial
 
 - rota `/utilitarios/horario-mundial/` responde
-- alternância entre abas funciona
-- query `?tab=mercados` abre a aba correta
 - navegação horizontal por continentes funciona por clique
 - navegação horizontal por continentes funciona por teclado
 - busca por país/cidade filtra a grade
@@ -82,12 +80,15 @@
 
 ## Mercados Globais
 
+- rota `/utilitarios/horario-mercados/` responde
+- `/utilitarios/horario-mundial/?tab=mercados` redireciona para `/utilitarios/horario-mercados/`
 - tabela compacta aparece em desktop
 - cards compactos aparecem em mobile
 - horários locais atualizam
 - status da bolsa muda sem depender de cor apenas
 - cotação, fechamento e variação exibem fallback elegante quando ausentes
 - botão atualizar funciona
+- HTML estático não imprime tabela inteira com “cotação indisponível” antes da hidratação
 
 ## Jogos
 
@@ -118,14 +119,15 @@
 
 - sem consentimento, scripts não essenciais não devem disparar como antes do aceite
 - com consentimento, GA4 deve registrar navegação
-- trocar aba de horário mundial deve emitir evento
+- trocar continente e abrir a página de mercados deve emitir evento
 - seleção de país e abertura de modal devem emitir evento
 
 ## Acessibilidade
 
 - navegar por teclado:
   - header
-  - tabs
+  - switcher entre horário mundial e mercados
+  - navegação por continentes
   - inputs
   - cards
   - modal
@@ -133,7 +135,7 @@
 - validar leitura básica com leitor de tela:
   - heading principal
   - breadcrumb
-  - tabs
+  - switcher entre páginas
   - modal
   - tabela de mercados
 

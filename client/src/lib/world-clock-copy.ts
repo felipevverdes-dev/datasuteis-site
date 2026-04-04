@@ -105,13 +105,13 @@ export interface WorldClockPageCopy {
 const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
   pt: {
     eyebrow: "Utilitários",
-    title: "Horário Mundial e Horário dos Principais Mercados do Mundo",
+    title: "Horário Mundial por Continente",
     description:
-      "Veja o horário de todos os países e regiões do mundo em tempo real, com UTC atual e capital, e acompanhe o funcionamento das principais bolsas globais em uma única página.",
+      "Veja o horário atual de países e capitais por continente, com UTC em tempo real, busca rápida por país ou cidade e leitura limpa dos principais fusos.",
     seoTitle:
-      "Horário Mundial e Horário dos Principais Mercados do Mundo | Datas Úteis",
+      "Horário Mundial por Continente | Fuso, UTC e Capitais | Datas Úteis",
     seoDescription:
-      "Veja o horário de todos os países e regiões em tempo real com UTC atual e capital, e acompanhe o horário das principais bolsas globais em uma única página.",
+      "Consulte o horário atual de países e capitais por continente, com UTC em tempo real, busca por país ou cidade e leitura rápida de fusos.",
     toolLabel: "Horário de todos os países e regiões",
     tabListLabel: "Alternar entre horário mundial e mercados globais",
     tabs: {
@@ -206,11 +206,11 @@ const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
         "Países de grande extensão territorial, como Brasil, Estados Unidos, Rússia e Austrália, adotam múltiplos fusos horários internamente.",
         "Horário de verão é adotado em parte dos países para aproveitar melhor a luz solar, deslocando o relógio local em relação ao UTC durante determinados meses.",
       ],
-      marketsTitle: "Como ler os horários dos mercados globais",
+      marketsTitle: "Como comparar horários entre continentes",
       marketsItems: [
-        "A agenda oficial de cada bolsa vem de uma camada configurável por mercado, pronta para receber feriados e exceções futuras.",
-        "Mercados com pré-abertura, pós-fechamento ou intervalo intradiário exibem status específico, sem depender de dedução manual.",
-        "Quando a cotação atrasa, a seção continua útil para planejamento internacional, reuniões e leitura das janelas de negociação.",
+        "A busca local permite localizar países por nome, capital, aliases e partes do timezone sem misturar continentes ou gerar duplicações.",
+        "Os relógios usam o fuso principal da capital e exibem UTC atual em tempo real, o que ajuda a planejar reuniões, viagens e janelas de atendimento.",
+        "Países com múltiplos fusos mostram o total de variações no card e abrem um modal com mais contexto quando você precisa aprofundar a consulta.",
       ],
       faqTitle: "Perguntas frequentes",
       faqItems: [
@@ -220,19 +220,19 @@ const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
             "A página exibe o fuso da capital do país por padrão. Países com múltiplos fusos relevantes listam as demais opções para consulta.",
         },
         {
-          question: "O clima e as cotações precisam de API paga?",
-          answer:
-            "Não. O clima usa Open-Meteo e as cotações globais passam por um proxy no backend sem expor chaves no navegador.",
-        },
-        {
-          question: "Os horários das bolsas respeitam pausa de almoço?",
-          answer:
-            "Sim. Bolsas com intervalo intradiário, como Japão, Hong Kong, Xangai e Shenzhen, exibem status de intervalo corretamente.",
-        },
-        {
           question: "Por que alguns países têm fusos com meia hora de diferença?",
           answer:
             "Alguns países adotam fusos com offset de 30 ou 45 minutos em vez de horas inteiras, como Índia (UTC+5:30), Nepal (UTC+5:45) e Irã (UTC+3:30).",
+        },
+        {
+          question: "A página atualiza os relógios automaticamente?",
+          answer:
+            "Sim. Os horários são recalculados no navegador em tempo real, sem depender de polling agressivo para cada país listado.",
+        },
+        {
+          question: "Posso buscar por capital ou nome alternativo do país?",
+          answer:
+            "Sim. A busca aceita nome do país, capital, aliases e trechos do timezone para reduzir o número de cliques até encontrar a região desejada.",
         },
       ],
     },
@@ -241,12 +241,12 @@ const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
   },
   en: {
     eyebrow: "Utilities",
-    title: "World Clock and Main Global Market Hours",
+    title: "World Clock by Continent",
     description:
-      "See the current time for all countries and regions in real time, with UTC offset and capital city, and follow the schedule of the main global exchanges in one place.",
-    seoTitle: "World Clock and Main Global Market Hours | Datas Úteis",
+      "See the current time for countries and capitals by continent, with live UTC offset, quick search and a clean timezone overview.",
+    seoTitle: "World Clock by Continent | UTC, Capitals and Timezones | Datas Úteis",
     seoDescription:
-      "See the current time for all countries and regions in real time with UTC offset and capital city, and follow the schedule of the main global exchanges in one place.",
+      "Check current time for countries and capitals by continent, with live UTC offset, country or city search and a quick timezone overview.",
     toolLabel: "World clock for all countries and regions",
     tabListLabel: "Switch between world clock and global markets",
     tabs: {
@@ -341,11 +341,11 @@ const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
         "Large countries such as Brazil, the United States, Russia and Australia use multiple time zones internally to match solar time across their territory.",
         "Daylight saving time is observed in part of the world to make better use of natural light, shifting the local clock relative to UTC during certain months.",
       ],
-      marketsTitle: "How to read global market hours",
+      marketsTitle: "How to compare time across continents",
       marketsItems: [
-        "Each exchange schedule comes from a configurable market layer, ready for future holidays and exceptional sessions.",
-        "Markets with pre-open, post-close or intraday breaks expose a dedicated status instead of relying on manual assumptions.",
-        "If quote data is delayed, the section stays useful for international planning, meetings and trading windows.",
+        "Local search lets you find countries by name, capital, aliases and timezone fragments without mixing continents or duplicating results.",
+        "Clocks use the capital city timezone and show the current UTC offset in real time, helping with meetings, travel and support windows.",
+        "Countries with multiple timezones show the total count on the card and open a richer modal when you need more context.",
       ],
       faqTitle: "Frequently asked questions",
       faqItems: [
@@ -355,19 +355,19 @@ const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
             "The page shows the capital city timezone by default. Countries with multiple relevant timezones list the other options for reference.",
         },
         {
-          question: "Do weather and quotes require a paid API?",
-          answer:
-            "No. Weather uses Open-Meteo and global quotes go through a backend proxy without exposing keys in the browser.",
-        },
-        {
-          question: "Do exchange hours respect lunch breaks?",
-          answer:
-            "Yes. Exchanges with intraday breaks, such as Japan, Hong Kong, Shanghai and Shenzhen, show a break status correctly.",
-        },
-        {
           question: "Why do some countries have half-hour timezone offsets?",
           answer:
             "Some countries use offsets of 30 or 45 minutes instead of full hours, such as India (UTC+5:30), Nepal (UTC+5:45) and Iran (UTC+3:30).",
+        },
+        {
+          question: "Does the page update clocks automatically?",
+          answer:
+            "Yes. Times are recalculated in the browser in real time without aggressive polling for every country listed on the page.",
+        },
+        {
+          question: "Can I search by capital city or alternate country name?",
+          answer:
+            "Yes. Search accepts country name, capital city, aliases and timezone fragments so you can narrow the grid quickly.",
         },
       ],
     },
@@ -376,13 +376,13 @@ const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
   },
   es: {
     eyebrow: "Utilidades",
-    title: "Horario Mundial y Horarios de los Principales Mercados",
+    title: "Horario Mundial por Continente",
     description:
-      "Consulte el horario de todos los países y regiones del mundo en tiempo real, con UTC actual y capital, y siga el horario de las principales bolsas globales en una sola página.",
+      "Consulte el horario actual de países y capitales por continente, con UTC en tiempo real, búsqueda rápida por país o ciudad y lectura clara de husos.",
     seoTitle:
-      "Horario Mundial y Horarios de los Principales Mercados | Datas Úteis",
+      "Horario Mundial por Continente | UTC, Capitales y Husos | Datas Úteis",
     seoDescription:
-      "Consulte el horario de todos los países y regiones en tiempo real con UTC actual y capital, y siga el horario de las principales bolsas globales en una sola página.",
+      "Consulte el horario actual de países y capitales por continente, con UTC en tiempo real, búsqueda por país o ciudad y lectura rápida de husos.",
     toolLabel: "Horario de todos los países y regiones",
     tabListLabel: "Alternar entre horario mundial y mercados globales",
     tabs: {
@@ -477,11 +477,11 @@ const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
         "Países de gran extensión, como Brasil, Estados Unidos, Rusia y Australia, utilizan múltiples husos horarios internamente para ajustarse al tiempo solar en su territorio.",
         "El horario de verano se aplica en parte del mundo para aprovechar mejor la luz natural, desplazando el reloj local respecto al UTC durante ciertos meses del año.",
       ],
-      marketsTitle: "Cómo leer los horarios de los mercados globales",
+      marketsTitle: "Cómo comparar horarios entre continentes",
       marketsItems: [
-        "La agenda oficial de cada bolsa proviene de una capa configurable por mercado, lista para futuros feriados y excepciones.",
-        "Los mercados con preapertura, postcierre o pausas intradiarias muestran un estado específico, sin deducciones manuales.",
-        "Cuando la cotización se retrasa, la sección sigue siendo útil para planificación internacional, reuniones y ventanas de negociación.",
+        "La búsqueda local permite encontrar países por nombre, capital, aliases y fragmentos del timezone sin mezclar continentes ni duplicar resultados.",
+        "Los relojes usan el huso principal de la capital y muestran el UTC actual en tiempo real, lo que ayuda en reuniones, viajes y ventanas de atención.",
+        "Los países con múltiples husos muestran la cantidad total en la tarjeta y abren un modal más completo cuando necesita más contexto.",
       ],
       faqTitle: "Preguntas frecuentes",
       faqItems: [
@@ -491,20 +491,19 @@ const PAGE_COPY: Record<SupportedLanguage, WorldClockPageCopy> = {
             "La página muestra el huso de la capital del país por defecto. Los países con múltiples husos relevantes listan las demás opciones para consulta.",
         },
         {
-          question: "¿El clima y las cotizaciones requieren API paga?",
-          answer:
-            "No. El clima usa Open-Meteo y las cotizaciones globales pasan por un proxy backend sin exponer claves en el navegador.",
-        },
-        {
-          question:
-            "¿Los horarios de las bolsas respetan la pausa de almuerzo?",
-          answer:
-            "Sí. Bolsas con intervalo intradiario, como Japón, Hong Kong, Shanghái y Shenzhen, muestran correctamente el estado de pausa.",
-        },
-        {
           question: "¿Por qué algunos países tienen husos de media hora?",
           answer:
             "Algunos países usan desfases de 30 o 45 minutos en lugar de horas completas, como India (UTC+5:30), Nepal (UTC+5:45) e Irán (UTC+3:30).",
+        },
+        {
+          question: "¿La página actualiza los relojes automáticamente?",
+          answer:
+            "Sí. Los horarios se recalculan en el navegador en tiempo real sin usar polling agresivo para cada país listado.",
+        },
+        {
+          question: "¿Puedo buscar por capital o nombre alternativo del país?",
+          answer:
+            "Sí. La búsqueda acepta nombre del país, capital, aliases y fragmentos del timezone para reducir la cuadrícula rápidamente.",
         },
       ],
     },

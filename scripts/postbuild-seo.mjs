@@ -21,6 +21,7 @@ const PRIORITY_PRERENDER_PATHS = new Set([
   "/calendario/",
   "/escala/",
   "/utilitarios/horario-mundial/",
+  "/utilitarios/horario-mercados/",
 ]);
 const MONTHS = [
   "janeiro",
@@ -217,11 +218,19 @@ function buildRoutes(blogPosts) {
     ),
     route(
       "/utilitarios/horario-mundial/",
-      "Horário Mundial e Horário dos Principais Mercados do Mundo | Datas Úteis",
-      "Compare fusos em tempo real, veja clima e distância entre capitais e acompanhe o horário das principais bolsas globais em uma única página.",
+      "Horário Mundial por Continente | Fuso, UTC e Capitais | Datas Úteis",
+      "Consulte o horário atual de países e capitais por continente, com UTC em tempo real, busca por país ou cidade e leitura rápida de fusos.",
       "0.68",
       "daily",
       { breadcrumbLabel: "Horário Mundial" }
+    ),
+    route(
+      "/utilitarios/horario-mercados/",
+      "Horário das Bolsas Globais: NYSE, Nasdaq, B3 e Mercados do Mundo | Datas Úteis",
+      "Veja abertura, fechamento, timezone local e status das principais bolsas globais, com snapshots úteis para NYSE, Nasdaq, B3, Europa e Ásia.",
+      "0.69",
+      "daily",
+      { breadcrumbLabel: "Horário de Mercados" }
     ),
     route(
       "/jogos/",

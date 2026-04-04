@@ -4,6 +4,7 @@ import {
   CloudSun,
   Coins,
   Dices,
+  Landmark,
   Sparkles,
 } from "lucide-react";
 import { Link } from "wouter";
@@ -80,7 +81,14 @@ const COPY: Record<
         href: "/utilitarios/horario-mundial/",
         title: "Horário mundial",
         description:
-          "Compare fusos, acompanhe relógios internacionais e veja o horário das principais bolsas do mundo.",
+          "Veja países e capitais por continente, com UTC em tempo real e busca rápida por país ou cidade.",
+        cta: "Abrir utilitário",
+      },
+      {
+        href: "/utilitarios/horario-mercados/",
+        title: "Horário de mercados",
+        description:
+          "Acompanhe abertura, fechamento e status das principais bolsas globais em uma página própria.",
         cta: "Abrir utilitário",
       },
     ],
@@ -156,7 +164,14 @@ const COPY: Record<
         href: "/utilitarios/horario-mundial/",
         title: "World clock",
         description:
-          "Compare timezones, international clocks and leading stock market hours in one place.",
+          "Browse countries and capitals by continent with live UTC offsets and quick search.",
+        cta: "Open utility",
+      },
+      {
+        href: "/utilitarios/horario-mercados/",
+        title: "Market hours",
+        description:
+          "Track the opening, closing and live session status of major global exchanges on a dedicated page.",
         cta: "Open utility",
       },
     ],
@@ -232,7 +247,14 @@ const COPY: Record<
         href: "/utilitarios/horario-mundial/",
         title: "Reloj mundial",
         description:
-          "Compare husos horarios, relojes internacionales y horarios de las principales bolsas del mundo.",
+          "Vea países y capitales por continente, con UTC en tiempo real y búsqueda rápida por país o ciudad.",
+        cta: "Abrir utilidad",
+      },
+      {
+        href: "/utilitarios/horario-mercados/",
+        title: "Horario de mercados",
+        description:
+          "Siga apertura, cierre y estado de sesión de las principales bolsas globales en una página dedicada.",
         cta: "Abrir utilidad",
       },
     ],
@@ -351,6 +373,8 @@ export default function Utilities() {
                       ? Coins
                       : card.href === "/utilitarios/horario-mundial/"
                         ? Clock3
+                        : card.href === "/utilitarios/horario-mercados/"
+                          ? Landmark
                         : CloudSun;
 
               return (

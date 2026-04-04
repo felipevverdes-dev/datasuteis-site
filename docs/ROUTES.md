@@ -36,8 +36,11 @@
 - `/utilitarios/conversor-de-moeda/`
 - `/utilitarios/clima/`
 - `/utilitarios/horario-mundial/`
-  - tabs por query param: `?tab=mundo` e `?tab=mercados`
-  - navegação interna por continentes na aba de horário mundial
+  - navegação interna por continentes
+  - busca por país, capital e aliases
+- `/utilitarios/horario-mercados/`
+  - página própria para horários de bolsas e snapshots de mercado
+  - query antiga `/utilitarios/horario-mundial/?tab=mercados` redireciona para esta rota
 
 ## Rotas de jogos
 

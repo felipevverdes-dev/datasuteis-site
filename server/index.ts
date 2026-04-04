@@ -95,6 +95,34 @@ async function startServer() {
     res.redirect(301, `/utilitarios/calculadora/${suffix}`);
   });
 
+  app.get(["/utilitarios/horario-mundial", "/utilitarios/horario-mundial/"], (req, res, next) => {
+    if (req.query.tab !== "mercados") {
+      next();
+      return;
+    }
+
+    const target = new URL(
+      `https://datasuteis.com.br/utilitarios/horario-mercados/`
+    );
+
+    Object.entries(req.query).forEach(([key, value]) => {
+      if (key === "tab") {
+        return;
+      }
+
+      if (Array.isArray(value)) {
+        value.forEach(item => target.searchParams.append(key, String(item)));
+        return;
+      }
+
+      if (value !== undefined) {
+        target.searchParams.set(key, String(value));
+      }
+    });
+
+    res.redirect(301, `${target.pathname}${target.search}`);
+  });
+
   app.use((req, res, next) => {
     if (isSecureRequest(req)) {
       res.setHeader(
@@ -282,6 +310,7 @@ async function startServer() {
     /^\/utilitarios\/conversor-de-moeda\/?$/,
     /^\/utilitarios\/clima\/?$/,
     /^\/utilitarios\/horario-mundial\/?$/,
+    /^\/utilitarios\/horario-mercados\/?$/,
     /^\/jogos\/?$/,
     /^\/jogos\/sudoku\/?$/,
     /^\/jogos\/caca-palavras\/?$/,

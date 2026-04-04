@@ -19,6 +19,8 @@ export function buildFallbackGlobalMarketsSnapshot(
 ): GlobalMarketsSnapshotResponse {
   return {
     updatedAt,
+    snapshotStatus: "fallback",
+    snapshotNotice: null,
     items: GLOBAL_MARKETS.map(
       market =>
         ({
@@ -35,8 +37,19 @@ export function buildFallbackGlobalMarketsSnapshot(
   };
 }
 
-export async function fetchGlobalMarketsSnapshot() {
-  const response = await fetch("/api/markets/global", {
+interface FetchGlobalMarketsSnapshotOptions {
+  force?: boolean;
+}
+
+export async function fetchGlobalMarketsSnapshot(
+  options: FetchGlobalMarketsSnapshotOptions = {}
+) {
+  const url = new URL("/api/markets/global", window.location.origin);
+  if (options.force) {
+    url.searchParams.set("refresh", "1");
+  }
+
+  const response = await fetch(url.toString(), {
     headers: {
       Accept: "application/json",
     },
@@ -54,7 +67,8 @@ export async function fetchGlobalMarketsSnapshot() {
   if (
     !payload ||
     !Array.isArray(payload.items) ||
-    typeof payload.updatedAt !== "string"
+    typeof payload.updatedAt !== "string" ||
+    typeof payload.snapshotStatus !== "string"
   ) {
     throw new WorldClockApiError(
       "A resposta das bolsas globais veio em formato inesperado.",

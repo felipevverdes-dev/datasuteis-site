@@ -51,6 +51,12 @@
 
 ## Novo conjunto de Horário Mundial
 
+- `WorldClock`
+  - Página dedicada de países, continentes e busca.
+- `WorldClockMarkets`
+  - Página dedicada de horários de bolsas e snapshots.
+- `WorldClockToolSwitcher`
+  - Navegação interna entre as duas rotas físicas da feature.
 - `WorldClockContinentNav`
   - Navegação horizontal por continentes com suporte a teclado.
 - `WorldClockCountryCard`

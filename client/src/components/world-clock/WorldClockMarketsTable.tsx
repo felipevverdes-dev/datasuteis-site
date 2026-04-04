@@ -79,6 +79,8 @@ interface WorldClockMarketsTableProps {
   now: Date;
   quotesById: Record<string, GlobalMarketQuote | undefined>;
   onMarketClick: (marketId: string) => void;
+  hideQuoteColumns?: boolean;
+  compactFallbackNote?: string | null;
 }
 
 export default function WorldClockMarketsTable({
@@ -87,6 +89,8 @@ export default function WorldClockMarketsTable({
   now,
   quotesById,
   onMarketClick,
+  hideQuoteColumns = false,
+  compactFallbackNote = null,
 }: WorldClockMarketsTableProps) {
   const copy = getWorldClockPageCopy(language).markets;
 
@@ -106,9 +110,9 @@ export default function WorldClockMarketsTable({
                 <th>{copy.timezone}</th>
                 <th>{copy.status}</th>
                 <th>{copy.hours}</th>
-                <th>{copy.currentQuote}</th>
-                <th>{copy.previousClose}</th>
-                <th>{copy.variation}</th>
+                {!hideQuoteColumns ? <th>{copy.currentQuote}</th> : null}
+                {!hideQuoteColumns ? <th>{copy.previousClose}</th> : null}
+                {!hideQuoteColumns ? <th>{copy.variation}</th> : null}
               </tr>
             </thead>
             <tbody>
@@ -145,7 +149,7 @@ export default function WorldClockMarketsTable({
                       </div>
                     </td>
                     <td>
-                      <div className="font-semibold">
+                      <div className="font-semibold tabular-nums">
                         {formatZonedTime(now, market.timezone, dateLocale)}
                       </div>
                     </td>
@@ -170,30 +174,36 @@ export default function WorldClockMarketsTable({
                         {market.notes ?? copy.sessionOnlyFallback}
                       </div>
                     </td>
-                    <td className="font-semibold">
-                      {formatMoney(quote?.price, currency, dateLocale) ??
-                        copy.quoteUnavailable}
-                    </td>
-                    <td>
-                      {formatMoney(
-                        quote?.previousClose,
-                        currency,
-                        dateLocale
-                      ) ?? copy.previousCloseUnavailable}
-                    </td>
-                    <td>
-                      {quote?.changeAbsolute === null ||
-                      quote?.changeAbsolute === undefined
-                        ? copy.variationUnavailable
-                        : `${formatSignedMoney(
-                            quote.changeAbsolute,
-                            currency,
-                            dateLocale
-                          )} • ${formatSignedPercent(
-                            quote.changePercent,
-                            dateLocale
-                          )}`}
-                    </td>
+                    {!hideQuoteColumns ? (
+                      <td className="font-semibold">
+                        {formatMoney(quote?.price, currency, dateLocale) ??
+                          copy.quoteUnavailable}
+                      </td>
+                    ) : null}
+                    {!hideQuoteColumns ? (
+                      <td>
+                        {formatMoney(
+                          quote?.previousClose,
+                          currency,
+                          dateLocale
+                        ) ?? copy.previousCloseUnavailable}
+                      </td>
+                    ) : null}
+                    {!hideQuoteColumns ? (
+                      <td>
+                        {quote?.changeAbsolute === null ||
+                        quote?.changeAbsolute === undefined
+                          ? copy.variationUnavailable
+                          : `${formatSignedMoney(
+                              quote.changeAbsolute,
+                              currency,
+                              dateLocale
+                            )} • ${formatSignedPercent(
+                              quote.changePercent,
+                              dateLocale
+                            )}`}
+                      </td>
+                    ) : null}
                   </tr>
                 );
               })}
@@ -237,7 +247,7 @@ export default function WorldClockMarketsTable({
               <div className="mt-2.5 grid gap-2 sm:grid-cols-2">
                 <div className="compact-stat compact-stat-tight">
                   <span className="compact-stat-label">{copy.localTime}</span>
-                  <strong className="compact-stat-value">
+                  <strong className="compact-stat-value tabular-nums">
                     {formatZonedTime(now, market.timezone, dateLocale)}
                   </strong>
                   <span className="compact-stat-note">
@@ -253,34 +263,43 @@ export default function WorldClockMarketsTable({
                     {market.officialHoursLabel}
                   </span>
                 </div>
+                {!hideQuoteColumns ? (
+                  <div className="compact-stat compact-stat-tight">
+                    <span className="compact-stat-label">
+                      {copy.currentQuote}
+                    </span>
+                    <strong className="compact-stat-value">
+                      {formatMoney(quote?.price, currency, dateLocale) ??
+                        copy.quoteUnavailable}
+                    </strong>
+                    <span className="compact-stat-note">
+                      {copy.previousClose}:{" "}
+                      {formatMoney(
+                        quote?.previousClose,
+                        currency,
+                        dateLocale
+                      ) ?? copy.previousCloseUnavailable}
+                    </span>
+                  </div>
+                ) : null}
                 <div className="compact-stat compact-stat-tight">
                   <span className="compact-stat-label">
-                    {copy.currentQuote}
+                    {hideQuoteColumns ? copy.notes : copy.variation}
                   </span>
                   <strong className="compact-stat-value">
-                    {formatMoney(quote?.price, currency, dateLocale) ??
-                      copy.quoteUnavailable}
-                  </strong>
-                  <span className="compact-stat-note">
-                    {copy.previousClose}:{" "}
-                    {formatMoney(quote?.previousClose, currency, dateLocale) ??
-                      copy.previousCloseUnavailable}
-                  </span>
-                </div>
-                <div className="compact-stat compact-stat-tight">
-                  <span className="compact-stat-label">{copy.variation}</span>
-                  <strong className="compact-stat-value">
-                    {quote?.changeAbsolute === null ||
-                    quote?.changeAbsolute === undefined
-                      ? copy.variationUnavailable
-                      : `${formatSignedMoney(
-                          quote.changeAbsolute,
-                          currency,
-                          dateLocale
-                        )} • ${formatSignedPercent(
-                          quote.changePercent,
-                          dateLocale
-                        )}`}
+                    {hideQuoteColumns
+                      ? compactFallbackNote ?? market.notes ?? copy.sessionOnlyFallback
+                      : quote?.changeAbsolute === null ||
+                          quote?.changeAbsolute === undefined
+                        ? copy.variationUnavailable
+                        : `${formatSignedMoney(
+                            quote.changeAbsolute,
+                            currency,
+                            dateLocale
+                          )} • ${formatSignedPercent(
+                            quote.changePercent,
+                            dateLocale
+                          )}`}
                   </strong>
                   <span className="compact-stat-note">
                     {market.notes ?? copy.sessionOnlyFallback}

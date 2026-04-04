@@ -27,6 +27,7 @@ const Utilities = lazy(() => import("./pages/Utilities"));
 const RandomPicker = lazy(() => import("./pages/RandomPicker"));
 const CurrencyConverter = lazy(() => import("./pages/CurrencyConverter"));
 const Weather = lazy(() => import("./pages/Weather"));
+const WorldClock = lazy(() => import("./pages/WorldClock"));
 const WorldClockMarkets = lazy(() => import("./pages/WorldClockMarkets"));
 const WordSearch = lazy(() => import("./pages/WordSearch"));
 const Crossword = lazy(() => import("./pages/Crossword"));
@@ -139,12 +140,14 @@ function Router() {
         />
         <Route path={"/utilitarios/clima/"} component={Weather} />
         <Route path={"/utilitarios/clima"} component={Weather} />
+        <Route path={"/utilitarios/horario-mundial/"} component={WorldClock} />
+        <Route path={"/utilitarios/horario-mundial"} component={WorldClock} />
         <Route
-          path={"/utilitarios/horario-mundial/"}
+          path={"/utilitarios/horario-mercados/"}
           component={WorldClockMarkets}
         />
         <Route
-          path={"/utilitarios/horario-mundial"}
+          path={"/utilitarios/horario-mercados"}
           component={WorldClockMarkets}
         />
         <Route path={"/jogos/caca-palavras/"} component={WordSearch} />

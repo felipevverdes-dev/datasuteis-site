@@ -29,6 +29,8 @@ O projeto usa integrações públicas e proxies server-side para evitar exposiç
 - Observações:
   - chamado apenas no backend
   - o front recebe snapshot já normalizado
+  - usa cache em memória com TTL curto
+  - tenta reaproveitar o último snapshot válido antes de cair em fallback
   - se falhar, a agenda da bolsa continua visível com fallback local
 
 ## Exchangerate.host / Frankfurter / open.er-api
@@ -84,6 +86,7 @@ O projeto usa integrações públicas e proxies server-side para evitar exposiç
 - `server/external-data.ts` usa cache em memória por TTL
 - `client/src/lib/home-widgets.ts` usa cache leve em `localStorage` para widgets públicos
 - `client/src/lib/world-clock-api.ts` monta fallback local para Mercados Globais quando a API falha
+- `/api/markets/global?refresh=1` força nova tentativa de snapshot no servidor
 - toda integração deve ter estado:
   - loading
   - success

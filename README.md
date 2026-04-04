@@ -53,11 +53,15 @@ docs/
 - O diretório efetivamente publicado pelo build é `dist/public/`.
 - Canonical, `hreflang`, Open Graph e JSON-LD são ajustados em runtime por `usePageSeo` e em build por `postbuild-seo.mjs`.
 - Integrações externas sensíveis passam pelo backend quando necessário para evitar expor chaves no client.
-- A nova página de Horário Mundial / Mercados Globais usa dataset global local por continente em `client/src/lib/world-clock-countries.ts`.
+- Horário Mundial e Horário de Mercados agora são páginas físicas separadas:
+  - `/utilitarios/horario-mundial/`
+  - `/utilitarios/horario-mercados/`
+- A query legada `/utilitarios/horario-mundial/?tab=mercados` redireciona para a rota nova para evitar canibalização de SEO.
+- A feature usa dataset global local por continente em `client/src/lib/world-clock-countries.ts`.
 - `client/src/lib/world-clock-data.ts` concentra formatadores, status de mercado e tipos normalizados da feature.
 - O modal editorial dos países usa `client/src/lib/world-clock-country-details.ts`.
 - O comparador entre países foi removido; a navegação atual é por continentes com busca por país, capital e aliases.
-- Cotações de mercado usam API interna e fallback local, sem dependência direta de CORS no frontend.
+- Cotações de mercado usam API interna, cache em memória, reaproveitamento do último snapshot válido e fallback local, sem dependência direta de CORS no frontend.
 
 ## Fluxo de produção
 
@@ -74,6 +78,7 @@ Saídas importantes para validar:
 - `dist/public/robots.txt`
 - `dist/public/ads.txt`
 - `dist/public/utilitarios/horario-mundial/index.html`
+- `dist/public/utilitarios/horario-mercados/index.html`
 
 ## Deploy resumido
 

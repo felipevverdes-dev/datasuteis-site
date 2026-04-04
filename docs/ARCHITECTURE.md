@@ -83,6 +83,9 @@ Responsável por:
 
 - Helper centralizado de idle-load em `client/src/lib/idle.ts`.
 - Nova página de horário mundial quebrada em componentes menores:
+  - `WorldClock`
+  - `WorldClockMarkets`
+  - `WorldClockToolSwitcher`
   - `WorldClockContinentNav`
   - `WorldClockCountryCard`
   - `WorldClockCountryModalContent`
@@ -99,11 +102,20 @@ Responsável por:
   - navegação horizontal por continentes
   - busca local por país, capital e aliases
   - modal sob demanda por país
+- Horário Mundial e Horário de Mercados separados em rotas físicas:
+  - `/utilitarios/horario-mundial/`
+  - `/utilitarios/horario-mercados/`
+- A query legada `?tab=mercados` deixou de ser arquitetura primária e agora redireciona para a rota própria de mercados.
 - Estilos reutilizáveis para leitura compacta:
   - `.compact-stat`
   - `.status-chip`
   - `.table-wrap`
   - `.data-table`
+- A rota `/api/markets/global` passou a usar:
+  - cache curto em memória
+  - reaproveitamento do último snapshot válido
+  - fallback degradado curto quando o provider falha
+  - refresh manual com bypass controlado de cache
 
 ## Pontos de dívida técnica ainda existentes
 

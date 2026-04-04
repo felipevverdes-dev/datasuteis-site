@@ -16,6 +16,35 @@ const EXCHANGERATE_HOST_ACCESS_KEY =
   "";
 
 const cache = new Map<string, { expiresAt: number; value: unknown }>();
+const GLOBAL_MARKETS_LIVE_TTL_MS = 1000 * 60 * 5;
+const GLOBAL_MARKETS_DEGRADED_TTL_MS = 1000 * 60;
+const GLOBAL_MARKETS_CONCURRENCY = 4;
+
+interface GlobalMarketSnapshotItem {
+  marketId: string;
+  symbol: string;
+  currency: string | null;
+  price: number | null;
+  previousClose: number | null;
+  changeAbsolute: number | null;
+  changePercent: number | null;
+  updatedAt: string | null;
+  source: "yahoo" | "unavailable";
+}
+
+interface GlobalMarketsSnapshotPayload {
+  ok: true;
+  updatedAt: string;
+  snapshotStatus: "live" | "stale" | "fallback";
+  snapshotNotice: string | null;
+  items: GlobalMarketSnapshotItem[];
+}
+
+let globalMarketsCache:
+  | { expiresAt: number; value: GlobalMarketsSnapshotPayload }
+  | null = null;
+let globalMarketsLastGoodSnapshot: GlobalMarketsSnapshotPayload | null = null;
+let globalMarketsInFlight: Promise<GlobalMarketsSnapshotPayload> | null = null;
 
 const HTML_ENTITY_MAP: Record<string, string> = {
   "&amp;": "&",
@@ -158,6 +187,22 @@ async function fetchText(url: string) {
 
 function parseNumber(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function buildUnavailableGlobalMarketQuote(
+  market: (typeof GLOBAL_MARKETS)[number]
+): GlobalMarketSnapshotItem {
+  return {
+    marketId: market.id,
+    symbol: market.index.symbol,
+    currency: market.index.currency,
+    price: null,
+    previousClose: null,
+    changeAbsolute: null,
+    changePercent: null,
+    updatedAt: null,
+    source: "unavailable",
+  };
 }
 
 function decodeHtmlEntities(value: string) {
@@ -899,6 +944,34 @@ function parseYahooMarketQuote(marketId: string, symbol: string, data: any) {
   };
 }
 
+async function mapWithConcurrency<TItem, TResult>(
+  items: TItem[],
+  concurrency: number,
+  mapper: (item: TItem, index: number) => Promise<TResult>
+) {
+  const results = new Array<TResult>(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (true) {
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+
+      if (currentIndex >= items.length) {
+        return;
+      }
+
+      results[currentIndex] = await mapper(items[currentIndex], currentIndex);
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, items.length) }, () => worker())
+  );
+
+  return results;
+}
+
 async function fetchCurrencyRates() {
   if (EXCHANGERATE_HOST_ACCESS_KEY) {
     const data = await fetchJson<{
@@ -1038,42 +1111,119 @@ async function buildMarketOverview() {
 }
 
 async function buildGlobalMarketsSnapshot() {
-  const quoteRequests = await Promise.allSettled(
-    GLOBAL_MARKETS.map(market =>
-      fetchJson<any>(
-        `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
-          market.index.symbol
-        )}?interval=1d&range=5d`
-      )
-    )
+  const items = await mapWithConcurrency(
+    GLOBAL_MARKETS,
+    GLOBAL_MARKETS_CONCURRENCY,
+    async market => {
+      try {
+        const payload = await fetchJson<any>(
+          `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
+            market.index.symbol
+          )}?interval=1d&range=5d`
+        );
+
+        return parseYahooMarketQuote(market.id, market.index.symbol, payload);
+      } catch {
+        return buildUnavailableGlobalMarketQuote(market);
+      }
+    }
   );
 
   return {
     ok: true,
     updatedAt: new Date().toISOString(),
-    items: GLOBAL_MARKETS.map((market, index) => {
-      const request = quoteRequests[index];
-      if (request.status === "fulfilled") {
-        return parseYahooMarketQuote(
-          market.id,
-          market.index.symbol,
-          request.value
-        );
-      }
+    snapshotStatus: "live",
+    snapshotNotice: null,
+    items,
+  } satisfies GlobalMarketsSnapshotPayload;
+}
 
-      return {
-        marketId: market.id,
-        symbol: market.index.symbol,
-        currency: market.index.currency,
-        price: null,
-        previousClose: null,
-        changeAbsolute: null,
-        changePercent: null,
-        updatedAt: null,
-        source: "unavailable" as const,
-      };
-    }),
+function countLiveGlobalMarketQuotes(snapshot: GlobalMarketsSnapshotPayload) {
+  return snapshot.items.filter(
+    item => item.source === "yahoo" && item.price !== null
+  ).length;
+}
+
+function buildFallbackGlobalMarketsSnapshotPayload() {
+  return {
+    ok: true,
+    updatedAt: new Date().toISOString(),
+    snapshotStatus: "fallback",
+    snapshotNotice: "provider_unavailable",
+    items: GLOBAL_MARKETS.map(market => buildUnavailableGlobalMarketQuote(market)),
+  } satisfies GlobalMarketsSnapshotPayload;
+}
+
+function getGlobalMarketsCachedSnapshot(forceRefresh: boolean) {
+  if (forceRefresh || !globalMarketsCache) {
+    return null;
+  }
+
+  return globalMarketsCache.expiresAt > Date.now()
+    ? globalMarketsCache.value
+    : null;
+}
+
+function setGlobalMarketsCachedSnapshot(
+  snapshot: GlobalMarketsSnapshotPayload,
+  ttlMs: number
+) {
+  globalMarketsCache = {
+    expiresAt: Date.now() + ttlMs,
+    value: snapshot,
   };
+}
+
+async function loadGlobalMarketsSnapshot(forceRefresh = false) {
+  const cached = getGlobalMarketsCachedSnapshot(forceRefresh);
+  if (cached) {
+    return cached;
+  }
+
+  if (globalMarketsInFlight) {
+    return globalMarketsInFlight;
+  }
+
+  globalMarketsInFlight = (async () => {
+    try {
+      const snapshot = await buildGlobalMarketsSnapshot();
+      const liveQuotes = countLiveGlobalMarketQuotes(snapshot);
+
+      if (liveQuotes > 0) {
+        globalMarketsLastGoodSnapshot = snapshot;
+        setGlobalMarketsCachedSnapshot(snapshot, GLOBAL_MARKETS_LIVE_TTL_MS);
+        return snapshot;
+      }
+    } catch {
+      // Ignore here and fall back to the latest valid snapshot below.
+    }
+
+    if (globalMarketsLastGoodSnapshot) {
+      const staleSnapshot = {
+        ...globalMarketsLastGoodSnapshot,
+        snapshotStatus: "stale" as const,
+        snapshotNotice: "stale_last_good",
+      };
+      setGlobalMarketsCachedSnapshot(
+        staleSnapshot,
+        GLOBAL_MARKETS_DEGRADED_TTL_MS
+      );
+      return staleSnapshot;
+    }
+
+    const fallbackSnapshot = buildFallbackGlobalMarketsSnapshotPayload();
+    setGlobalMarketsCachedSnapshot(
+      fallbackSnapshot,
+      GLOBAL_MARKETS_DEGRADED_TTL_MS
+    );
+    return fallbackSnapshot;
+  })();
+
+  try {
+    return await globalMarketsInFlight;
+  } finally {
+    globalMarketsInFlight = null;
+  }
 }
 
 async function buildWeatherSnapshot(req: ApiRequest) {
@@ -1181,14 +1331,14 @@ async function handleOverviewRequest(res: ApiResponse) {
   }
 }
 
-async function handleGlobalMarketsRequest(res: ApiResponse) {
+async function handleGlobalMarketsRequest(req: ApiRequest, res: ApiResponse) {
   try {
-    const data = await getCached(
-      "widgets:global-markets",
-      1000 * 60 * 5,
-      buildGlobalMarketsSnapshot
+    const forceRefresh = getQueryParam(req, "refresh") === "1";
+    const data = await loadGlobalMarketsSnapshot(forceRefresh);
+    setApiCache(
+      res,
+      data.snapshotStatus === "live" ? 300 : 60
     );
-    setApiCache(res, 300);
     sendJson(res, 200, data);
   } catch {
     sendJsonError(
@@ -1331,7 +1481,7 @@ async function handleExternalDataRequest(req: ApiRequest, res: ApiResponse) {
   }
 
   if (pathname === "/api/markets/global") {
-    await handleGlobalMarketsRequest(res);
+    await handleGlobalMarketsRequest(req, res);
     return true;
   }
 
