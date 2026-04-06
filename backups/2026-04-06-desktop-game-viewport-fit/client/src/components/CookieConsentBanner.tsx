@@ -11,21 +11,21 @@ import {
 const COPY = {
   pt: {
     message:
-      "Usamos cookies de medição para Analytics e AdSense. Você pode aceitar ou recusar.",
+      "Usamos cookies e scripts de medição para Google Analytics e Google AdSense. Você pode aceitar ou recusar esse carregamento.",
     accept: "Aceitar",
     reject: "Recusar",
     privacy: "Privacidade",
   },
   en: {
     message:
-      "We use measurement cookies for Analytics and AdSense. You can accept or reject them.",
+      "We use cookies and measurement scripts for Google Analytics and Google AdSense. You can accept or reject this loading.",
     accept: "Accept",
     reject: "Reject",
     privacy: "Privacy",
   },
   es: {
     message:
-      "Usamos cookies de medición para Analytics y AdSense. Puede aceptarlas o rechazarlas.",
+      "Usamos cookies y scripts de medición para Google Analytics y Google AdSense. Puede aceptar o rechazar esta carga.",
     accept: "Aceptar",
     reject: "Rechazar",
     privacy: "Privacidad",
@@ -64,19 +64,17 @@ export default function CookieConsentBanner() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-border/70 bg-background/95 shadow-lg backdrop-blur">
       <div
-        className="container mx-auto flex flex-col gap-2 px-3 py-2.5 md:flex-row md:items-center md:justify-between md:px-4 md:py-3 lg:gap-3 lg:px-5 lg:py-2"
-        style={{
-          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.35rem)",
-        }}
+        className="container mx-auto flex flex-col gap-4 px-6 py-4 md:flex-row md:items-center md:justify-between"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }}
       >
-        <p className="max-w-4xl text-[13px] leading-4 text-muted-foreground md:text-sm md:leading-5 lg:text-[11px] lg:leading-4">
+        <p className="max-w-4xl text-sm leading-6 text-muted-foreground">
           {copy.message}{" "}
           <Link href="/privacidade/" className="font-semibold text-primary">
             {copy.privacy}
           </Link>
         </p>
 
-        <div className="flex shrink-0 flex-wrap gap-2 lg:justify-end">
+        <div className="flex shrink-0 flex-wrap gap-3">
           <button
             type="button"
             onClick={() => {
@@ -85,7 +83,7 @@ export default function CookieConsentBanner() {
               });
               writeStoredCookieConsent("rejected");
             }}
-            className="btn-outline min-h-10 px-4 py-2 text-sm lg:min-h-9 lg:px-3.5 lg:py-1.5 lg:text-[13px]"
+            className="btn-outline"
           >
             {copy.reject}
           </button>
@@ -97,7 +95,7 @@ export default function CookieConsentBanner() {
               });
               writeStoredCookieConsent("accepted");
             }}
-            className="btn-primary min-h-10 px-4 py-2 text-sm lg:min-h-9 lg:px-3.5 lg:py-1.5 lg:text-[13px]"
+            className="btn-primary"
           >
             {copy.accept}
           </button>

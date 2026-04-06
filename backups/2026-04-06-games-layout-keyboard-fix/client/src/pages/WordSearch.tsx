@@ -1,5 +1,4 @@
 import {
-  type CSSProperties,
   useEffect,
   useMemo,
   useRef,
@@ -10,7 +9,6 @@ import { toast } from "sonner";
 import { Link } from "wouter";
 import ConfettiBurst from "@/components/ConfettiBurst";
 import Footer from "@/components/Footer";
-import ResponsiveSecondarySection from "@/components/games/ResponsiveSecondarySection";
 import Header from "@/components/Header";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
 import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
@@ -18,11 +16,7 @@ import GameLanguageNotice from "@/components/layout/GameLanguageNotice";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
-import {
-  buildBreadcrumbSchema,
-  buildFaqPageSchema,
-  getNavigationLabels,
-} from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import {
@@ -504,105 +498,24 @@ export default function WordSearch() {
     drag && getWordSearchSelection(game.size, drag.start, drag.current);
   const navItems = getToolPageNavItems(language);
   const topLabel = getBackToTopLabel(language);
-  const boardSizing =
-    game.size >= 18
-      ? { staticMax: "37rem", vhOffset: "28rem" }
-      : game.size >= 14
-        ? { staticMax: "33rem", vhOffset: "28rem" }
-        : { staticMax: "30rem", vhOffset: "28rem" };
-  const cellTextClassName =
-    game.size >= 18
-      ? "text-[11px] sm:text-xs"
-      : game.size >= 14
-        ? "text-[12px] sm:text-sm"
-        : "text-[13px] sm:text-base";
-  const rankingList = ranking.length ? (
-    ranking.map((entry, index) => (
-      <div
-        key={`${entry.name}-${entry.score}-${entry.date}`}
-        className="rounded-2xl bg-secondary/60 px-4 py-3 text-sm"
-      >
-        <p className="font-semibold">
-          {index + 1}. {entry.name}
-        </p>
-        <p className="mt-1 text-muted-foreground">
-          {entry.score} pts • {formatElapsed(entry.time)}
-        </p>
-      </div>
-    ))
-  ) : (
-    <p className="rounded-2xl bg-secondary/60 px-4 py-4 text-sm text-muted-foreground">
-      Ainda não há partidas registradas nesta dificuldade.
-    </p>
-  );
-  const scoreRegistrationContent =
-    completedTime !== null ? (
-      <>
-        <p className="text-sm text-muted-foreground">
-          {rankingPlacement
-            ? `Sua partida entra em ${rankingPlacement}º lugar nesta dificuldade.`
-            : "A pontuação final não entrou no Top 10 desta dificuldade."}
-        </p>
-        {rankingPlacement ? (
-          <div className="mt-4 space-y-3">
-            <input
-              type="text"
-              value={playerName}
-              onChange={event => {
-                setPlayerName(
-                  sanitizePlayerName(event.target.value, {
-                    maxLength: 12,
-                  })
-                );
-                setPlayerError("");
-              }}
-              className="input-base w-full"
-              placeholder="Nome ou apelido"
-            />
-            {playerError ? (
-              <p className="rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/60 dark:text-rose-200">
-                {playerError}
-              </p>
-            ) : null}
-            {savedPosition !== null ? (
-              <p className="rounded-2xl bg-accent/10 px-4 py-3 text-sm text-accent">
-                Pontuação registrada em {savedPosition}º lugar.
-              </p>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSaveRanking}
-                className="btn-primary w-full"
-              >
-                Registrar pontuação
-              </button>
-            )}
-          </div>
-        ) : null}
-      </>
-    ) : (
-      <p className="text-sm text-muted-foreground">
-        Termine uma rodada para tentar entrar no Top 10.
-      </p>
-    );
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main id="main-content" role="main" className="relative">
-        <section className="hero-game border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
+        <section className="hero border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto">
-            <div className="max-w-3xl">
+            <div className="max-w-4xl">
               <PageIntroNavigation
                 breadcrumbs={breadcrumbs}
                 breadcrumbAriaLabel={navigationLabels.breadcrumb}
                 backLabel={navigationLabels.back}
                 backAriaLabel={navigationLabels.backAria}
               />
-              <h1 className="mt-2 text-3xl font-bold text-primary md:text-[2.2rem] lg:text-[1.875rem] xl:text-[2.05rem]">
+              <h1 className="mt-4 text-3xl font-bold text-primary md:text-4xl">
                 Caça-Palavras Online Grátis
               </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground lg:hidden">
+              <p className="mt-3 max-w-3xl text-muted-foreground">
                 Encontre palavras em até 8 direções, use dicas com parcimônia e
                 registre sua melhor pontuação por dificuldade.
               </p>
@@ -612,79 +525,75 @@ export default function WordSearch() {
 
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
-        <section className="section-game">
-          <div className="container mx-auto game-mobile-container game-page-stack">
+        <section className="section-md">
+          <div className="container mx-auto page-stack">
             <GameLanguageNotice />
 
             <section id="ferramenta" className="section-anchor">
               <div
-                className="card-base game-focus-card game-panel"
+                className="card-base relative overflow-hidden p-4 sm:p-6"
                 data-game-focus
               >
                 <ConfettiBurst active={completedTime !== null} />
-                <div className="hidden lg:block game-toolbar">
-                  <div className="game-toolbar-row">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {(
-                        [
-                          "easy",
-                          "medium",
-                          "hard",
-                          "expert",
-                        ] as WordSearchDifficulty[]
-                      ).map(level => (
-                        <button
-                          key={level}
-                          type="button"
-                          className={cn(
-                            "game-difficulty-button",
-                            difficulty === level
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-secondary hover:bg-secondary/80"
-                          )}
-                          onClick={() => resetForGame(level)}
-                        >
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex flex-wrap gap-2">
+                    {(
+                      [
+                        "easy",
+                        "medium",
+                        "hard",
+                        "expert",
+                      ] as WordSearchDifficulty[]
+                    ).map(level => (
+                      <button
+                        key={level}
+                        type="button"
+                        className={cn(
+                          "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                          difficulty === level
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary hover:bg-secondary/80"
+                        )}
+                        onClick={() => resetForGame(level)}
+                      >
+                        {
                           {
-                            {
-                              easy: "Fácil",
-                              medium: "Médio",
-                              hard: "Difícil",
-                              expert: "Expert",
-                            }[level]
-                          }
-                        </button>
-                      ))}
+                            easy: "Fácil",
+                            medium: "Médio",
+                            hard: "Difícil",
+                            expert: "Expert",
+                          }[level]
+                        }
+                      </button>
+                    ))}
+                  </div>
 
-                      <div className="game-theme-chip game-theme-chip-compact">
+                  <div className="flex flex-wrap gap-3 text-sm">
+                    <span className="rounded-full bg-secondary px-3 py-2">
+                      Tempo: {formatElapsed(elapsed)}
+                    </span>
+                    <span className="rounded-full bg-secondary px-3 py-2">
+                      Pontos: {score}
+                    </span>
+                    <span className="rounded-full bg-secondary px-3 py-2">
+                      Multiplicador: {multiplier.toFixed(2)}x
+                    </span>
+                    <span className="rounded-full bg-secondary px-3 py-2">
+                      Palavras: {foundIds.length}/{game.words.length}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_260px]">
+                  <div className="space-y-5">
+                    <div className="text-center">
+                      <div className="game-theme-chip">
                         Tema da rodada: {game.category}
                       </div>
                     </div>
 
-                    <div className="game-meta-row">
-                      <span className="game-meta-chip">
-                        Tempo: {formatElapsed(elapsed)}
-                      </span>
-                      <span className="game-meta-chip">Pontos: {score}</span>
-                      <span className="game-meta-chip">
-                        Multiplicador: {multiplier.toFixed(2)}x
-                      </span>
-                      <span className="game-meta-chip">
-                        Palavras: {foundIds.length}/{game.words.length}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px]">
-                  <div className="space-y-4">
                     <div
-                      className="game-interactive-area protected-interactive game-board-shell game-mobile-stage relative mx-auto w-full touch-none"
-                      style={
-                        {
-                          "--game-board-static-max": boardSizing.staticMax,
-                          "--game-board-vh-offset": boardSizing.vhOffset,
-                        } as CSSProperties
-                      }
+                      className="game-interactive-area protected-interactive relative mx-auto max-w-[660px] touch-none"
                       onContextMenu={event => event.preventDefault()}
                     >
                       <div
@@ -718,8 +627,7 @@ export default function WordSearch() {
                                 drag?.start === index
                               }
                               className={cn(
-                                "aspect-square rounded-lg border border-border bg-background font-bold",
-                                cellTextClassName,
+                                "aspect-square rounded-lg border border-border bg-background text-sm font-bold sm:text-base",
                                 isFound && "bg-accent/15 text-accent",
                                 inHint && "ring-2 ring-primary/30",
                                 activeCell === index &&
@@ -786,7 +694,7 @@ export default function WordSearch() {
                       </svg>
                     </div>
 
-                    <div className="game-mobile-primary-actions lg:flex lg:flex-wrap lg:gap-2">
+                    <div className="flex flex-wrap gap-3">
                       <button
                         type="button"
                         onClick={handleHint}
@@ -810,125 +718,17 @@ export default function WordSearch() {
                       </button>
                     </div>
 
-                    <div className="hidden lg:block game-secondary-note">
+                    <div className="rounded-2xl bg-secondary/60 px-4 py-3 text-sm text-muted-foreground">
                       Use toque ou mouse para arrastar a seleção. No teclado,
                       use as setas para mover, Enter para marcar início e Enter
                       novamente para fechar a palavra.
                     </div>
-
-                    <div className="space-y-3 lg:hidden">
-                      <div className="rounded-2xl bg-secondary/60 p-3.5 text-sm text-muted-foreground">
-                        <p className="font-semibold text-foreground">
-                          Tema da rodada: {game.category}
-                        </p>
-                        <p className="mt-2 leading-6">
-                          Arraste com o dedo para marcar palavras e use dica
-                          apenas quando precisar destravar a grade.
-                        </p>
-                      </div>
-
-                      <div className="rounded-2xl bg-secondary/60 p-3.5">
-                        <div className="flex items-center justify-between gap-3">
-                          <h2 className="text-base font-bold">
-                            Palavras da rodada
-                          </h2>
-                          <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold text-muted-foreground">
-                            {foundIds.length}/{game.words.length}
-                          </span>
-                        </div>
-                        <div className="mt-3 max-h-44 space-y-1.5 overflow-auto pr-1">
-                          {game.words.map(word => (
-                            <div
-                              key={word.id}
-                              className={cn(
-                                "rounded-xl px-3 py-2 text-[12px] leading-4 sm:text-[13px] sm:leading-5",
-                                foundWords.has(word.id)
-                                  ? "bg-accent/15 text-accent line-through"
-                                  : hintWordId === word.id
-                                    ? "bg-primary/10 text-primary"
-                                    : "bg-background text-foreground"
-                              )}
-                            >
-                              {word.label}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="game-mobile-status-grid">
-                        <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Tempo</span>
-                          <span className="compact-stat-value">
-                            {formatElapsed(elapsed)}
-                          </span>
-                        </div>
-                        <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Pontos</span>
-                          <span className="compact-stat-value">{score}</span>
-                        </div>
-                        <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Streak</span>
-                          <span className="compact-stat-value">{streak}</span>
-                        </div>
-                        <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Multiplicador</span>
-                          <span className="compact-stat-value">
-                            {multiplier.toFixed(2)}x
-                          </span>
-                        </div>
-                      </div>
-
-                      <ResponsiveSecondarySection
-                        title="Dificuldade e ajuda"
-                        summaryText="Troque o nivel, veja o tema da rodada e revise os controles."
-                        className="lg:hidden"
-                      >
-                        <div className="space-y-4">
-                          <div className="flex flex-wrap gap-2">
-                            {(
-                              [
-                                "easy",
-                                "medium",
-                                "hard",
-                                "expert",
-                              ] as WordSearchDifficulty[]
-                            ).map(level => (
-                              <button
-                                key={level}
-                                type="button"
-                                className={cn(
-                                  "game-difficulty-button",
-                                  difficulty === level
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-secondary hover:bg-secondary/80"
-                                )}
-                                onClick={() => resetForGame(level)}
-                              >
-                                {
-                                  {
-                                    easy: "Fácil",
-                                    medium: "Médio",
-                                    hard: "Difícil",
-                                    expert: "Expert",
-                                  }[level]
-                                }
-                              </button>
-                            ))}
-                          </div>
-                          <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                            No teclado físico, use setas para mover, Enter para
-                            marcar o início e Enter novamente para fechar a
-                            palavra.
-                          </div>
-                        </div>
-                      </ResponsiveSecondarySection>
-                    </div>
                   </div>
 
-                  <aside className="hidden space-y-3 lg:block">
+                  <aside className="space-y-3">
                     <div className="rounded-2xl bg-secondary/60 p-3.5 sm:p-4">
                       <h2 className="text-lg font-bold">Palavras da rodada</h2>
-                      <div className="game-side-scroll mt-3 space-y-1.5 overflow-auto pr-1">
+                      <div className="mt-3 max-h-[14rem] space-y-1.5 overflow-auto pr-1 md:max-h-[16rem] lg:max-h-[18rem]">
                         {game.words.map(word => (
                           <div
                             key={word.id}
@@ -964,49 +764,32 @@ export default function WordSearch() {
               </div>
             </section>
 
-            <div className="space-y-3 lg:hidden">
-              <ResponsiveSecondarySection
-                title="Ranking local"
-                summaryText="Top 10 salvo neste navegador por dificuldade."
-              >
-                <div className="space-y-3">{rankingList}</div>
-              </ResponsiveSecondarySection>
-
-              <ResponsiveSecondarySection
-                title="Registrar pontuacao"
-                summaryText="Salve a rodada quando a pontuacao entrar no ranking."
-                defaultOpenMobile={completedTime !== null}
-              >
-                <div className="space-y-4">{scoreRegistrationContent}</div>
-              </ResponsiveSecondarySection>
-            </div>
-
             <div
               id="explicacao"
-              className="section-anchor grid gap-3 lg:grid-cols-[minmax(0,1fr)_340px]"
+              className="section-anchor grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"
             >
-              <section className="space-y-3 lg:space-y-6">
-                <ResponsiveSecondarySection
-                  title="Como funciona o caca-palavras"
-                  summaryText="Regras basicas, niveis e recursos extras da partida."
-                >
+              <section className="space-y-6">
+                <div className="card-base p-6">
+                  <h2 className="text-2xl font-bold">
+                    Como funciona o caça-palavras
+                  </h2>
                   <p className="mt-3 text-muted-foreground">
                     Procure as palavras da rodada no grid e selecione cada uma
-                    em linha reta. As direções podem seguir horizontal,
-                    vertical ou diagonal, então vale começar pelas palavras
-                    maiores para abrir a leitura da grade.
+                    em linha reta. As direções podem seguir horizontal, vertical
+                    ou diagonal, então vale começar pelas palavras maiores para
+                    abrir a leitura da grade.
                   </p>
-
-                  <h3 className="mt-6 text-xl font-bold">
-                    Niveis de dificuldade
-                  </h3>
+                </div>
+                <div className="card-base p-6">
+                  <h2 className="text-2xl font-bold">Níveis de dificuldade</h2>
                   <p className="mt-3 text-muted-foreground">
                     As dificuldades variam de grids 10x10 a 20x20 e aumentam o
                     número de palavras por partida, o tempo de leitura e a
                     exigência de atenção visual.
                   </p>
-
-                  <h3 className="mt-6 text-xl font-bold">Recursos do jogo</h3>
+                </div>
+                <div className="card-base p-6">
+                  <h2 className="text-2xl font-bold">Recursos do jogo</h2>
                   <p className="mt-3 text-muted-foreground">
                     Há timer, pontuação, multiplicador por streak, três dicas
                     por partida, embaralhamento das letras não usadas e ranking
@@ -1023,25 +806,19 @@ export default function WordSearch() {
                       Alternar para Sudoku
                     </Link>
                   </div>
-                </ResponsiveSecondarySection>
-                <ResponsiveSecondarySection
-                  id="exemplos"
-                  title="Categorias e banco de palavras"
-                  summaryText="Temas usados nas rodadas e variedade de palavras."
-                  className="section-anchor"
-                >
+                </div>
+                <div id="exemplos" className="section-anchor card-base p-6">
+                  <h2 className="text-2xl font-bold">
+                    Categorias e banco de palavras
+                  </h2>
                   <p className="mt-3 text-muted-foreground">
                     As rodadas usam categorias como calendário, tecnologia,
                     natureza, culinária e cidade, com combinações suficientes
                     para muitas grades diferentes.
                   </p>
-                </ResponsiveSecondarySection>
-                <ResponsiveSecondarySection
-                  id="faq"
-                  title="Perguntas frequentes"
-                  summaryText="Respostas rapidas sobre dicas, ranking e celular."
-                  className="section-anchor"
-                >
+                </div>
+                <div id="faq" className="section-anchor card-base p-6">
+                  <h2 className="text-2xl font-bold">Perguntas frequentes</h2>
                   <div className="mt-4 space-y-3">
                     {FAQ_ITEMS.map(item => (
                       <details
@@ -1072,10 +849,10 @@ export default function WordSearch() {
                       Sudoku
                     </Link>
                   </div>
-                </ResponsiveSecondarySection>
+                </div>
               </section>
 
-              <aside className="hidden space-y-6 lg:block">
+              <aside className="space-y-6">
                 <div className="card-base p-6">
                   <h2 className="text-xl font-bold">Top 10 por dificuldade</h2>
                   <div className="mt-4 rounded-2xl bg-secondary px-4 py-3 text-sm font-medium">
@@ -1089,12 +866,80 @@ export default function WordSearch() {
                       }[difficulty]
                     }
                   </div>
-                  <div className="mt-4 space-y-3">{rankingList}</div>
+                  <div className="mt-4 space-y-3">
+                    {ranking.length ? (
+                      ranking.map((entry, index) => (
+                        <div
+                          key={`${entry.name}-${entry.score}-${entry.date}`}
+                          className="rounded-2xl bg-secondary/60 px-4 py-3 text-sm"
+                        >
+                          <p className="font-semibold">
+                            {index + 1}. {entry.name}
+                          </p>
+                          <p className="mt-1 text-muted-foreground">
+                            {entry.score} pts • {formatElapsed(entry.time)}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="rounded-2xl bg-secondary/60 px-4 py-4 text-sm text-muted-foreground">
+                        Ainda não há partidas registradas nesta dificuldade.
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="card-base p-6">
                   <h2 className="text-xl font-bold">Registrar pontuação</h2>
-                  <div className="mt-3 space-y-4">{scoreRegistrationContent}</div>
+                  {completedTime !== null ? (
+                    <>
+                      <p className="mt-3 text-sm text-muted-foreground">
+                        {rankingPlacement
+                          ? `Sua partida entra em ${rankingPlacement}º lugar nesta dificuldade.`
+                          : "A pontuação final não entrou no Top 10 desta dificuldade."}
+                      </p>
+                      {rankingPlacement ? (
+                        <div className="mt-4 space-y-3">
+                          <input
+                            type="text"
+                            value={playerName}
+                            onChange={event => {
+                              setPlayerName(
+                                sanitizePlayerName(event.target.value, {
+                                  maxLength: 12,
+                                })
+                              );
+                              setPlayerError("");
+                            }}
+                            className="input-base w-full"
+                            placeholder="Nome ou apelido"
+                          />
+                          {playerError ? (
+                            <p className="rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/60 dark:text-rose-200">
+                              {playerError}
+                            </p>
+                          ) : null}
+                          {savedPosition !== null ? (
+                            <p className="rounded-2xl bg-accent/10 px-4 py-3 text-sm text-accent">
+                              Pontuação registrada em {savedPosition}º lugar.
+                            </p>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={handleSaveRanking}
+                              className="btn-primary w-full"
+                            >
+                              Registrar pontuação
+                            </button>
+                          )}
+                        </div>
+                      ) : null}
+                    </>
+                  ) : (
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      Termine uma rodada para tentar entrar no Top 10.
+                    </p>
+                  )}
                 </div>
               </aside>
             </div>

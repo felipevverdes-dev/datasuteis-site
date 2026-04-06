@@ -2,11 +2,7 @@ import { ArrowRight, BookOpen, Grid3X3, Search } from "lucide-react";
 import { Link } from "wouter";
 import PageShell from "@/components/layout/PageShell";
 import { useI18n } from "@/contexts/LanguageContext";
-import {
-  buildBreadcrumbSchema,
-  buildFaqPageSchema,
-  getNavigationLabels,
-} from "@/lib/navigation";
+import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import type { SupportedLanguage } from "@/lib/site";
@@ -61,7 +57,7 @@ const COPY: Record<
         href: "/jogos/palavras-cruzadas/",
         title: "Palavras Cruzadas",
         description:
-          "Grade compacta com teclado nativo no celular, teclado físico no desktop, verificação, dicas e ranking local.",
+          "Grade compacta com teclado virtual, verificação, dicas e ranking local.",
         cta: "Abrir Palavras Cruzadas",
       },
     ],
@@ -75,13 +71,14 @@ const COPY: Record<
     exampleItems: [
       "Use Sudoku quando quiser uma pausa curta com foco em lógica, leitura de padrões e atenção.",
       "Use Caça-Palavras para uma rodada rápida com pontuação, dica e leitura visual mais dinâmica.",
-      "Use Palavras Cruzadas para partidas com pistas curtas, leitura mais analítica e teclado nativo do dispositivo.",
+      "Use Palavras Cruzadas para partidas com pistas curtas, teclado virtual e leitura mais analítica.",
     ],
     faqTitle: "Perguntas frequentes",
     faqItems: [
       {
         question: "Preciso criar conta para jogar?",
-        answer: "Não. As partidas rodam direto no navegador.",
+        answer:
+          "Não. As partidas rodam direto no navegador.",
       },
       {
         question: "Os rankings são públicos?",
@@ -122,7 +119,7 @@ const COPY: Record<
         href: "/jogos/palavras-cruzadas/",
         title: "Crossword",
         description:
-          "Compact board with native keyboard on mobile, physical keyboard on desktop, validation, hints and local ranking.",
+          "Compact board with virtual keyboard, validation, hints and local ranking.",
         cta: "Open Crossword",
       },
     ],
@@ -136,13 +133,14 @@ const COPY: Record<
     exampleItems: [
       "Use Sudoku for a short break focused on logic and pattern reading.",
       "Use Word Search for a quicker round with score, hint and visual scanning.",
-      "Use Crossword for clue-based play with native device keyboard support.",
+      "Use Crossword for clue-based play with virtual keyboard support.",
     ],
     faqTitle: "Frequently asked questions",
     faqItems: [
       {
         question: "Do I need an account to play?",
-        answer: "No. The games run directly in the browser.",
+        answer:
+          "No. The games run directly in the browser.",
       },
       {
         question: "Are rankings public?",
@@ -181,7 +179,7 @@ const COPY: Record<
         href: "/jogos/palavras-cruzadas/",
         title: "Crucigrama",
         description:
-          "Cuadrícula compacta con teclado nativo en el móvil, teclado físico en el escritorio, validación, pistas y ranking local.",
+          "Cuadrícula compacta con teclado virtual, validación, pistas y ranking local.",
         cta: "Abrir crucigrama",
       },
     ],
@@ -195,13 +193,14 @@ const COPY: Record<
     exampleItems: [
       "Use Sudoku cuando quiera una pausa corta con foco en lógica y patrones.",
       "Use la sopa de letras para una ronda rápida con puntuación, pista y lectura visual.",
-      "Use el crucigrama para partidas con pistas cortas y teclado nativo del dispositivo.",
+      "Use el crucigrama para partidas con pistas cortas y teclado virtual.",
     ],
     faqTitle: "Preguntas frecuentes",
     faqItems: [
       {
         question: "¿Necesito una cuenta para jugar?",
-        answer: "No. Las partidas funcionan directamente en el navegador.",
+        answer:
+          "No. Las partidas funcionan directamente en el navegador.",
       },
       {
         question: "¿Los rankings son públicos?",
@@ -270,20 +269,8 @@ export default function Games() {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
       language={language}
-      ctaTitle={
-        language === "en"
-          ? "Discover all Datas Úteis tools"
-          : language === "es"
-            ? "Descubra todas las herramientas de Datas Úteis"
-            : "Conheça todas as ferramentas do Datas Úteis"
-      }
-      ctaButtonLabel={
-        language === "en"
-          ? "Explore tools"
-          : language === "es"
-            ? "Explorar herramientas"
-            : "Explorar ferramentas"
-      }
+      ctaTitle={language === "en" ? "Discover all Datas Úteis tools" : language === "es" ? "Descubra todas las herramientas de Datas Úteis" : "Conheça todas as ferramentas do Datas Úteis"}
+      ctaButtonLabel={language === "en" ? "Explore tools" : language === "es" ? "Explorar herramientas" : "Explorar ferramentas"}
       ctaHref="/"
     >
       <section id="ferramenta" className="section-anchor">

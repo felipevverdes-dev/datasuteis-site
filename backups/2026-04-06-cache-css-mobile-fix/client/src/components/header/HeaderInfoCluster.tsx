@@ -475,11 +475,9 @@ export function HeaderInfoCluster({
   const isDesktop = mode === "desktop";
   const visibilityClass = isDesktop
     ? "grid min-w-0 grid-cols-[minmax(0,15rem)_2rem] items-center gap-1.5"
-    : data.showPreciseLocationAction
-      ? "grid w-full min-w-0 grid-cols-[minmax(0,1fr)_2rem] items-center gap-1.5 py-1"
-      : "block w-full min-w-0 py-1";
+    : "flex w-full min-w-0 items-center gap-1.5 overflow-x-auto py-1.5 xl:hidden";
   const desktopCardWidthClassName = "w-[15rem] max-w-[15rem]";
-  const mobileCardWidthClassName = "w-full max-w-full";
+  const mobileCardWidthClassName = "min-w-[170px] max-w-[calc(100vw-5.5rem)]";
   const weatherIcon = data.weatherSummary?.icon.icon ?? Cloud;
   const weatherIconClass =
     data.weatherSummary?.icon.className ?? "text-muted-foreground";

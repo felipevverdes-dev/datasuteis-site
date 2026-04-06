@@ -38,9 +38,9 @@ export default function Header() {
   const closeDropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
-  const desktopItemRefs = useRef<Array<HTMLAnchorElement | HTMLButtonElement | null>>(
-    []
-  );
+  const desktopItemRefs = useRef<
+    Array<HTMLAnchorElement | HTMLButtonElement | null>
+  >([]);
   const dropdownItemRefs = useRef<
     Record<string, Array<HTMLAnchorElement | null>>
   >({});
@@ -290,230 +290,263 @@ export default function Header() {
       className="sticky top-0 z-50 border-b border-border/70 bg-background/95"
     >
       <div className="container mx-auto px-1 lg:px-2">
-        <div className="grid min-h-20 min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-1 py-3 sm:gap-2 lg:gap-4">
-          <Brand href="/" className="min-w-0 justify-self-start" />
+        <div className="flex min-w-0 flex-col gap-3 py-3">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 xl:grid-cols-[auto_minmax(0,1fr)_auto] xl:gap-4">
+            <Brand href="/" className="min-w-0 justify-self-start" />
 
-          <nav
-            ref={navRef}
-            role="navigation"
-            aria-label={labels.primaryNavigation}
-            className="hidden flex-nowrap items-center justify-center gap-1 px-2 xl:flex lg:gap-4"
-          >
-            {navItems.map((item, index) => {
-              const active = isItemActive(item);
-              const desktopItemClassName = cn(
-                "inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-2 text-sm font-medium transition-colors",
-                active
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-secondary"
-              );
-
-              if (item.type === "link") {
-                return (
-                  <a
-                    key={item.id}
-                    href={item.href}
-                    ref={element => setDesktopItemRef(index, element)}
-                    className={desktopItemClassName}
-                    onKeyDown={event => handleTopLevelKeyDown(event, item, index)}
-                    title={item.label}
-                  >
-                    <span>{item.label}</span>
-                  </a>
+            <nav
+              ref={navRef}
+              role="navigation"
+              aria-label={labels.primaryNavigation}
+              className="hidden min-w-0 flex-nowrap items-center justify-center gap-1 px-2 xl:flex lg:gap-4"
+            >
+              {navItems.map((item, index) => {
+                const active = isItemActive(item);
+                const desktopItemClassName = cn(
+                  "inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-2 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-secondary"
                 );
-              }
 
-              const isOpen = openDesktopDropdownId === item.id;
-
-              return (
-                <div
-                  key={item.id}
-                  className="group relative shrink-0"
-                  onMouseEnter={() => setDesktopDropdownState(item.id)}
-                  onMouseLeave={scheduleDesktopDropdownClose}
-                >
-                  <button
-                    type="button"
-                    ref={element => setDesktopItemRef(index, element)}
-                    className={desktopItemClassName}
-                    aria-haspopup="true"
-                    aria-expanded={isOpen}
-                    aria-controls={`${item.id}-desktop-menu`}
-                    onClick={() =>
-                      setDesktopDropdownState(
-                        openDesktopDropdownId === item.id ? null : item.id
-                      )
-                    }
-                    onKeyDown={event => handleTopLevelKeyDown(event, item, index)}
-                    title={item.label}
-                  >
-                    <span>{item.label}</span>
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 shrink-0 transition-transform duration-200",
-                        isOpen ? "rotate-180" : ""
-                      )}
-                    />
-                  </button>
-
-                  <div
-                    className={cn(
-                      "absolute left-0 top-full z-50 pt-2 transition-all duration-200",
-                      isOpen
-                        ? "pointer-events-auto opacity-100 translate-y-0"
-                        : "pointer-events-none opacity-0 -translate-y-2 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0"
-                    )}
-                  >
-                    <div
-                      id={`${item.id}-desktop-menu`}
-                      role="menu"
-                      aria-label={item.label}
-                      className="min-w-64 overflow-hidden rounded-2xl border border-border/70 bg-card p-2 shadow-xl"
+                if (item.type === "link") {
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.href}
+                      ref={element => setDesktopItemRef(index, element)}
+                      className={desktopItemClassName}
+                      onKeyDown={event =>
+                        handleTopLevelKeyDown(event, item, index)
+                      }
+                      title={item.label}
                     >
-                      {item.items.map((subItem, subIndex) => (
-                        <a
-                          key={subItem.id}
-                          href={subItem.href}
-                          ref={element =>
-                            registerDropdownItemRef(item.id, subIndex, element)
-                          }
-                          role="menuitem"
-                          className="block rounded-xl px-4 py-3 text-sm transition-colors hover:bg-secondary"
-                          onKeyDown={event =>
-                            handleDropdownKeyDown(event, item, subIndex, index)
-                          }
-                          title={subItem.label}
-                        >
-                          {subItem.label}
-                        </a>
-                      ))}
+                      <span>{item.label}</span>
+                    </a>
+                  );
+                }
+
+                const isOpen = openDesktopDropdownId === item.id;
+
+                return (
+                  <div
+                    key={item.id}
+                    className="group relative shrink-0"
+                    onMouseEnter={() => setDesktopDropdownState(item.id)}
+                    onMouseLeave={scheduleDesktopDropdownClose}
+                  >
+                    <button
+                      type="button"
+                      ref={element => setDesktopItemRef(index, element)}
+                      className={desktopItemClassName}
+                      aria-haspopup="true"
+                      aria-expanded={isOpen}
+                      aria-controls={`${item.id}-desktop-menu`}
+                      onClick={() =>
+                        setDesktopDropdownState(
+                          openDesktopDropdownId === item.id ? null : item.id
+                        )
+                      }
+                      onKeyDown={event =>
+                        handleTopLevelKeyDown(event, item, index)
+                      }
+                      title={item.label}
+                    >
+                      <span>{item.label}</span>
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 shrink-0 transition-transform duration-200",
+                          isOpen ? "rotate-180" : ""
+                        )}
+                      />
+                    </button>
+
+                    <div
+                      className={cn(
+                        "absolute left-0 top-full z-50 pt-2 transition-all duration-200",
+                        isOpen
+                          ? "pointer-events-auto opacity-100 translate-y-0"
+                          : "pointer-events-none opacity-0 -translate-y-2 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0"
+                      )}
+                    >
+                      <div
+                        id={`${item.id}-desktop-menu`}
+                        role="menu"
+                        aria-label={item.label}
+                        className="min-w-64 overflow-hidden rounded-2xl border border-border/70 bg-card p-2 shadow-xl"
+                      >
+                        {item.items.map((subItem, subIndex) => (
+                          <a
+                            key={subItem.id}
+                            href={subItem.href}
+                            ref={element =>
+                              registerDropdownItemRef(
+                                item.id,
+                                subIndex,
+                                element
+                              )
+                            }
+                            role="menuitem"
+                            className="block rounded-xl px-4 py-3 text-sm transition-colors hover:bg-secondary"
+                            onKeyDown={event =>
+                              handleDropdownKeyDown(
+                                event,
+                                item,
+                                subIndex,
+                                index
+                              )
+                            }
+                            title={subItem.label}
+                          >
+                            {subItem.label}
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </nav>
+                );
+              })}
+            </nav>
 
-          <div className="flex min-w-0 max-w-full items-center justify-self-end gap-1 sm:gap-2">
-            <div className="min-w-0">
-              <HeaderInfoCluster 
-                mode="desktop" 
-                data={headerInfo} 
-              />
+            <div className="flex min-w-0 items-center justify-self-end gap-1.5 sm:gap-2">
+              <div className="hidden min-w-0 xl:block">
+                <HeaderInfoCluster mode="desktop" data={headerInfo} />
+              </div>
+
+              {!hideLanguageSwitcher ? (
+                <div className="hidden min-w-0 shrink-0 xl:block">
+                  <LanguageSwitcher />
+                </div>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="min-w-0 shrink-0 rounded-full border border-border p-2 text-foreground transition-colors hover:bg-secondary sm:p-2.5"
+                aria-label={themeButtonAriaLabel}
+                title={labels.toggleTheme}
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </button>
+
+              <button
+                type="button"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-secondary xl:hidden"
+                onClick={() => setIsMenuOpen(current => !current)}
+                aria-label={menuButtonAriaLabel}
+                aria-controls="mobile-navigation"
+                aria-expanded={isMenuOpen}
+              >
+                {isMenuOpen ? (
+                  <X className="h-4 w-4" />
+                ) : (
+                  <Menu className="h-4 w-4" />
+                )}
+              </button>
             </div>
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-2 xl:hidden">
+            <HeaderInfoCluster mode="mobile" data={headerInfo} />
 
             {!hideLanguageSwitcher ? (
-              <div className="min-w-0 shrink-0">
+              <div className="flex min-w-0 justify-end">
                 <LanguageSwitcher />
               </div>
             ) : null}
-
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="min-w-0 shrink-0 rounded-full border border-border p-2 text-foreground transition-colors hover:bg-secondary sm:p-2.5"
-              aria-label={themeButtonAriaLabel}
-              title={labels.toggleTheme}
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </button>
-
-            <button
-              type="button"
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-secondary xl:hidden"
-              onClick={() => setIsMenuOpen(current => !current)}
-              aria-label={menuButtonAriaLabel}
-            >
-              {isMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
           </div>
-        </div>
 
-        {isMenuOpen ? (
-          <nav
-            id="mobile-navigation"
-            role="navigation"
-            aria-label={labels.mobileNavigation}
-            className="flex flex-col gap-2 border-t border-border py-4 xl:hidden"
-          >
-            {navItems.map(item => {
-              const active = isItemActive(item);
+          {isMenuOpen ? (
+            <nav
+              id="mobile-navigation"
+              role="navigation"
+              aria-label={labels.mobileNavigation}
+              className="flex flex-col gap-2 border-t border-border pt-3 pb-1 xl:hidden"
+            >
+              {navItems.map(item => {
+                const active = isItemActive(item);
 
-              if (item.type === "link") {
-                return (
-                  <a
-                    key={item.id}
-                    href={item.href}
-                    className={cn(
-                      "rounded-2xl px-4 py-3 text-sm font-medium transition-colors",
-                      active
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-secondary"
-                    )}
-                    title={item.label}
-                  >
-                    {item.label}
-                  </a>
-                );
-              }
-
-              const isOpen = Boolean(openMobileDropdowns[item.id]);
-
-              return (
-                <div key={item.id} className="rounded-2xl border border-border/70">
-                  <button
-                    type="button"
-                    className={cn(
-                      "flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-medium transition-colors",
-                      active || isOpen ? "bg-secondary" : "hover:bg-secondary"
-                    )}
-                    aria-haspopup="true"
-                    aria-expanded={isOpen}
-                    aria-controls={`${item.id}-mobile-menu`}
-                    onClick={() => toggleMobileDropdown(item.id)}
-                    title={item.label}
-                  >
-                    <span>{item.label}</span>
-                    <ChevronDown
+                if (item.type === "link") {
+                  return (
+                    <a
+                      key={item.id}
+                      href={item.href}
                       className={cn(
-                        "h-4 w-4 transition-transform duration-200",
-                        isOpen ? "rotate-180" : ""
+                        "rounded-2xl px-4 py-3 text-sm font-medium transition-colors",
+                        active
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-secondary"
                       )}
-                    />
-                  </button>
+                      title={item.label}
+                    >
+                      {item.label}
+                    </a>
+                  );
+                }
 
+                const isOpen = Boolean(openMobileDropdowns[item.id]);
+
+                return (
                   <div
-                    id={`${item.id}-mobile-menu`}
-                    role="menu"
-                    aria-label={item.label}
-                    className={cn(
-                      "overflow-hidden transition-all duration-300 ease-in-out",
-                      isOpen ? "max-h-96 pb-2 opacity-100" : "max-h-0 opacity-0"
-                    )}
+                    key={item.id}
+                    className="rounded-2xl border border-border/70"
                   >
-                    <div className="space-y-1 px-2">
-                      {item.items.map(subItem => (
-                        <a
-                          key={subItem.id}
-                          href={subItem.href}
-                          role="menuitem"
-                          className="block rounded-xl px-4 py-3 text-sm transition-colors hover:bg-secondary"
-                          title={subItem.label}
-                        >
-                          {subItem.label}
-                        </a>
-                      ))}
+                    <button
+                      type="button"
+                      className={cn(
+                        "flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-medium transition-colors",
+                        active || isOpen ? "bg-secondary" : "hover:bg-secondary"
+                      )}
+                      aria-haspopup="true"
+                      aria-expanded={isOpen}
+                      aria-controls={`${item.id}-mobile-menu`}
+                      onClick={() => toggleMobileDropdown(item.id)}
+                      title={item.label}
+                    >
+                      <span>{item.label}</span>
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 transition-transform duration-200",
+                          isOpen ? "rotate-180" : ""
+                        )}
+                      />
+                    </button>
+
+                    <div
+                      id={`${item.id}-mobile-menu`}
+                      role="menu"
+                      aria-label={item.label}
+                      className={cn(
+                        "overflow-hidden transition-all duration-300 ease-in-out",
+                        isOpen
+                          ? "max-h-96 pb-2 opacity-100"
+                          : "max-h-0 opacity-0"
+                      )}
+                    >
+                      <div className="space-y-1 px-2">
+                        {item.items.map(subItem => (
+                          <a
+                            key={subItem.id}
+                            href={subItem.href}
+                            role="menuitem"
+                            className="block rounded-xl px-4 py-3 text-sm transition-colors hover:bg-secondary"
+                            title={subItem.label}
+                          >
+                            {subItem.label}
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </nav>
-        ) : null}
+                );
+              })}
+            </nav>
+          ) : null}
+        </div>
       </div>
     </header>
   );

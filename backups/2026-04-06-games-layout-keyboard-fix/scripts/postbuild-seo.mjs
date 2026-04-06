@@ -259,7 +259,7 @@ function buildRoutes(blogPosts) {
     route(
       "/jogos/palavras-cruzadas/",
       "Palavras Cruzadas Online Grátis | Com Dicas e Níveis | Datas Úteis",
-      "Resolva palavras cruzadas online grátis com dicas, teclado nativo no celular, teclado físico no desktop, níveis de dificuldade, pontuação e ranking. Jogue no celular ou computador.",
+      "Resolva palavras cruzadas online grátis com dicas, teclado virtual, níveis de dificuldade, pontuação e ranking. Jogue no celular ou computador.",
       "0.55",
       "weekly",
       { breadcrumbLabel: "Palavras Cruzadas" }

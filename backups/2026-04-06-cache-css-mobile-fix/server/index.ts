@@ -95,36 +95,33 @@ async function startServer() {
     res.redirect(301, `/utilitarios/calculadora/${suffix}`);
   });
 
-  app.get(
-    ["/utilitarios/horario-mundial", "/utilitarios/horario-mundial/"],
-    (req, res, next) => {
-      if (req.query.tab !== "mercados") {
-        next();
+  app.get(["/utilitarios/horario-mundial", "/utilitarios/horario-mundial/"], (req, res, next) => {
+    if (req.query.tab !== "mercados") {
+      next();
+      return;
+    }
+
+    const target = new URL(
+      `https://datasuteis.com.br/utilitarios/horario-mercados/`
+    );
+
+    Object.entries(req.query).forEach(([key, value]) => {
+      if (key === "tab") {
         return;
       }
 
-      const target = new URL(
-        `https://datasuteis.com.br/utilitarios/horario-mercados/`
-      );
+      if (Array.isArray(value)) {
+        value.forEach(item => target.searchParams.append(key, String(item)));
+        return;
+      }
 
-      Object.entries(req.query).forEach(([key, value]) => {
-        if (key === "tab") {
-          return;
-        }
+      if (value !== undefined) {
+        target.searchParams.set(key, String(value));
+      }
+    });
 
-        if (Array.isArray(value)) {
-          value.forEach(item => target.searchParams.append(key, String(item)));
-          return;
-        }
-
-        if (value !== undefined) {
-          target.searchParams.set(key, String(value));
-        }
-      });
-
-      res.redirect(301, `${target.pathname}${target.search}`);
-    }
-  );
+    res.redirect(301, `${target.pathname}${target.search}`);
+  });
 
   app.use((req, res, next) => {
     if (isSecureRequest(req)) {
@@ -244,23 +241,10 @@ async function startServer() {
       etag: true,
       setHeaders: (res, filePath) => {
         const normalized = filePath.replace(/\\/g, "/");
-        const isHtmlFile = /\.(html)$/i.test(normalized);
-        const isManifestFile = /\/manifest\.json$/i.test(normalized);
-        const isServiceWorkerFile = /\/service-worker\.js$/i.test(normalized);
-        const isFaviconFile = /\/favicon\.ico$/i.test(normalized);
-        const isHashedBuildAsset =
-          /\/assets\/.+-[A-Za-z0-9_-]{8,}\.[A-Za-z0-9]+$/i.test(normalized);
 
-        if (
-          isHtmlFile ||
-          isManifestFile ||
-          isServiceWorkerFile ||
-          isFaviconFile
-        ) {
+        if (/\.(html)$/i.test(normalized)) {
           res.setHeader("Last-Modified", SITE_LAST_MODIFIED_HTTP);
-          res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-          res.setHeader("Pragma", "no-cache");
-          res.setHeader("Expires", "0");
+          res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
           return;
         }
 
@@ -270,13 +254,13 @@ async function startServer() {
           return;
         }
 
-        if (isHashedBuildAsset) {
+        if (/\/assets\/.+-[A-Za-z0-9]{8,}\.[A-Za-z0-9]+$/i.test(normalized)) {
           res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
           return;
         }
 
         if (/\/assets\//i.test(normalized)) {
-          res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+          res.setHeader("Cache-Control", "public, max-age=604800");
         }
       },
     })
@@ -354,9 +338,6 @@ async function startServer() {
     }
 
     res.setHeader("Last-Modified", SITE_LAST_MODIFIED_HTTP);
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
 
     if (isSpaRoute(req.path)) {
       // Valid SPA route without a pre-rendered file → serve SPA shell with 200

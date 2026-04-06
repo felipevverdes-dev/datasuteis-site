@@ -1,5 +1,4 @@
 import {
-  type CSSProperties,
   useEffect,
   useMemo,
   useRef,
@@ -10,7 +9,6 @@ import { toast } from "sonner";
 import { Link } from "wouter";
 import ConfettiBurst from "@/components/ConfettiBurst";
 import Footer from "@/components/Footer";
-import ResponsiveSecondarySection from "@/components/games/ResponsiveSecondarySection";
 import Header from "@/components/Header";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
 import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
@@ -229,10 +227,10 @@ export default function Crossword() {
   );
   const navItems = getToolPageNavItems(language);
   const topLabel = getBackToTopLabel(language);
-  const boardSizing =
+  const boardWidthClassName =
     puzzle.width >= 13
-      ? { staticMax: "38rem", vhOffset: "28rem" }
-      : { staticMax: "34rem", vhOffset: "28rem" };
+      ? "max-w-[min(100%,33rem)] sm:max-w-[36rem] lg:max-w-[38rem]"
+      : "max-w-[min(100%,28rem)] sm:max-w-[31rem] lg:max-w-[34rem]";
   const breadcrumbs = [
     { label: navigationLabels.home, href: "/" },
     { label: navigationLabels.games },
@@ -617,96 +615,23 @@ export default function Crossword() {
     });
   }
 
-  const activeClueSummary = activePlacement
-    ? `${activePlacement.number}. ${activePlacement.entry.clue}`
-    : "Toque em uma casa da grade para abrir a pista ativa.";
-  const rankingList = ranking.length ? (
-    ranking.map((entry, index) => (
-      <div
-        key={`${entry.name}-${entry.score}-${entry.date}`}
-        className="rounded-2xl bg-secondary/60 px-4 py-3 text-sm"
-      >
-        <p className="font-semibold">
-          {index + 1}. {entry.name}
-        </p>
-        <p className="mt-1 text-muted-foreground">
-          {entry.score} pts • {formatElapsed(entry.time)}
-        </p>
-      </div>
-    ))
-  ) : (
-    <p className="rounded-2xl bg-secondary/60 px-4 py-4 text-sm text-muted-foreground">
-      Ainda não há partidas registradas nesta dificuldade.
-    </p>
-  );
-  const scoreRegistrationContent =
-    completedTime !== null ? (
-      <>
-        <p className="text-sm text-muted-foreground">
-          {rankingPlacement
-            ? `Sua partida entra em ${rankingPlacement}º lugar nesta dificuldade.`
-            : "A partida não entrou no Top 10 desta dificuldade."}
-        </p>
-        {rankingPlacement ? (
-          <div className="mt-4 space-y-3">
-            <input
-              type="text"
-              value={playerName}
-              onChange={event => {
-                setPlayerName(
-                  sanitizePlayerName(event.target.value, {
-                    maxLength: 12,
-                  })
-                );
-                setPlayerError("");
-              }}
-              className="input-base w-full"
-              placeholder="Nome ou apelido"
-            />
-            {playerError ? (
-              <p className="rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/60 dark:text-rose-200">
-                {playerError}
-              </p>
-            ) : null}
-            {savedPosition !== null ? (
-              <p className="rounded-2xl bg-accent/10 px-4 py-3 text-sm text-accent">
-                Pontuação registrada em {savedPosition}º lugar.
-              </p>
-            ) : (
-              <button
-                type="button"
-                onClick={handleSaveRanking}
-                className="btn-primary w-full"
-              >
-                Registrar pontuação
-              </button>
-            )}
-          </div>
-        ) : null}
-      </>
-    ) : (
-      <p className="text-sm text-muted-foreground">
-        Termine a grade para tentar entrar no Top 10.
-      </p>
-    );
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main id="main-content" role="main" className="relative">
-        <section className="hero-game border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
+        <section className="hero hero-compact border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto">
-            <div className="max-w-3xl">
+            <div className="max-w-4xl">
               <PageIntroNavigation
                 breadcrumbs={breadcrumbs}
                 breadcrumbAriaLabel={navigationLabels.breadcrumb}
                 backLabel={navigationLabels.back}
                 backAriaLabel={navigationLabels.backAria}
               />
-              <h1 className="mt-2 text-3xl font-bold text-primary md:text-[2.2rem] lg:text-[1.875rem] xl:text-[2.05rem]">
+              <h1 className="mt-4 text-3xl font-bold text-primary md:text-4xl">
                 Palavras Cruzadas Online Grátis
               </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground lg:hidden">
+              <p className="mt-3 max-w-3xl text-muted-foreground">
                 Resolva uma grade compacta com tema sorteado, dicas completas,
                 teclado nativo no celular, teclado físico no desktop e ranking
                 local por dificuldade.
@@ -718,62 +643,58 @@ export default function Crossword() {
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
         <section className="section-game">
-          <div className="container mx-auto game-mobile-container game-page-stack">
+          <div className="container mx-auto page-stack">
             <GameLanguageNotice />
 
             <section id="ferramenta" className="section-anchor">
-              <div className="card-base game-panel relative" data-game-focus>
+              <div className="card-base relative p-5 sm:p-6" data-game-focus>
                 <ConfettiBurst active={completedTime !== null} />
-                <div className="hidden lg:block game-toolbar">
-                  <div className="game-toolbar-row">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {(
-                        [
-                          "easy",
-                          "medium",
-                          "hard",
-                          "expert",
-                        ] as CrosswordDifficulty[]
-                      ).map(level => (
-                        <button
-                          key={level}
-                          type="button"
-                          className={cn(
-                            "game-difficulty-button",
-                            difficulty === level
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-secondary hover:bg-secondary/80"
-                          )}
-                          onClick={() => resetPuzzle(level)}
-                        >
-                          {DIFFICULTY_LABELS[level]}
-                        </button>
-                      ))}
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex flex-wrap gap-2">
+                    {(
+                      [
+                        "easy",
+                        "medium",
+                        "hard",
+                        "expert",
+                      ] as CrosswordDifficulty[]
+                    ).map(level => (
+                      <button
+                        key={level}
+                        type="button"
+                        className={cn(
+                          "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                          difficulty === level
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary hover:bg-secondary/80"
+                        )}
+                        onClick={() => resetPuzzle(level)}
+                      >
+                        {DIFFICULTY_LABELS[level]}
+                      </button>
+                    ))}
+                  </div>
 
-                      <div className="game-theme-chip game-theme-chip-compact">
-                        Pistas sobre: {puzzle.theme}
-                      </div>
-                    </div>
-
-                    <div className="game-meta-row">
-                      <span className="game-meta-chip">
-                        Tempo: {formatElapsed(elapsed)}
-                      </span>
-                      <span className="game-meta-chip">
-                        Progresso: {progress}%
-                      </span>
-                      <span className="game-meta-chip">Pontos: {score}</span>
-                      <span className="game-meta-chip">
-                        Palavras: {placements.length}
-                      </span>
-                      <span className="game-meta-chip">
-                        Pistas: {clueCount}
-                      </span>
-                    </div>
+                  <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
+                    <span className="rounded-full bg-secondary px-3 py-1.5 sm:py-2">
+                      Tempo: {formatElapsed(elapsed)}
+                    </span>
+                    <span className="rounded-full bg-secondary px-3 py-1.5 sm:py-2">
+                      Progresso: {progress}%
+                    </span>
+                    <span className="rounded-full bg-secondary px-3 py-1.5 sm:py-2">
+                      Pontos: {score}
+                    </span>
+                    <span className="rounded-full bg-secondary px-3 py-1.5 sm:py-2">
+                      Palavras: {placements.length}
+                    </span>
+                    <span className="rounded-full bg-secondary px-3 py-1.5 sm:py-2">
+                      Pistas: {clueCount}
+                    </span>
                   </div>
                 </div>
 
-                <div className="mt-4 lg:hidden">
+                <div className="mt-5">
                   <div className="h-3 rounded-full bg-secondary">
                     <div
                       className="h-3 rounded-full bg-primary transition-[width]"
@@ -782,16 +703,19 @@ export default function Crossword() {
                   </div>
                 </div>
 
-                <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
-                  <div className="space-y-4">
+                <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
+                  <div className="space-y-5">
+                    <div className="text-center">
+                      <div className="game-theme-chip">
+                        Pistas sobre: {puzzle.theme}
+                      </div>
+                    </div>
+
                     <div
-                      className="game-interactive-area protected-interactive game-board-shell game-mobile-stage mx-auto w-full"
-                      style={
-                        {
-                          "--game-board-static-max": boardSizing.staticMax,
-                          "--game-board-vh-offset": boardSizing.vhOffset,
-                        } as CSSProperties
-                      }
+                      className={cn(
+                        "game-interactive-area protected-interactive mx-auto w-full",
+                        boardWidthClassName
+                      )}
                       onContextMenu={event => event.preventDefault()}
                     >
                       <div
@@ -863,8 +787,8 @@ export default function Crossword() {
                                   handleCellKeyDown(cell.index, event)
                                 }
                                 className={cn(
-                                  "h-full w-full rounded-lg bg-transparent px-0 pb-1 text-center text-[14px] font-semibold uppercase leading-none caret-primary sm:text-base",
-                                  cell.number ? "pt-3.5" : "pt-1"
+                                  "h-full w-full rounded-lg bg-transparent px-0 pb-1 text-center text-[13px] font-semibold uppercase leading-none caret-primary sm:text-base",
+                                  cell.number ? "pt-3" : "pt-0.5"
                                 )}
                                 aria-label={
                                   cell.number
@@ -883,7 +807,7 @@ export default function Crossword() {
                       </div>
                     </div>
 
-                    <div className="game-mobile-primary-actions lg:flex lg:flex-wrap lg:gap-2">
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                       <button
                         type="button"
                         onClick={handleRevealLetter}
@@ -913,134 +837,9 @@ export default function Crossword() {
                         Novo jogo
                       </button>
                     </div>
-
-                    <div className="space-y-3 lg:hidden">
-                      <div className="rounded-2xl bg-secondary/60 px-4 py-3 text-sm text-muted-foreground">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                          Pista ativa
-                        </p>
-                        <p className="mt-2 font-semibold text-foreground">
-                          {activePlacement
-                            ? `${activePlacement.direction === "across" ? "Horizontal" : "Vertical"} ${activePlacement.number}`
-                            : "Selecione uma casa"}
-                        </p>
-                        <p className="mt-1 leading-6">{activeClueSummary}</p>
-                      </div>
-
-                      <div className="game-mobile-status-grid">
-                        <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Tempo</span>
-                          <span className="compact-stat-value">
-                            {formatElapsed(elapsed)}
-                          </span>
-                        </div>
-                        <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Pontos</span>
-                          <span className="compact-stat-value">{score}</span>
-                        </div>
-                        <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Progresso</span>
-                          <span className="compact-stat-value">{progress}%</span>
-                        </div>
-                        <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Pistas</span>
-                          <span className="compact-stat-value">{clueCount}</span>
-                        </div>
-                      </div>
-
-                      <ResponsiveSecondarySection
-                        title="Dicas horizontais"
-                        summaryText={`${puzzle.across.length} pistas, com prioridade para as essenciais.`}
-                        className="lg:hidden"
-                      >
-                        <div className="space-y-1.5">
-                          {acrossClues.map(placement => (
-                            <button
-                              key={placement.id}
-                              type="button"
-                              className={cn(
-                                "w-full rounded-xl px-3 py-2 text-left text-[12px] leading-4 sm:text-[13px] sm:leading-5",
-                                activePlacement?.id === placement.id
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-secondary"
-                              )}
-                              onClick={() => setActiveFromClue(placement.id)}
-                              aria-label={`Dica horizontal ${placement.number}: ${placement.entry.clue}`}
-                            >
-                              <strong>{placement.number}.</strong>{" "}
-                              {placement.entry.clue}
-                            </button>
-                          ))}
-                        </div>
-                      </ResponsiveSecondarySection>
-
-                      <ResponsiveSecondarySection
-                        title="Dicas verticais"
-                        summaryText={`${puzzle.down.length} pistas para completar os cruzamentos.`}
-                        className="lg:hidden"
-                      >
-                        <div className="space-y-1.5">
-                          {downClues.map(placement => (
-                            <button
-                              key={placement.id}
-                              type="button"
-                              className={cn(
-                                "w-full rounded-xl px-3 py-2 text-left text-[12px] leading-4 sm:text-[13px] sm:leading-5",
-                                activePlacement?.id === placement.id
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-secondary"
-                              )}
-                              onClick={() => setActiveFromClue(placement.id)}
-                              aria-label={`Dica vertical ${placement.number}: ${placement.entry.clue}`}
-                            >
-                              <strong>{placement.number}.</strong>{" "}
-                              {placement.entry.clue}
-                            </button>
-                          ))}
-                        </div>
-                      </ResponsiveSecondarySection>
-
-                      <ResponsiveSecondarySection
-                        title="Nivel e ajuda"
-                        summaryText="Troque a dificuldade e veja o tema sorteado."
-                        className="lg:hidden"
-                      >
-                        <div className="space-y-4">
-                          <div className="flex flex-wrap gap-2">
-                            {(
-                              [
-                                "easy",
-                                "medium",
-                                "hard",
-                                "expert",
-                              ] as CrosswordDifficulty[]
-                            ).map(level => (
-                              <button
-                                key={level}
-                                type="button"
-                                className={cn(
-                                  "game-difficulty-button",
-                                  difficulty === level
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-secondary hover:bg-secondary/80"
-                                )}
-                                onClick={() => resetPuzzle(level)}
-                              >
-                                {DIFFICULTY_LABELS[level]}
-                              </button>
-                            ))}
-                          </div>
-                          <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                            Pistas sobre <strong>{puzzle.theme}</strong>. No
-                            teclado físico, use setas para mover, Tab para
-                            trocar a direção e Backspace para apagar.
-                          </div>
-                        </div>
-                      </ResponsiveSecondarySection>
-                    </div>
                   </div>
 
-                  <aside className="hidden space-y-3 lg:block">
+                  <aside className="space-y-3">
                     <div className="card-base p-3.5 sm:p-4">
                       <div className="flex items-center justify-between gap-3">
                         <h2 className="text-lg font-bold">Dicas horizontais</h2>
@@ -1053,7 +852,7 @@ export default function Crossword() {
                           ? "As essenciais ficam no topo para destravar a grade mais cedo."
                           : "Todas as pistas desta rodada estão aqui."}
                       </p>
-                      <div className="game-side-scroll mt-3 space-y-1.5 overflow-auto pr-1">
+                      <div className="mt-3 max-h-[14rem] space-y-1.5 overflow-auto pr-1 md:max-h-[16rem] xl:max-h-[18rem]">
                         {acrossClues.map(placement => (
                           <button
                             key={placement.id}
@@ -1110,7 +909,7 @@ export default function Crossword() {
                           {puzzle.down.length}
                         </span>
                       </div>
-                      <div className="game-side-scroll mt-3 space-y-1.5 overflow-auto pr-1">
+                      <div className="mt-3 max-h-[14rem] space-y-1.5 overflow-auto pr-1 md:max-h-[16rem] xl:max-h-[18rem]">
                         {downClues.map(placement => (
                           <button
                             key={placement.id}
@@ -1164,32 +963,15 @@ export default function Crossword() {
               </div>
             </section>
 
-            <div className="space-y-3 lg:hidden">
-              <ResponsiveSecondarySection
-                title="Ranking local"
-                summaryText="Top 10 salvo neste navegador por dificuldade."
-              >
-                <div className="space-y-3">{rankingList}</div>
-              </ResponsiveSecondarySection>
-
-              <ResponsiveSecondarySection
-                title="Registrar pontuacao"
-                summaryText="Salve sua rodada quando a pontuacao entrar no ranking."
-                defaultOpenMobile={completedTime !== null}
-              >
-                <div className="space-y-4">{scoreRegistrationContent}</div>
-              </ResponsiveSecondarySection>
-            </div>
-
             <div
               id="explicacao"
-              className="section-anchor grid gap-3 lg:grid-cols-[minmax(0,1fr)_340px]"
+              className="section-anchor grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]"
             >
-              <section className="space-y-3 lg:space-y-6">
-                <ResponsiveSecondarySection
-                  title="Como jogar palavras cruzadas"
-                  summaryText="Fluxo da grade, tema da rodada e recursos de apoio."
-                >
+              <section className="space-y-6">
+                <div className="card-base p-6">
+                  <h2 className="text-2xl font-bold">
+                    Como jogar palavras cruzadas
+                  </h2>
                   <p className="mt-3 text-muted-foreground">
                     Escolha uma dica horizontal ou vertical, toque nas casas da
                     grade e preencha as letras. No computador, use setas para
@@ -1200,32 +982,28 @@ export default function Crossword() {
                     Elas ajudam mais quando a palavra ainda tem poucos
                     cruzamentos e dão o contexto mínimo para destravar a grade.
                   </p>
-                </ResponsiveSecondarySection>
-                <ResponsiveSecondarySection
-                  id="exemplos"
-                  title="Tema da rodada"
-                  summaryText="Tema atual e como as partidas variam."
-                  className="section-anchor"
-                >
+                </div>
+                <div id="exemplos" className="section-anchor card-base p-6">
+                  <h2 className="text-2xl font-bold">Tema da rodada</h2>
                   <p className="mt-3 text-muted-foreground">
                     A rodada atual traz pistas sobre{" "}
                     <strong>{puzzle.theme}</strong>. Cada novo jogo sorteia um
                     tema e uma combinação diferente de palavras para manter a
                     partida variada.
                   </p>
-                </ResponsiveSecondarySection>
-                <ResponsiveSecondarySection
-                  title="Recursos da partida"
-                  summaryText="Ajudas de letra, verificacao, pontuacao e beneficios do jogo."
-                >
+                </div>
+                <div className="card-base p-6">
+                  <h2 className="text-2xl font-bold">Recursos da partida</h2>
                   <p className="mt-3 text-muted-foreground">
                     Você pode revelar uma letra, revelar a palavra ativa,
                     verificar erros e acompanhar progresso, tempo e pontuação na
                     mesma tela.
                   </p>
-                  <h3 className="mt-6 text-xl font-bold">
-                    Beneficios das palavras cruzadas
-                  </h3>
+                </div>
+                <div className="card-base p-6">
+                  <h2 className="text-2xl font-bold">
+                    Benefícios das palavras cruzadas
+                  </h2>
                   <p className="mt-3 text-muted-foreground">
                     Palavras cruzadas ajudam a manter leitura ativa, vocabulário
                     e atenção a padrões curtos. Funcionam bem como pausa mental
@@ -1242,13 +1020,9 @@ export default function Crossword() {
                       Ler sobre jogos de lógica
                     </Link>
                   </div>
-                </ResponsiveSecondarySection>
-                <ResponsiveSecondarySection
-                  id="faq"
-                  title="Perguntas frequentes"
-                  summaryText="Respostas rapidas sobre dicas, ranking e teclado."
-                  className="section-anchor"
-                >
+                </div>
+                <div id="faq" className="section-anchor card-base p-6">
+                  <h2 className="text-2xl font-bold">Perguntas frequentes</h2>
                   <div className="mt-4 space-y-3">
                     {FAQ_ITEMS.map(item => (
                       <details
@@ -1278,21 +1052,89 @@ export default function Crossword() {
                       Sudoku
                     </Link>
                   </div>
-                </ResponsiveSecondarySection>
+                </div>
               </section>
 
-              <aside className="hidden space-y-6 lg:block">
+              <aside className="space-y-6">
                 <div className="card-base p-6">
                   <h2 className="text-xl font-bold">Top 10 por dificuldade</h2>
                   <div className="mt-4 rounded-2xl bg-secondary px-4 py-3 text-sm font-medium">
                     Dificuldade: {DIFFICULTY_LABELS[difficulty]}
                   </div>
-                  <div className="mt-4 space-y-3">{rankingList}</div>
+                  <div className="mt-4 space-y-3">
+                    {ranking.length ? (
+                      ranking.map((entry, index) => (
+                        <div
+                          key={`${entry.name}-${entry.score}-${entry.date}`}
+                          className="rounded-2xl bg-secondary/60 px-4 py-3 text-sm"
+                        >
+                          <p className="font-semibold">
+                            {index + 1}. {entry.name}
+                          </p>
+                          <p className="mt-1 text-muted-foreground">
+                            {entry.score} pts • {formatElapsed(entry.time)}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="rounded-2xl bg-secondary/60 px-4 py-4 text-sm text-muted-foreground">
+                        Ainda não há partidas registradas nesta dificuldade.
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="card-base p-6">
                   <h2 className="text-xl font-bold">Registrar pontuação</h2>
-                  <div className="mt-3 space-y-4">{scoreRegistrationContent}</div>
+                  {completedTime !== null ? (
+                    <>
+                      <p className="mt-3 text-sm text-muted-foreground">
+                        {rankingPlacement
+                          ? `Sua partida entra em ${rankingPlacement}º lugar nesta dificuldade.`
+                          : "A partida não entrou no Top 10 desta dificuldade."}
+                      </p>
+                      {rankingPlacement ? (
+                        <div className="mt-4 space-y-3">
+                          <input
+                            type="text"
+                            value={playerName}
+                            onChange={event => {
+                              setPlayerName(
+                                sanitizePlayerName(event.target.value, {
+                                  maxLength: 12,
+                                })
+                              );
+                              setPlayerError("");
+                            }}
+                            className="input-base w-full"
+                            placeholder="Nome ou apelido"
+                          />
+                          {playerError ? (
+                            <p className="rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/60 dark:text-rose-200">
+                              {playerError}
+                            </p>
+                          ) : null}
+                          {savedPosition !== null ? (
+                            <p className="rounded-2xl bg-accent/10 px-4 py-3 text-sm text-accent">
+                              Pontuação registrada em {savedPosition}º lugar.
+                            </p>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={handleSaveRanking}
+                              className="btn-primary w-full"
+                            >
+                              Registrar pontuação
+                            </button>
+                          )}
+                        </div>
+                      ) : null}
+                    </>
+                  ) : (
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      Termine a grade para tentar entrar no Top 10.
+                    </p>
+                  )}
                 </div>
               </aside>
             </div>

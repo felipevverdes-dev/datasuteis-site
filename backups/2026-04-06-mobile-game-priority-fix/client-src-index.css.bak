@@ -200,7 +200,7 @@
   }
 
   .hero-game {
-    @apply py-4 md:py-7 lg:py-3 xl:py-4;
+    @apply py-6 md:py-7 lg:py-3 xl:py-4;
   }
 
   .hero-title {
@@ -416,15 +416,15 @@
   }
 
   .section-game {
-    @apply py-4 md:py-7 lg:py-4 xl:py-5;
+    @apply py-5 md:py-7 lg:py-4 xl:py-5;
   }
 
   .game-page-stack {
-    @apply space-y-3 md:space-y-5 lg:space-y-3;
+    @apply space-y-4 md:space-y-5 lg:space-y-3;
   }
 
   .game-panel {
-    @apply p-3 sm:p-5 lg:p-3.5 xl:p-4;
+    @apply p-4 sm:p-5 lg:p-3.5 xl:p-4;
   }
 
   .game-toolbar {
@@ -500,68 +500,6 @@
     @apply relative overflow-hidden;
   }
 
-  .game-mobile-container {
-    padding-left: 0.875rem;
-    padding-right: 0.875rem;
-  }
-
-  .game-mobile-stage {
-    margin-left: -0.35rem;
-    margin-right: -0.35rem;
-  }
-
-  .game-mobile-primary-actions {
-    @apply grid grid-cols-2 gap-2;
-  }
-
-  .game-mobile-status-grid {
-    @apply grid grid-cols-2 gap-2;
-  }
-
-  .game-mobile-disclosure {
-    @apply overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-sm;
-  }
-
-  .game-mobile-disclosure-summary {
-    @apply flex list-none items-start justify-between gap-3 px-4 py-3 text-left;
-  }
-
-  .game-mobile-disclosure-summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .game-mobile-disclosure-copy {
-    @apply flex min-w-0 flex-col gap-1;
-  }
-
-  .game-mobile-disclosure-title {
-    @apply text-base font-bold text-foreground;
-  }
-
-  .game-mobile-disclosure-note {
-    @apply text-xs leading-5 text-muted-foreground;
-  }
-
-  .game-mobile-disclosure-icon {
-    @apply mt-1 shrink-0 text-muted-foreground transition-transform duration-200;
-  }
-
-  .game-mobile-disclosure[open] .game-mobile-disclosure-icon {
-    transform: rotate(180deg);
-  }
-
-  .game-mobile-disclosure-content {
-    @apply border-t border-border/70 px-4 py-4;
-  }
-
-  .game-mobile-disclosure-content > :first-child {
-    margin-top: 0;
-  }
-
-  .game-mobile-disclosure-content > :last-child {
-    margin-bottom: 0;
-  }
-
   @media (min-width: 1024px) {
     .game-inline-actions > :where(.btn-primary, .btn-secondary, .btn-outline) {
       min-height: 40px;
@@ -577,24 +515,6 @@
 
     .game-side-scroll {
       max-height: 18rem;
-    }
-
-    .game-mobile-primary-actions > :where(.btn-primary, .btn-secondary, .btn-outline) {
-      min-height: 44px;
-      padding: 0.7rem 0.9rem;
-      font-size: 0.875rem;
-    }
-  }
-
-  @media (min-width: 640px) {
-    .game-mobile-container {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-
-    .game-mobile-stage {
-      margin-left: 0;
-      margin-right: 0;
     }
   }
 
