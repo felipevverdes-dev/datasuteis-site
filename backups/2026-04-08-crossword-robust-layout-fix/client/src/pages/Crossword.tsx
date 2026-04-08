@@ -21,7 +21,6 @@ import { trackAnalyticsEvent } from "@/lib/analytics";
 import {
   createCrosswordPuzzle,
   type CrosswordDifficulty,
-  type CrosswordPlacement,
 } from "@/lib/crossword";
 import {
   compareScoredRankingDesc,
@@ -118,96 +117,6 @@ function sortCluesByPriority<
     }
     return left.number - right.number;
   });
-}
-
-interface ClueListSectionProps {
-  title: string;
-  direction: "across" | "down";
-  clues: CrosswordPlacement[];
-  activePlacementId?: string;
-  onSelect: (placementId: string) => void;
-  showMeta?: boolean;
-  showHeader?: boolean;
-  className?: string;
-}
-
-function ClueListSection({
-  title,
-  direction,
-  clues,
-  activePlacementId,
-  onSelect,
-  showMeta = false,
-  showHeader = true,
-  className,
-}: ClueListSectionProps) {
-  const directionLabel = direction === "across" ? "horizontal" : "vertical";
-  const directionPlural = direction === "across" ? "horizontais" : "verticais";
-
-  return (
-    <section className={cn("space-y-3", className)}>
-      {showHeader ? (
-        <header className="flex items-center justify-between gap-3">
-          <h2 className="text-lg font-bold">{title}</h2>
-          <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
-            {clues.length}
-          </span>
-        </header>
-      ) : null}
-      <p className="text-xs leading-5 text-muted-foreground">
-        Mostrando {clues.length} de {clues.length} pistas {directionPlural}.
-      </p>
-      <ul className="space-y-1.5">
-        {clues.map(placement => (
-          <li key={placement.id}>
-            <button
-              type="button"
-              className={cn(
-                "crossword-clue-item",
-                activePlacementId === placement.id &&
-                  "crossword-clue-item-active"
-              )}
-              onClick={() => onSelect(placement.id)}
-              aria-label={`Dica ${directionLabel} ${placement.number}: ${placement.entry.clue}`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <strong>{placement.number}.</strong> {placement.entry.clue}
-                </div>
-                {showMeta ? (
-                  <div className="flex flex-col items-end gap-1 text-[11px] font-semibold uppercase tracking-wide">
-                    <span
-                      className={cn(
-                        "rounded-full px-2 py-1",
-                        activePlacementId === placement.id
-                          ? "bg-primary-foreground/15 text-primary-foreground"
-                          : placement.cluePriority === "required"
-                            ? "bg-primary/10 text-primary"
-                            : "bg-background text-muted-foreground"
-                      )}
-                    >
-                      {placement.cluePriority === "required"
-                        ? "Essencial"
-                        : "Apoio"}
-                    </span>
-                    <span
-                      className={
-                        activePlacementId === placement.id
-                          ? "text-primary-foreground/80"
-                          : "text-muted-foreground"
-                      }
-                    >
-                      {placement.crossings} cruz.
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
 }
 
 export default function Crossword() {
@@ -873,10 +782,10 @@ export default function Crossword() {
                   </div>
                 </div>
 
-                <div className="mt-4 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,22rem)] 2xl:grid-cols-[minmax(0,1fr)_23rem]">
+                <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
                   <div className="space-y-4">
                     <div
-                      className="game-interactive-area protected-interactive game-board-shell game-mobile-stage crossword-board-frame mx-auto w-full"
+                      className="game-interactive-area protected-interactive game-board-shell game-mobile-stage mx-auto w-full"
                       style={
                         {
                           "--game-board-static-max": boardSizing.staticMax,
@@ -886,7 +795,7 @@ export default function Crossword() {
                       onContextMenu={event => event.preventDefault()}
                     >
                       <div
-                        className="crossword-board-grid"
+                        className="grid gap-1 rounded-3xl bg-primary/10 p-2.5 sm:p-3"
                         style={{
                           gridTemplateColumns: `repeat(${puzzle.width}, minmax(0, 1fr))`,
                         }}
@@ -896,7 +805,7 @@ export default function Crossword() {
                             <div
                               key={index}
                               className={cn(
-                                "crossword-cell",
+                                "relative aspect-square rounded-lg border border-border bg-background",
                                 activePlacement?.cells.includes(cell.index) &&
                                   "bg-primary/10",
                                 activeCell === cell.index &&
@@ -906,7 +815,7 @@ export default function Crossword() {
                               )}
                             >
                               {cell.number ? (
-                                <span className="crossword-cell-number">
+                                <span className="absolute left-1 top-1 z-10 text-[9px] font-bold leading-none text-muted-foreground">
                                   {cell.number}
                                 </span>
                               ) : null}
@@ -953,7 +862,10 @@ export default function Crossword() {
                                 onKeyDown={event =>
                                   handleCellKeyDown(cell.index, event)
                                 }
-                                className="crossword-cell-input"
+                                className={cn(
+                                  "h-full w-full rounded-lg bg-transparent px-0 pb-1 text-center text-[14px] font-semibold uppercase leading-none caret-primary sm:text-base",
+                                  cell.number ? "pt-3.5" : "pt-1"
+                                )}
                                 aria-label={
                                   cell.number
                                     ? `Casa ${cell.number}`
@@ -964,7 +876,7 @@ export default function Crossword() {
                           ) : (
                             <div
                               key={index}
-                              className="crossword-cell crossword-cell-block"
+                              className="aspect-square rounded-lg bg-secondary/60"
                             />
                           )
                         )}
@@ -1038,32 +950,54 @@ export default function Crossword() {
 
                       <ResponsiveSecondarySection
                         title="Dicas horizontais"
-                        summaryText={`${acrossClues.length} de ${puzzle.across.length} pistas exibidas.`}
+                        summaryText={`${puzzle.across.length} pistas, com prioridade para as essenciais.`}
                         className="lg:hidden"
                       >
-                        <ClueListSection
-                          title="Dicas horizontais"
-                          direction="across"
-                          clues={acrossClues}
-                          activePlacementId={activePlacement?.id}
-                          onSelect={setActiveFromClue}
-                          showHeader={false}
-                        />
+                        <div className="space-y-1.5">
+                          {acrossClues.map(placement => (
+                            <button
+                              key={placement.id}
+                              type="button"
+                              className={cn(
+                                "w-full rounded-xl px-3 py-2 text-left text-[12px] leading-4 sm:text-[13px] sm:leading-5",
+                                activePlacement?.id === placement.id
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-secondary"
+                              )}
+                              onClick={() => setActiveFromClue(placement.id)}
+                              aria-label={`Dica horizontal ${placement.number}: ${placement.entry.clue}`}
+                            >
+                              <strong>{placement.number}.</strong>{" "}
+                              {placement.entry.clue}
+                            </button>
+                          ))}
+                        </div>
                       </ResponsiveSecondarySection>
 
                       <ResponsiveSecondarySection
                         title="Dicas verticais"
-                        summaryText={`${downClues.length} de ${puzzle.down.length} pistas exibidas.`}
+                        summaryText={`${puzzle.down.length} pistas para completar os cruzamentos.`}
                         className="lg:hidden"
                       >
-                        <ClueListSection
-                          title="Dicas verticais"
-                          direction="down"
-                          clues={downClues}
-                          activePlacementId={activePlacement?.id}
-                          onSelect={setActiveFromClue}
-                          showHeader={false}
-                        />
+                        <div className="space-y-1.5">
+                          {downClues.map(placement => (
+                            <button
+                              key={placement.id}
+                              type="button"
+                              className={cn(
+                                "w-full rounded-xl px-3 py-2 text-left text-[12px] leading-4 sm:text-[13px] sm:leading-5",
+                                activePlacement?.id === placement.id
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-secondary"
+                              )}
+                              onClick={() => setActiveFromClue(placement.id)}
+                              aria-label={`Dica vertical ${placement.number}: ${placement.entry.clue}`}
+                            >
+                              <strong>{placement.number}.</strong>{" "}
+                              {placement.entry.clue}
+                            </button>
+                          ))}
+                        </div>
                       </ResponsiveSecondarySection>
 
                       <ResponsiveSecondarySection
@@ -1106,30 +1040,123 @@ export default function Crossword() {
                     </div>
                   </div>
 
-                  <aside className="hidden lg:block">
-                    <div className="card-base crossword-clues-panel p-3.5 sm:p-4">
-                      <p className="text-xs leading-5 text-muted-foreground">
+                  <aside className="hidden space-y-3 lg:block">
+                    <div className="card-base p-3.5 sm:p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-lg font-bold">Dicas horizontais</h2>
+                        <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+                          {puzzle.across.length}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-muted-foreground">
                         {essentialClues
-                          ? "As pistas essenciais aparecem primeiro para destravar a grade."
-                          : "Todas as pistas da rodada aparecem na lista completa abaixo."}
+                          ? "As essenciais ficam no topo para destravar a grade mais cedo."
+                          : "Todas as pistas desta rodada estão aqui."}
                       </p>
-                      <div className="crossword-clues-panel-scroll mt-3 space-y-5 pr-1">
-                        <ClueListSection
-                          title="Dicas horizontais"
-                          direction="across"
-                          clues={acrossClues}
-                          activePlacementId={activePlacement?.id}
-                          onSelect={setActiveFromClue}
-                          showMeta
-                        />
-                        <ClueListSection
-                          title="Dicas verticais"
-                          direction="down"
-                          clues={downClues}
-                          activePlacementId={activePlacement?.id}
-                          onSelect={setActiveFromClue}
-                          showMeta
-                        />
+                      <div className="game-side-scroll mt-3 space-y-1.5 overflow-auto pr-1">
+                        {acrossClues.map(placement => (
+                          <button
+                            key={placement.id}
+                            type="button"
+                            className={cn(
+                              "w-full rounded-xl px-3 py-2 text-left text-[12px] leading-4 sm:text-[13px] sm:leading-5",
+                              activePlacement?.id === placement.id
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-secondary"
+                            )}
+                            onClick={() => setActiveFromClue(placement.id)}
+                            aria-label={`Dica horizontal ${placement.number}: ${placement.entry.clue}`}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <strong>{placement.number}.</strong>{" "}
+                                {placement.entry.clue}
+                              </div>
+                              <div className="flex flex-col items-end gap-1 text-[11px] font-semibold uppercase tracking-wide">
+                                <span
+                                  className={cn(
+                                    "rounded-full px-2 py-1",
+                                    activePlacement?.id === placement.id
+                                      ? "bg-primary-foreground/15 text-primary-foreground"
+                                      : placement.cluePriority === "required"
+                                        ? "bg-primary/10 text-primary"
+                                        : "bg-background text-muted-foreground"
+                                  )}
+                                >
+                                  {placement.cluePriority === "required"
+                                    ? "Essencial"
+                                    : "Apoio"}
+                                </span>
+                                <span
+                                  className={
+                                    activePlacement?.id === placement.id
+                                      ? "text-primary-foreground/80"
+                                      : "text-muted-foreground"
+                                  }
+                                >
+                                  {placement.crossings} cruz.
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="card-base p-3.5 sm:p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-lg font-bold">Dicas verticais</h2>
+                        <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+                          {puzzle.down.length}
+                        </span>
+                      </div>
+                      <div className="game-side-scroll mt-3 space-y-1.5 overflow-auto pr-1">
+                        {downClues.map(placement => (
+                          <button
+                            key={placement.id}
+                            type="button"
+                            className={cn(
+                              "w-full rounded-xl px-3 py-2 text-left text-[12px] leading-4 sm:text-[13px] sm:leading-5",
+                              activePlacement?.id === placement.id
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-secondary"
+                            )}
+                            onClick={() => setActiveFromClue(placement.id)}
+                            aria-label={`Dica vertical ${placement.number}: ${placement.entry.clue}`}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <strong>{placement.number}.</strong>{" "}
+                                {placement.entry.clue}
+                              </div>
+                              <div className="flex flex-col items-end gap-1 text-[11px] font-semibold uppercase tracking-wide">
+                                <span
+                                  className={cn(
+                                    "rounded-full px-2 py-1",
+                                    activePlacement?.id === placement.id
+                                      ? "bg-primary-foreground/15 text-primary-foreground"
+                                      : placement.cluePriority === "required"
+                                        ? "bg-primary/10 text-primary"
+                                        : "bg-background text-muted-foreground"
+                                  )}
+                                >
+                                  {placement.cluePriority === "required"
+                                    ? "Essencial"
+                                    : "Apoio"}
+                                </span>
+                                <span
+                                  className={
+                                    activePlacement?.id === placement.id
+                                      ? "text-primary-foreground/80"
+                                      : "text-muted-foreground"
+                                  }
+                                >
+                                  {placement.crossings} cruz.
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </aside>
