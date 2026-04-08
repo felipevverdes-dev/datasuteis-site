@@ -549,12 +549,7 @@ export default function Crossword() {
   }
 
   function handleRevealLetter() {
-    if (completedTime !== null) {
-      return;
-    }
-
-    if (!activePlacement) {
-      toast("Selecione uma palavra para revelar uma letra.");
+    if (!activePlacement || completedTime !== null) {
       return;
     }
 
@@ -578,12 +573,7 @@ export default function Crossword() {
   }
 
   function handleRevealWord() {
-    if (completedTime !== null) {
-      return;
-    }
-
-    if (!activePlacement) {
-      toast("Selecione uma palavra para revelar a resposta.");
+    if (!activePlacement || completedTime !== null) {
       return;
     }
 
