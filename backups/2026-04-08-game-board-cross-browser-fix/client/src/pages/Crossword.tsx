@@ -19,7 +19,6 @@ import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import {
-  type CrosswordCell,
   createCrosswordPuzzle,
   type CrosswordDifficulty,
   type CrosswordPlacement,
@@ -323,34 +322,8 @@ export default function Crossword() {
   const topLabel = getBackToTopLabel(language);
   const boardSizing =
     puzzle.width >= 13
-      ? { staticMax: "46rem", min: "22rem", minMobile: "18rem" }
-      : { staticMax: "42rem", min: "20rem", minMobile: "18rem" };
-  const boardDimension = useMemo(
-    () => Math.max(puzzle.width, puzzle.height),
-    [puzzle.height, puzzle.width]
-  );
-  const boardCells = useMemo<Array<CrosswordCell | null>>(() => {
-    const rowOffset = Math.floor((boardDimension - puzzle.height) / 2);
-    const colOffset = Math.floor((boardDimension - puzzle.width) / 2);
-
-    return Array.from({ length: boardDimension * boardDimension }, (_, index) => {
-      const row = Math.floor(index / boardDimension);
-      const col = index % boardDimension;
-      const puzzleRow = row - rowOffset;
-      const puzzleCol = col - colOffset;
-
-      if (
-        puzzleRow < 0 ||
-        puzzleCol < 0 ||
-        puzzleRow >= puzzle.height ||
-        puzzleCol >= puzzle.width
-      ) {
-        return null;
-      }
-
-      return puzzle.cells[puzzleRow * puzzle.width + puzzleCol];
-    });
-  }, [boardDimension, puzzle.cells, puzzle.height, puzzle.width]);
+      ? { staticMax: "38rem", vhOffset: "28rem" }
+      : { staticMax: "34rem", vhOffset: "28rem" };
   const breadcrumbs = [
     { label: navigationLabels.home, href: "/" },
     { label: navigationLabels.games },
@@ -907,8 +880,7 @@ export default function Crossword() {
                       style={
                         {
                           "--game-board-static-max": boardSizing.staticMax,
-                          "--game-board-min": boardSizing.min,
-                          "--game-board-min-mobile": boardSizing.minMobile,
+                          "--game-board-vh-offset": boardSizing.vhOffset,
                         } as CSSProperties
                       }
                       onContextMenu={event => event.preventDefault()}
@@ -916,13 +888,13 @@ export default function Crossword() {
                       <div
                         className="crossword-board-grid"
                         style={{
-                          gridTemplateColumns: `repeat(${boardDimension}, minmax(0, 1fr))`,
+                          gridTemplateColumns: `repeat(${puzzle.width}, minmax(0, 1fr))`,
                         }}
                       >
-                        {boardCells.map((cell, displayIndex) =>
+                        {puzzle.cells.map((cell, index) =>
                           cell ? (
                             <div
-                              key={`cell-${cell.index}`}
+                              key={index}
                               className={cn(
                                 "crossword-cell",
                                 activePlacement?.cells.includes(cell.index) &&
@@ -940,7 +912,7 @@ export default function Crossword() {
                               ) : null}
                               <input
                                 ref={element => {
-                                  cellRefs.current[cell.index] = element;
+                                  cellRefs.current[index] = element;
                                 }}
                                 type="text"
                                 inputMode="text"
@@ -991,7 +963,7 @@ export default function Crossword() {
                             </div>
                           ) : (
                             <div
-                              key={`empty-${displayIndex}`}
+                              key={index}
                               className="crossword-cell crossword-cell-block"
                             />
                           )

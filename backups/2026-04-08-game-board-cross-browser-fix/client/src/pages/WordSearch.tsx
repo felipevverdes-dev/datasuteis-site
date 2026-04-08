@@ -506,10 +506,10 @@ export default function WordSearch() {
   const topLabel = getBackToTopLabel(language);
   const boardSizing =
     game.size >= 18
-      ? { staticMax: "48rem", min: "22rem", minMobile: "18rem" }
+      ? { staticMax: "37rem", vhOffset: "28rem" }
       : game.size >= 14
-        ? { staticMax: "44rem", min: "20rem", minMobile: "18rem" }
-        : { staticMax: "40rem", min: "20rem", minMobile: "18rem" };
+        ? { staticMax: "33rem", vhOffset: "28rem" }
+        : { staticMax: "30rem", vhOffset: "28rem" };
   const cellTextClassName =
     game.size >= 18
       ? "text-[11px] sm:text-xs"
@@ -682,8 +682,7 @@ export default function WordSearch() {
                       style={
                         {
                           "--game-board-static-max": boardSizing.staticMax,
-                          "--game-board-min": boardSizing.min,
-                          "--game-board-min-mobile": boardSizing.minMobile,
+                          "--game-board-vh-offset": boardSizing.vhOffset,
                         } as CSSProperties
                       }
                       onContextMenu={event => event.preventDefault()}

@@ -714,9 +714,8 @@ export default function Sudoku() {
                     className="game-interactive-area protected-interactive game-board-shell game-mobile-stage mx-auto"
                     style={
                       {
-                        "--game-board-static-max": "44rem",
-                        "--game-board-min": "20rem",
-                        "--game-board-min-mobile": "18rem",
+                        "--game-board-static-max": "35.5rem",
+                        "--game-board-vh-offset": "31rem",
                       } as CSSProperties
                     }
                     onContextMenu={event => event.preventDefault()}
@@ -768,7 +767,7 @@ export default function Sudoku() {
                             }
                             onKeyDown={event => handleCellKeyDown(index, event)}
                             className={cn(
-                              "aspect-square min-h-10 w-full appearance-none rounded-md border px-0 text-center text-[15px] font-semibold leading-[1.1] transition-colors caret-primary sm:min-h-10 sm:text-lg",
+                              "aspect-square min-h-10 w-full rounded-md border px-0 text-center text-[15px] font-semibold leading-none transition-colors caret-primary sm:min-h-10 sm:text-lg",
                               getSudokuRow(index) % 3 === 0 &&
                                 "border-t-2 border-t-primary/35",
                               getSudokuColumn(index) % 3 === 0 &&
@@ -800,19 +799,19 @@ export default function Sudoku() {
                         );
                       })}
                     </div>
-                  </div>
 
-                  <div className="game-meta-row mt-4 hidden justify-center xl:flex">
-                    <span className="game-meta-chip">
-                      9x9
-                    </span>
-                    <span className="game-meta-chip">
-                      {getSudokuDifficultyClues(currentDifficulty)} pistas
-                      iniciais
-                    </span>
-                    <span className="game-meta-chip">
-                      Toque para abrir o teclado numérico nativo
-                    </span>
+                    <div className="game-meta-row mt-4 hidden justify-center xl:flex">
+                      <span className="game-meta-chip">
+                        9x9
+                      </span>
+                      <span className="game-meta-chip">
+                        {getSudokuDifficultyClues(currentDifficulty)} pistas
+                        iniciais
+                      </span>
+                      <span className="game-meta-chip">
+                        Toque para abrir o teclado numérico nativo
+                      </span>
+                    </div>
                   </div>
 
                   <div className="mt-4 space-y-3 xl:hidden">
