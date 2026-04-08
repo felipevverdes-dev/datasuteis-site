@@ -7,7 +7,6 @@ export interface CrosswordEntry {
   label: string;
   clue: string;
   category: string;
-  clueSource: "seed" | "fallback";
 }
 
 export interface CrosswordPlacement {
@@ -46,52 +45,6 @@ export interface CrosswordPuzzle {
   signature: string;
 }
 
-export interface CrosswordAuditPosition {
-  row: number;
-  col: number;
-}
-
-export interface CrosswordPuzzleAuditEntry {
-  id: string;
-  key: string;
-  direction: CrosswordDirection;
-  number: number;
-  clue: string;
-  answer: string;
-  label: string;
-  length: number;
-  crossings: number;
-  cells: number[];
-  positions: CrosswordAuditPosition[];
-  clueSource: CrosswordEntry["clueSource"];
-  hasClue: boolean;
-  hasValidNumber: boolean;
-  hasValidCells: boolean;
-}
-
-export interface CrosswordPuzzleAudit {
-  isValid: boolean;
-  acrossCount: number;
-  downCount: number;
-  totalCount: number;
-  clueCount: number;
-  missingClueCount: number;
-  fallbackClueCount: number;
-  invalidNumberCount: number;
-  invalidCellCount: number;
-  duplicateKeyCount: number;
-  numberedCellCount: number;
-  invalidNumberedCellCount: number;
-  gridAcrossStartCount: number;
-  gridDownStartCount: number;
-  danglingCellReferenceCount: number;
-  entries: CrosswordPuzzleAuditEntry[];
-  missingClueKeys: string[];
-  duplicateKeys: string[];
-  missingEntryKeysFromGrid: string[];
-  orphanEntryKeys: string[];
-}
-
 type CrosswordTheme = {
   id: string;
   label: string;
@@ -108,14 +61,6 @@ type GridCell = {
   letter: string;
   acrossId?: string;
   downId?: string;
-};
-
-type CrosswordPlacementDraft = Omit<
-  CrosswordPlacement,
-  "number" | "cells" | "crossings" | "cluePriority"
-> & {
-  number?: number;
-  cells?: number[];
 };
 
 const OVERSIZE_GRID = 32;
@@ -328,256 +273,20 @@ const THEMES: CrosswordTheme[] = THEME_SEEDS.map(theme => ({
   entries: theme.words.map(([label, clue]) => createEntry(label, clue, theme.label)),
 }));
 
-function buildFallbackClue(
-  answer: string,
-  category: string
-) {
-  return `Tema ${category}. Palavra com ${answer.length} letras.`;
-}
-
-export function getCrosswordEntryClue(
-  entry: Pick<CrosswordEntry, "answer" | "category" | "clue">
-) {
-  const normalizedClue = entry.clue.trim();
-  return normalizedClue || buildFallbackClue(entry.answer, entry.category);
-}
-
-export function getCrosswordPlacementKey(
-  direction: CrosswordDirection,
-  number: number
-) {
-  return `${direction === "across" ? "H" : "V"}:${number}`;
-}
-
-function getPuzzleCell(
-  puzzle: CrosswordPuzzle,
-  row: number,
-  col: number
-) {
-  if (row < 0 || col < 0 || row >= puzzle.height || col >= puzzle.width) {
-    return null;
-  }
-
-  return puzzle.cells[indexFor(row, col, puzzle.width)];
-}
-
-function isAcrossStartInPuzzle(
-  puzzle: CrosswordPuzzle,
-  cell: CrosswordCell
-) {
-  if (!cell.acrossId) {
-    return false;
-  }
-
-  const previous = getPuzzleCell(puzzle, cell.row, cell.col - 1);
-  const next = getPuzzleCell(puzzle, cell.row, cell.col + 1);
-
-  return (
-    (!previous || previous.acrossId !== cell.acrossId) &&
-    !!next &&
-    next.acrossId === cell.acrossId
-  );
-}
-
-function isDownStartInPuzzle(
-  puzzle: CrosswordPuzzle,
-  cell: CrosswordCell
-) {
-  if (!cell.downId) {
-    return false;
-  }
-
-  const previous = getPuzzleCell(puzzle, cell.row - 1, cell.col);
-  const next = getPuzzleCell(puzzle, cell.row + 1, cell.col);
-
-  return (
-    (!previous || previous.downId !== cell.downId) &&
-    !!next &&
-    next.downId === cell.downId
-  );
-}
-
-export function auditCrosswordPuzzle(
-  puzzle: CrosswordPuzzle
-): CrosswordPuzzleAudit {
-  const placementIds = new Set(
-    [...puzzle.across, ...puzzle.down].map(placement => placement.id)
-  );
-  const entries = [...puzzle.across, ...puzzle.down].map(placement => {
-    const clue = getCrosswordEntryClue(placement.entry);
-    const hasValidNumber = placement.number > 0;
-    const positions = placement.cells.map(cellIndex => {
-      const cell = puzzle.cells[cellIndex];
-      return {
-        row: cell?.row ?? -1,
-        col: cell?.col ?? -1,
-      };
-    });
-    const hasValidCells =
-      placement.cells.length === placement.entry.answer.length &&
-      placement.cells.every(cellIndex => {
-        const cell = puzzle.cells[cellIndex];
-        if (!cell) {
-          return false;
-        }
-
-        return placement.direction === "across"
-          ? cell.acrossId === placement.id
-          : cell.downId === placement.id;
-      });
-
-    return {
-      id: placement.id,
-      key: getCrosswordPlacementKey(placement.direction, placement.number),
-      direction: placement.direction,
-      number: placement.number,
-      clue,
-      answer: placement.entry.answer,
-      label: placement.entry.label,
-      length: placement.entry.answer.length,
-      crossings: placement.crossings,
-      cells: placement.cells,
-      positions,
-      clueSource: placement.entry.clueSource,
-      hasClue: clue.trim().length > 0,
-      hasValidNumber,
-      hasValidCells,
-    } satisfies CrosswordPuzzleAuditEntry;
-  });
-  const entriesByKey = new Map(entries.map(entry => [entry.key, entry]));
-
-  const seenKeys = new Set<string>();
-  const duplicateKeys = new Set<string>();
-
-  for (const entry of entries) {
-    if (!entry.hasValidNumber) {
-      continue;
-    }
-
-    if (seenKeys.has(entry.key)) {
-      duplicateKeys.add(entry.key);
-      continue;
-    }
-
-    seenKeys.add(entry.key);
-  }
-
-  const missingClueKeys = entries
-    .filter(entry => !entry.hasClue)
-    .map(entry => entry.key);
-  const fallbackClueCount = entries.filter(
-    entry => entry.clueSource === "fallback"
-  ).length;
-  const invalidNumberCount = entries.filter(
-    entry => !entry.hasValidNumber
-  ).length;
-  const invalidCellCount = entries.filter(entry => !entry.hasValidCells).length;
-  const duplicateKeyList = Array.from(duplicateKeys);
-  const clueCount = entries.filter(entry => entry.hasClue).length;
-  let numberedCellCount = 0;
-  let invalidNumberedCellCount = 0;
-  let gridAcrossStartCount = 0;
-  let gridDownStartCount = 0;
-  let danglingCellReferenceCount = 0;
-  const gridStartKeys = new Set<string>();
-
-  for (const cell of puzzle.cells) {
-    if (!cell) {
-      continue;
-    }
-
-    if (cell.acrossId && !placementIds.has(cell.acrossId)) {
-      danglingCellReferenceCount += 1;
-    }
-
-    if (cell.downId && !placementIds.has(cell.downId)) {
-      danglingCellReferenceCount += 1;
-    }
-
-    const startsAcross = isAcrossStartInPuzzle(puzzle, cell);
-    const startsDown = isDownStartInPuzzle(puzzle, cell);
-
-    if (startsAcross) {
-      gridAcrossStartCount += 1;
-      gridStartKeys.add(
-        getCrosswordPlacementKey("across", cell.number ?? 0)
-      );
-    }
-
-    if (startsDown) {
-      gridDownStartCount += 1;
-      gridStartKeys.add(
-        getCrosswordPlacementKey("down", cell.number ?? 0)
-      );
-    }
-
-    if (cell.number !== undefined) {
-      numberedCellCount += 1;
-      if (!startsAcross && !startsDown) {
-        invalidNumberedCellCount += 1;
-      }
-    }
-  }
-
-  const missingEntryKeysFromGrid = Array.from(gridStartKeys).filter(
-    key => !entriesByKey.has(key)
-  );
-  const orphanEntryKeys = entries
-    .filter(entry => !gridStartKeys.has(entry.key))
-    .map(entry => entry.key);
-
-  return {
-    isValid:
-      missingClueKeys.length === 0 &&
-      invalidNumberCount === 0 &&
-      invalidCellCount === 0 &&
-      duplicateKeyList.length === 0 &&
-      invalidNumberedCellCount === 0 &&
-      danglingCellReferenceCount === 0 &&
-      missingEntryKeysFromGrid.length === 0 &&
-      orphanEntryKeys.length === 0 &&
-      gridAcrossStartCount === puzzle.across.length &&
-      gridDownStartCount === puzzle.down.length,
-    acrossCount: puzzle.across.length,
-    downCount: puzzle.down.length,
-    totalCount: entries.length,
-    clueCount,
-    missingClueCount: missingClueKeys.length,
-    fallbackClueCount,
-    invalidNumberCount,
-    invalidCellCount,
-    duplicateKeyCount: duplicateKeyList.length,
-    numberedCellCount,
-    invalidNumberedCellCount,
-    gridAcrossStartCount,
-    gridDownStartCount,
-    danglingCellReferenceCount,
-    entries,
-    missingClueKeys,
-    duplicateKeys: duplicateKeyList,
-    missingEntryKeysFromGrid,
-    orphanEntryKeys,
-  };
-}
-
 function createEntry(
   label: string,
   clue: string,
   category: string
 ): CrosswordEntry {
-  const answer = label
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^A-Za-z]/g, "")
-    .toUpperCase();
-  const normalizedClue = clue.trim();
-
   return {
     label,
-    clue: normalizedClue || buildFallbackClue(answer, category),
+    clue,
     category,
-    answer,
-    clueSource: normalizedClue ? "seed" : "fallback",
+    answer: label
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^A-Za-z]/g, "")
+      .toUpperCase(),
   };
 }
 
@@ -597,63 +306,6 @@ function indexFor(row: number, col: number, width: number) {
 function createGrid() {
   return Array.from({ length: OVERSIZE_GRID }, () =>
     Array.from({ length: OVERSIZE_GRID }, () => null as GridCell | null)
-  );
-}
-
-function buildGridFromPlacements(placements: CrosswordPlacementDraft[]) {
-  const grid = createGrid();
-
-  for (const placement of placements) {
-    placeWord(
-      grid,
-      placement.entry,
-      placement.row,
-      placement.col,
-      placement.direction,
-      placement.id
-    );
-  }
-
-  return grid;
-}
-
-function isAcrossStartOnGrid(
-  grid: Array<Array<GridCell | null>>,
-  row: number,
-  col: number
-) {
-  const cell = grid[row]?.[col];
-  if (!cell?.acrossId) {
-    return false;
-  }
-
-  const previous = col > 0 ? grid[row][col - 1] : null;
-  const next = col < OVERSIZE_GRID - 1 ? grid[row][col + 1] : null;
-
-  return (
-    (!previous || previous.acrossId !== cell.acrossId) &&
-    !!next &&
-    next.acrossId === cell.acrossId
-  );
-}
-
-function isDownStartOnGrid(
-  grid: Array<Array<GridCell | null>>,
-  row: number,
-  col: number
-) {
-  const cell = grid[row]?.[col];
-  if (!cell?.downId) {
-    return false;
-  }
-
-  const previous = row > 0 ? grid[row - 1][col] : null;
-  const next = row < OVERSIZE_GRID - 1 ? grid[row + 1][col] : null;
-
-  return (
-    (!previous || previous.downId !== cell.downId) &&
-    !!next &&
-    next.downId === cell.downId
   );
 }
 
@@ -786,7 +438,12 @@ function buildPuzzle(
   }
 
   const grid = createGrid();
-  const placements: CrosswordPlacementDraft[] = [];
+  const placements: Array<
+    Omit<CrosswordPlacement, "number" | "cells" | "crossings" | "cluePriority"> & {
+      number?: number;
+      cells?: number[];
+    }
+  > = [];
 
   const first = selected[0];
   const startRow = Math.floor(OVERSIZE_GRID / 2);
@@ -906,7 +563,6 @@ function buildPuzzle(
   }
 
   const chosenPlacements = placements.slice(0, config.wordCount);
-  const finalGrid = buildGridFromPlacements(chosenPlacements);
   const rows = chosenPlacements.flatMap(placement =>
     Array.from({ length: placement.entry.answer.length }, (_, offset) =>
       placement.row + (placement.direction === "down" ? offset : 0)
@@ -934,7 +590,7 @@ function buildPuzzle(
 
   for (let row = minRow; row <= maxRow; row += 1) {
     for (let col = minCol; col <= maxCol; col += 1) {
-      const cell = finalGrid[row][col];
+      const cell = grid[row][col];
       if (!cell) {
         continue;
       }
@@ -942,8 +598,10 @@ function buildPuzzle(
       const croppedRow = row - minRow;
       const croppedCol = col - minCol;
       const index = indexFor(croppedRow, croppedCol, width);
-      const startsAcross = isAcrossStartOnGrid(finalGrid, row, col);
-      const startsDown = isDownStartOnGrid(finalGrid, row, col);
+      const startsAcross =
+        !!cell.acrossId && (col === minCol || !grid[row][col - 1]);
+      const startsDown =
+        !!cell.downId && (row === minRow || !grid[row - 1][col]);
       const number = startsAcross || startsDown ? numbering++ : undefined;
       if (startsAcross && cell.acrossId) {
         numberedPlacements.set(cell.acrossId, number!);
@@ -1043,66 +701,15 @@ export function createCrosswordPuzzle(
       if (options?.avoidSignature && puzzle.signature === options.avoidSignature) {
         continue;
       }
-      const audit = auditCrosswordPuzzle(puzzle);
-      if (!audit.isValid) {
-        console.warn("[Crossword] Puzzle invalido descartado.", {
-          difficulty,
-          theme: puzzle.theme,
-          missingClueKeys: audit.missingClueKeys,
-          duplicateKeys: audit.duplicateKeys,
-          invalidNumberCount: audit.invalidNumberCount,
-          invalidCellCount: audit.invalidCellCount,
-          invalidNumberedCellCount: audit.invalidNumberedCellCount,
-          danglingCellReferenceCount: audit.danglingCellReferenceCount,
-          missingEntryKeysFromGrid: audit.missingEntryKeysFromGrid,
-          orphanEntryKeys: audit.orphanEntryKeys,
-        });
-        continue;
-      }
-      if (audit.fallbackClueCount > 0) {
-        console.warn("[Crossword] Puzzle usando dicas fallback.", {
-          difficulty,
-          theme: puzzle.theme,
-          fallbackEntries: audit.entries
-            .filter(entry => entry.clueSource === "fallback")
-            .map(entry => entry.key),
-        });
-      }
       return puzzle;
     }
   }
 
   for (const theme of THEMES) {
     const puzzle = buildPuzzle(difficulty, theme);
-    if (!puzzle) {
-      continue;
+    if (puzzle) {
+      return puzzle;
     }
-    const audit = auditCrosswordPuzzle(puzzle);
-    if (!audit.isValid) {
-      console.warn("[Crossword] Puzzle invalido descartado no fallback final.", {
-        difficulty,
-        theme: puzzle.theme,
-        missingClueKeys: audit.missingClueKeys,
-        duplicateKeys: audit.duplicateKeys,
-        invalidNumberCount: audit.invalidNumberCount,
-        invalidCellCount: audit.invalidCellCount,
-        invalidNumberedCellCount: audit.invalidNumberedCellCount,
-        danglingCellReferenceCount: audit.danglingCellReferenceCount,
-        missingEntryKeysFromGrid: audit.missingEntryKeysFromGrid,
-        orphanEntryKeys: audit.orphanEntryKeys,
-      });
-      continue;
-    }
-    if (audit.fallbackClueCount > 0) {
-      console.warn("[Crossword] Puzzle fallback final usando dicas fallback.", {
-        difficulty,
-        theme: puzzle.theme,
-        fallbackEntries: audit.entries
-          .filter(entry => entry.clueSource === "fallback")
-          .map(entry => entry.key),
-      });
-    }
-    return puzzle;
   }
 
   throw new Error("Unable to create crossword puzzle.");

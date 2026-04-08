@@ -20,12 +20,8 @@ import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import {
-  auditCrosswordPuzzle,
   createCrosswordPuzzle,
   type CrosswordDifficulty,
-  getCrosswordEntryClue,
-  getCrosswordPlacementKey,
-  type CrosswordCell,
 } from "@/lib/crossword";
 import {
   compareScoredRankingDesc,
@@ -175,29 +171,6 @@ function getCellSizeLimits(maxDimension: number, desktop: boolean) {
   return { min: 16, max: 28 };
 }
 
-function getPreferredDirectionForCell(
-  cell: Pick<CrosswordCell, "acrossId" | "downId">,
-  preferredDirection: "across" | "down"
-) {
-  if (preferredDirection === "across" && cell.acrossId) {
-    return "across";
-  }
-
-  if (preferredDirection === "down" && cell.downId) {
-    return "down";
-  }
-
-  if (cell.acrossId) {
-    return "across";
-  }
-
-  if (cell.downId) {
-    return "down";
-  }
-
-  return preferredDirection;
-}
-
 export default function Crossword() {
   const { language } = useI18n();
   const navigationLabels = getNavigationLabels(language);
@@ -242,18 +215,9 @@ export default function Crossword() {
     () => [...puzzle.across, ...puzzle.down],
     [puzzle.across, puzzle.down]
   );
-  const puzzleAudit = useMemo(() => auditCrosswordPuzzle(puzzle), [puzzle]);
   const placementById = useMemo(
     () => new Map(placements.map(placement => [placement.id, placement])),
     [placements]
-  );
-  const auditEntryById = useMemo(
-    () => new Map(puzzleAudit.entries.map(entry => [entry.id, entry])),
-    [puzzleAudit.entries]
-  );
-  const auditEntryByKey = useMemo(
-    () => new Map(puzzleAudit.entries.map(entry => [entry.key, entry])),
-    [puzzleAudit.entries]
   );
   const activePlacement = useMemo(() => {
     if (activeCell === null) {
@@ -345,9 +309,8 @@ export default function Crossword() {
       down: downClues.length,
       hasMissingNumbers:
         [...acrossClues, ...downClues].some(placement => placement.number <= 0),
-      fallbackClues: puzzleAudit.fallbackClueCount,
     }),
-    [acrossClues, downClues, puzzleAudit.fallbackClueCount]
+    [acrossClues, downClues]
   );
   const navItems = getToolPageNavItems(language);
   const topLabel = getBackToTopLabel(language);
@@ -455,14 +418,12 @@ export default function Crossword() {
         parsePixelValue(playboxStyles.rowGap) ||
         parsePixelValue(playboxStyles.gap);
       const playboxMaxHeight = Math.max(1, viewportHeight - top - bottomMargin);
-      const reservedInline = desktop ? support.offsetWidth + playboxGap : 0;
-      const reservedHeight = desktop
-        ? 0
-        : support.offsetHeight +
-          Math.max(0, element.children.length - 1) * playboxGap;
+      const reservedHeight =
+        support.offsetHeight +
+        Math.max(0, element.children.length - 1) * playboxGap;
       const availableBoardWidth = Math.max(
         1,
-        Math.floor(element.clientWidth - paddingInline - reservedInline)
+        Math.floor(element.clientWidth - paddingInline)
       );
       const availableBoardHeight = Math.max(
         1,
@@ -577,45 +538,6 @@ export default function Crossword() {
       window.removeEventListener("orientationchange", scheduleMeasure);
     };
   }, [boardColumns, boardRows]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const isLocalAudit =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-
-    if (!isLocalAudit) {
-      return;
-    }
-
-    const payload = {
-      theme: puzzle.theme,
-      across: puzzleAudit.acrossCount,
-      down: puzzleAudit.downCount,
-      total: puzzleAudit.totalCount,
-      clues: puzzleAudit.clueCount,
-      missingClues: puzzleAudit.missingClueCount,
-      fallbackClues: puzzleAudit.fallbackClueCount,
-      entries: puzzleAudit.entries.map(entry => ({
-        key: entry.key,
-        answer: entry.answer,
-        clue: entry.clue,
-        length: entry.length,
-        crossings: entry.crossings,
-        hasClue: entry.hasClue,
-      })),
-    };
-
-    if (!puzzleAudit.isValid) {
-      console.warn("[Crossword] Auditoria do puzzle falhou.", payload);
-      return;
-    }
-
-    console.info("[Crossword] Auditoria do puzzle.", payload);
-  }, [puzzle.signature, puzzle.theme, puzzleAudit]);
 
   function updateActiveCell(index: number | null, focus = false) {
     shouldFocusActiveCellRef.current = focus;
@@ -947,21 +869,9 @@ export default function Crossword() {
   const activeCellData = activeCell !== null ? puzzle.cells[activeCell] : null;
   const canToggleDirection =
     !!activeCellData?.acrossId && !!activeCellData?.downId;
-  const activePlacementKey = activePlacement
-    ? getCrosswordPlacementKey(
-        activePlacement.direction,
-        clueNumberById.get(activePlacement.id) ?? activePlacement.number
-      )
+  const activeClueNumber = activePlacement
+    ? clueNumberById.get(activePlacement.id) ?? activePlacement.number
     : null;
-  const activePlacementAudit = activePlacementKey
-    ? auditEntryByKey.get(activePlacementKey) ??
-      (activePlacement ? auditEntryById.get(activePlacement.id) ?? null : null)
-    : null;
-  const activeClueNumber = activePlacementAudit
-    ? activePlacementAudit.number
-    : activePlacement
-      ? clueNumberById.get(activePlacement.id) ?? activePlacement.number
-      : null;
   const activeDirectionLabel = activePlacement
     ? activePlacement.direction === "across"
       ? "Horizontal"
@@ -974,29 +884,14 @@ export default function Crossword() {
     : [];
   const activeDirectionIndex = activePlacement
     ? activeDirectionClues.findIndex(
-        placement =>
-          getCrosswordPlacementKey(
-            placement.direction,
-            clueNumberById.get(placement.id) ?? placement.number
-          ) === activePlacementKey
+        placement => placement.id === activePlacement.id
       )
     : -1;
   const activeDirectionToggleLabel =
     direction === "across" ? "vertical" : "horizontal";
-  const activeClueSummary = activePlacementAudit
-    ? activePlacementAudit.clue
-    : activePlacement
-      ? getCrosswordEntryClue(activePlacement.entry)
-      : "Selecione uma palavra para ver a dica.";
-  const activeClueUsesFallback = activePlacementAudit
-    ? activePlacementAudit.clueSource === "fallback"
-    : activePlacement
-      ? activePlacement.entry.clueSource === "fallback"
-      : false;
-  const activePlacementLength =
-    activePlacementAudit?.length ?? activePlacement?.entry.answer.length ?? 0;
-  const activePlacementCrossings =
-    activePlacementAudit?.crossings ?? activePlacement?.crossings ?? 0;
+  const activeClueSummary = activePlacement
+    ? activePlacement.entry.clue
+    : "Selecione uma palavra para ver a dica.";
   const rankingList = ranking.length ? (
     ranking.map((entry, index) => (
       <div
@@ -1229,9 +1124,7 @@ export default function Crossword() {
                                 onFocus={() => {
                                   updateActiveCell(cell.index);
                                   if (activeCell !== cell.index) {
-                                    setDirection(
-                                      getPreferredDirectionForCell(cell, direction)
-                                    );
+                                    setDirection(cell.acrossId ? "across" : "down");
                                   }
                                 }}
                                 onClick={() => {
@@ -1247,9 +1140,7 @@ export default function Crossword() {
                                   }
 
                                   updateActiveCell(cell.index);
-                                  setDirection(
-                                    getPreferredDirectionForCell(cell, direction)
-                                  );
+                                  setDirection(cell.acrossId ? "across" : "down");
                                 }}
                                 onChange={event =>
                                   handleCellChange(cell.index, event.target.value)
@@ -1275,14 +1166,10 @@ export default function Crossword() {
                       </div>
                     </div>
 
-                    <aside ref={supportRef} className="crossword-playbox-support">
-                      <section
-                        className="crossword-context-card"
-                        aria-live="polite"
-                        aria-label="Dica da Palavra"
-                      >
+                    <div ref={supportRef} className="crossword-playbox-support">
+                      <section className="crossword-context-card" aria-live="polite">
                         <div className="crossword-context-head">
-                          <p className="crossword-context-eyebrow">Dica da Palavra</p>
+                          <p className="crossword-context-eyebrow">Dica contextual</p>
                           <p className="crossword-context-count">
                             H {clueListIntegrity.across} • V {clueListIntegrity.down}
                           </p>
@@ -1299,18 +1186,18 @@ export default function Crossword() {
                             </p>
                             <p className="crossword-context-text">{activeClueSummary}</p>
                             <div className="crossword-context-foot">
-                              <span>{activePlacementLength} letras</span>
-                              <span>{activePlacementCrossings} cruzamentos</span>
+                              <span>{activePlacement.entry.answer.length} letras</span>
+                              <span>{activePlacement.crossings} cruzamentos</span>
+                              {canToggleDirection ? (
+                                <button
+                                  type="button"
+                                  onClick={toggleDirectionForActiveCell}
+                                  className="crossword-context-toggle"
+                                >
+                                  Trocar para {activeDirectionToggleLabel}
+                                </button>
+                              ) : null}
                             </div>
-                            {canToggleDirection ? (
-                              <button
-                                type="button"
-                                onClick={toggleDirectionForActiveCell}
-                                className="crossword-context-toggle"
-                              >
-                                Trocar para {activeDirectionToggleLabel}
-                              </button>
-                            ) : null}
                           </>
                         ) : (
                           <p className="crossword-context-placeholder">
@@ -1322,12 +1209,6 @@ export default function Crossword() {
                           <p className="crossword-context-note">
                             Algumas pistas sem número explícito receberam numeração
                             automática para manter a navegação consistente.
-                          </p>
-                        ) : null}
-                        {activeClueUsesFallback ? (
-                          <p className="crossword-context-note">
-                            Dica gerada automaticamente para esta palavra. Vale
-                            completar a base temática depois.
                           </p>
                         ) : null}
                       </section>
@@ -1362,7 +1243,7 @@ export default function Crossword() {
                           Novo jogo
                         </button>
                       </div>
-                    </aside>
+                    </div>
                   </div>
 
                   <div className="space-y-3 lg:hidden">

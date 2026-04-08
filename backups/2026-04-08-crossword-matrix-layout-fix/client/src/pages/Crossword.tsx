@@ -1,7 +1,6 @@
 import {
   type CSSProperties,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -20,12 +19,9 @@ import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import {
-  auditCrosswordPuzzle,
+  type CrosswordCell,
   createCrosswordPuzzle,
   type CrosswordDifficulty,
-  getCrosswordEntryClue,
-  getCrosswordPlacementKey,
-  type CrosswordCell,
 } from "@/lib/crossword";
 import {
   compareScoredRankingDesc,
@@ -41,7 +37,6 @@ import {
   buildFaqPageSchema,
   getNavigationLabels,
 } from "@/lib/navigation";
-import { calculateMatrixBoardMetrics } from "@/lib/matrix-board-layout";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -118,86 +113,6 @@ function sortCluesByNumber<T extends { number: number }>(items: T[]) {
   return [...items].sort((left, right) => left.number - right.number);
 }
 
-function parsePixelValue(value: string | null | undefined) {
-  const parsed = Number.parseFloat(value ?? "");
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function getMatrixSpacing(maxDimension: number, desktop: boolean) {
-  if (maxDimension >= 24) {
-    return {
-      gap: desktop ? 2 : 1,
-      padding: desktop ? 6 : 4,
-    };
-  }
-
-  if (maxDimension >= 18) {
-    return {
-      gap: desktop ? 3 : 2,
-      padding: desktop ? 8 : 6,
-    };
-  }
-
-  if (maxDimension >= 13) {
-    return {
-      gap: desktop ? 4 : 3,
-      padding: desktop ? 10 : 8,
-    };
-  }
-
-  return {
-    gap: desktop ? 4 : 3,
-    padding: desktop ? 12 : 9,
-  };
-}
-
-function getCellSizeLimits(maxDimension: number, desktop: boolean) {
-  if (desktop) {
-    if (maxDimension >= 24) {
-      return { min: 18, max: 34 };
-    }
-
-    if (maxDimension >= 18) {
-      return { min: 20, max: 38 };
-    }
-
-    return { min: 22, max: 44 };
-  }
-
-  if (maxDimension >= 24) {
-    return { min: 16, max: 22 };
-  }
-
-  if (maxDimension >= 18) {
-    return { min: 16, max: 25 };
-  }
-
-  return { min: 16, max: 28 };
-}
-
-function getPreferredDirectionForCell(
-  cell: Pick<CrosswordCell, "acrossId" | "downId">,
-  preferredDirection: "across" | "down"
-) {
-  if (preferredDirection === "across" && cell.acrossId) {
-    return "across";
-  }
-
-  if (preferredDirection === "down" && cell.downId) {
-    return "down";
-  }
-
-  if (cell.acrossId) {
-    return "across";
-  }
-
-  if (cell.downId) {
-    return "down";
-  }
-
-  return preferredDirection;
-}
-
 export default function Crossword() {
   const { language } = useI18n();
   const navigationLabels = getNavigationLabels(language);
@@ -220,21 +135,10 @@ export default function Crossword() {
   const [savedPosition, setSavedPosition] = useState<number | null>(null);
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
   const playboxRef = useRef<HTMLDivElement | null>(null);
-  const supportRef = useRef<HTMLDivElement | null>(null);
   const shouldFocusActiveCellRef = useRef(false);
-  const [boardLayout, setBoardLayout] = useState<{
-    playboxMaxHeight: string;
-    boardWidth: string;
-    boardHeight: string;
-    cellSize: string;
-    gridGap: string;
-    gridPadding: string;
-    cellRadius: string;
-    boardRadius: string;
-    cellFontSize: string;
-    cellNumberSize: string;
-    cellNumberOffset: string;
-    cellInsetPadding: string;
+  const [playboxViewportCaps, setPlayboxViewportCaps] = useState<{
+    maxHeight: string;
+    boardMax: string;
   } | null>(null);
 
   const difficulty = puzzle.difficulty;
@@ -242,18 +146,9 @@ export default function Crossword() {
     () => [...puzzle.across, ...puzzle.down],
     [puzzle.across, puzzle.down]
   );
-  const puzzleAudit = useMemo(() => auditCrosswordPuzzle(puzzle), [puzzle]);
   const placementById = useMemo(
     () => new Map(placements.map(placement => [placement.id, placement])),
     [placements]
-  );
-  const auditEntryById = useMemo(
-    () => new Map(puzzleAudit.entries.map(entry => [entry.id, entry])),
-    [puzzleAudit.entries]
-  );
-  const auditEntryByKey = useMemo(
-    () => new Map(puzzleAudit.entries.map(entry => [entry.key, entry])),
-    [puzzleAudit.entries]
   );
   const activePlacement = useMemo(() => {
     if (activeCell === null) {
@@ -345,15 +240,41 @@ export default function Crossword() {
       down: downClues.length,
       hasMissingNumbers:
         [...acrossClues, ...downClues].some(placement => placement.number <= 0),
-      fallbackClues: puzzleAudit.fallbackClueCount,
     }),
-    [acrossClues, downClues, puzzleAudit.fallbackClueCount]
+    [acrossClues, downClues]
   );
   const navItems = getToolPageNavItems(language);
   const topLabel = getBackToTopLabel(language);
-  const boardRows = puzzle.height;
-  const boardColumns = puzzle.width;
-  const boardCells = puzzle.cells;
+  const boardSizing =
+    puzzle.width >= 13
+      ? { staticMax: "31rem", min: "13.5rem", minMobile: "13rem" }
+      : { staticMax: "28rem", min: "13rem", minMobile: "12.5rem" };
+  const boardDimension = useMemo(
+    () => Math.max(puzzle.width, puzzle.height),
+    [puzzle.height, puzzle.width]
+  );
+  const boardCells = useMemo<Array<CrosswordCell | null>>(() => {
+    const rowOffset = Math.floor((boardDimension - puzzle.height) / 2);
+    const colOffset = Math.floor((boardDimension - puzzle.width) / 2);
+
+    return Array.from({ length: boardDimension * boardDimension }, (_, index) => {
+      const row = Math.floor(index / boardDimension);
+      const col = index % boardDimension;
+      const puzzleRow = row - rowOffset;
+      const puzzleCol = col - colOffset;
+
+      if (
+        puzzleRow < 0 ||
+        puzzleCol < 0 ||
+        puzzleRow >= puzzle.height ||
+        puzzleCol >= puzzle.width
+      ) {
+        return null;
+      }
+
+      return puzzle.cells[puzzleRow * puzzle.width + puzzleCol];
+    });
+  }, [boardDimension, puzzle.cells, puzzle.height, puzzle.width]);
   const breadcrumbs = [
     { label: navigationLabels.home, href: "/" },
     { label: navigationLabels.games },
@@ -422,7 +343,7 @@ export default function Crossword() {
     };
   }, [activeCell]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined") {
       return;
     }
@@ -432,127 +353,37 @@ export default function Crossword() {
     const measure = () => {
       frame = null;
       const element = playboxRef.current;
-      const support = supportRef.current;
-      if (!element || !support) {
+      if (!element) {
         return;
       }
 
       const desktop = window.matchMedia("(min-width: 1024px)").matches;
-      const viewportHeight = Math.floor(window.innerHeight);
+      const viewportHeight = Math.floor(
+        window.visualViewport?.height ?? window.innerHeight
+      );
       const top = Math.floor(element.getBoundingClientRect().top);
-      const bottomMargin = desktop ? 18 : 10;
-      const playboxStyles = window.getComputedStyle(element);
-      const paddingInline =
-        parsePixelValue(playboxStyles.paddingLeft) +
-        parsePixelValue(playboxStyles.paddingRight);
-      const paddingBlock =
-        parsePixelValue(playboxStyles.paddingTop) +
-        parsePixelValue(playboxStyles.paddingBottom);
-      const borderBlock =
-        parsePixelValue(playboxStyles.borderTopWidth) +
-        parsePixelValue(playboxStyles.borderBottomWidth);
-      const playboxGap =
-        parsePixelValue(playboxStyles.rowGap) ||
-        parsePixelValue(playboxStyles.gap);
-      const playboxMaxHeight = Math.max(1, viewportHeight - top - bottomMargin);
-      const reservedInline = desktop ? support.offsetWidth + playboxGap : 0;
-      const reservedHeight = desktop
-        ? 0
-        : support.offsetHeight +
-          Math.max(0, element.children.length - 1) * playboxGap;
-      const availableBoardWidth = Math.max(
-        1,
-        Math.floor(element.clientWidth - paddingInline - reservedInline)
+      const bottomMargin = desktop ? 24 : 12;
+      const available = Math.max(
+        desktop ? 300 : 250,
+        viewportHeight - top - bottomMargin
       );
-      const availableBoardHeight = Math.max(
-        1,
-        Math.floor(playboxMaxHeight - paddingBlock - borderBlock - reservedHeight)
+      const reserved = desktop ? 206 : 186;
+      const boardMax = Math.max(
+        desktop ? 120 : 108,
+        Math.floor(available - reserved)
       );
-      const spacing = getMatrixSpacing(
-        Math.max(boardRows, boardColumns),
-        desktop
-      );
-      const cellSizeLimits = getCellSizeLimits(
-        Math.max(boardRows, boardColumns),
-        desktop
-      );
-      let nextGap = spacing.gap;
-      let nextPadding = spacing.padding;
-      let metrics = calculateMatrixBoardMetrics({
-        rows: boardRows,
-        columns: boardColumns,
-        availableWidth: availableBoardWidth,
-        availableHeight: availableBoardHeight,
-        gridGap: nextGap,
-        gridPadding: nextPadding,
-        minimumCellSize: cellSizeLimits.min,
-        maximumCellSize: cellSizeLimits.max,
-      });
 
-      // Spend decorative spacing first so the matrix can approach the preferred
-      // minimum cell size before we ever accept a smaller interactive target.
-      while (
-        metrics.fitCellSize < cellSizeLimits.min &&
-        (nextGap > 0 || nextPadding > 0)
-      ) {
-        if (nextPadding > 0) {
-          nextPadding -= 1;
-        } else {
-          nextGap -= 1;
-        }
-
-        metrics = calculateMatrixBoardMetrics({
-          rows: boardRows,
-          columns: boardColumns,
-          availableWidth: availableBoardWidth,
-          availableHeight: availableBoardHeight,
-          gridGap: nextGap,
-          gridPadding: nextPadding,
-          minimumCellSize: cellSizeLimits.min,
-          maximumCellSize: cellSizeLimits.max,
-        });
-      }
-
-      const cellSize = metrics.cellSize;
-      const letterSize = Math.max(
-        1,
-        Math.min(Math.max(1, cellSize - 2), Math.round(cellSize * 0.58))
-      );
-      const numberSize = Math.max(
-        1,
-        Math.min(Math.max(1, cellSize - 3), Math.round(cellSize * 0.26))
-      );
-      const nextLayout = {
-        playboxMaxHeight: `${playboxMaxHeight}px`,
-        boardWidth: `${metrics.boardWidth}px`,
-        boardHeight: `${metrics.boardHeight}px`,
-        cellSize: `${cellSize}px`,
-        gridGap: `${metrics.gridGap}px`,
-        gridPadding: `${metrics.gridPadding}px`,
-        cellRadius: `${Math.max(1, Math.min(Math.floor(cellSize / 2), Math.round(cellSize * 0.16)))}px`,
-        boardRadius: `${Math.max(8, Math.round(metrics.gridPadding + cellSize * 0.24))}px`,
-        cellFontSize: `${letterSize}px`,
-        cellNumberSize: `${numberSize}px`,
-        cellNumberOffset: `${Math.max(1, Math.round(cellSize * 0.12))}px`,
-        cellInsetPadding: `${Math.max(0, Math.round(cellSize * 0.03))}px`,
+      const nextCaps = {
+        maxHeight: `${available}px`,
+        boardMax: `${boardMax}px`,
       };
 
-      setBoardLayout(current =>
+      setPlayboxViewportCaps(current =>
         current &&
-        current.playboxMaxHeight === nextLayout.playboxMaxHeight &&
-        current.boardWidth === nextLayout.boardWidth &&
-        current.boardHeight === nextLayout.boardHeight &&
-        current.cellSize === nextLayout.cellSize &&
-        current.gridGap === nextLayout.gridGap &&
-        current.gridPadding === nextLayout.gridPadding &&
-        current.cellRadius === nextLayout.cellRadius &&
-        current.boardRadius === nextLayout.boardRadius &&
-        current.cellFontSize === nextLayout.cellFontSize &&
-        current.cellNumberSize === nextLayout.cellNumberSize &&
-        current.cellNumberOffset === nextLayout.cellNumberOffset &&
-        current.cellInsetPadding === nextLayout.cellInsetPadding
+        current.maxHeight === nextCaps.maxHeight &&
+        current.boardMax === nextCaps.boardMax
           ? current
-          : nextLayout
+          : nextCaps
       );
     };
 
@@ -567,6 +398,7 @@ export default function Crossword() {
     const settleTimer = window.setTimeout(scheduleMeasure, 140);
     window.addEventListener("resize", scheduleMeasure);
     window.addEventListener("orientationchange", scheduleMeasure);
+    window.visualViewport?.addEventListener("resize", scheduleMeasure);
 
     return () => {
       if (frame !== null) {
@@ -575,47 +407,9 @@ export default function Crossword() {
       window.clearTimeout(settleTimer);
       window.removeEventListener("resize", scheduleMeasure);
       window.removeEventListener("orientationchange", scheduleMeasure);
+      window.visualViewport?.removeEventListener("resize", scheduleMeasure);
     };
-  }, [boardColumns, boardRows]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const isLocalAudit =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-
-    if (!isLocalAudit) {
-      return;
-    }
-
-    const payload = {
-      theme: puzzle.theme,
-      across: puzzleAudit.acrossCount,
-      down: puzzleAudit.downCount,
-      total: puzzleAudit.totalCount,
-      clues: puzzleAudit.clueCount,
-      missingClues: puzzleAudit.missingClueCount,
-      fallbackClues: puzzleAudit.fallbackClueCount,
-      entries: puzzleAudit.entries.map(entry => ({
-        key: entry.key,
-        answer: entry.answer,
-        clue: entry.clue,
-        length: entry.length,
-        crossings: entry.crossings,
-        hasClue: entry.hasClue,
-      })),
-    };
-
-    if (!puzzleAudit.isValid) {
-      console.warn("[Crossword] Auditoria do puzzle falhou.", payload);
-      return;
-    }
-
-    console.info("[Crossword] Auditoria do puzzle.", payload);
-  }, [puzzle.signature, puzzle.theme, puzzleAudit]);
+  }, [boardDimension, difficulty]);
 
   function updateActiveCell(index: number | null, focus = false) {
     shouldFocusActiveCellRef.current = focus;
@@ -947,21 +741,9 @@ export default function Crossword() {
   const activeCellData = activeCell !== null ? puzzle.cells[activeCell] : null;
   const canToggleDirection =
     !!activeCellData?.acrossId && !!activeCellData?.downId;
-  const activePlacementKey = activePlacement
-    ? getCrosswordPlacementKey(
-        activePlacement.direction,
-        clueNumberById.get(activePlacement.id) ?? activePlacement.number
-      )
+  const activeClueNumber = activePlacement
+    ? clueNumberById.get(activePlacement.id) ?? activePlacement.number
     : null;
-  const activePlacementAudit = activePlacementKey
-    ? auditEntryByKey.get(activePlacementKey) ??
-      (activePlacement ? auditEntryById.get(activePlacement.id) ?? null : null)
-    : null;
-  const activeClueNumber = activePlacementAudit
-    ? activePlacementAudit.number
-    : activePlacement
-      ? clueNumberById.get(activePlacement.id) ?? activePlacement.number
-      : null;
   const activeDirectionLabel = activePlacement
     ? activePlacement.direction === "across"
       ? "Horizontal"
@@ -974,29 +756,14 @@ export default function Crossword() {
     : [];
   const activeDirectionIndex = activePlacement
     ? activeDirectionClues.findIndex(
-        placement =>
-          getCrosswordPlacementKey(
-            placement.direction,
-            clueNumberById.get(placement.id) ?? placement.number
-          ) === activePlacementKey
+        placement => placement.id === activePlacement.id
       )
     : -1;
   const activeDirectionToggleLabel =
     direction === "across" ? "vertical" : "horizontal";
-  const activeClueSummary = activePlacementAudit
-    ? activePlacementAudit.clue
-    : activePlacement
-      ? getCrosswordEntryClue(activePlacement.entry)
-      : "Selecione uma palavra para ver a dica.";
-  const activeClueUsesFallback = activePlacementAudit
-    ? activePlacementAudit.clueSource === "fallback"
-    : activePlacement
-      ? activePlacement.entry.clueSource === "fallback"
-      : false;
-  const activePlacementLength =
-    activePlacementAudit?.length ?? activePlacement?.entry.answer.length ?? 0;
-  const activePlacementCrossings =
-    activePlacementAudit?.crossings ?? activePlacement?.crossings ?? 0;
+  const activeClueSummary = activePlacement
+    ? activePlacement.entry.clue
+    : "Selecione uma palavra para ver a dica.";
   const rankingList = ranking.length ? (
     ranking.map((entry, index) => (
       <div
@@ -1147,7 +914,7 @@ export default function Crossword() {
                   </div>
                 </div>
 
-                <div className="mt-3 lg:hidden">
+                <div className="mt-4 lg:hidden">
                   <div className="h-3 rounded-full bg-secondary">
                     <div
                       className="h-3 rounded-full bg-primary transition-[width]"
@@ -1156,34 +923,25 @@ export default function Crossword() {
                   </div>
                 </div>
 
-                <div className="mt-2.5 space-y-2.5 lg:mt-2 lg:space-y-2">
+                <div className="mt-3 space-y-3">
                   <div
                     ref={playboxRef}
                     className="crossword-playbox"
                     style={
                       {
                         "--crossword-playbox-max-h":
-                          boardLayout?.playboxMaxHeight,
+                          playboxViewportCaps?.maxHeight,
                       } as CSSProperties
                     }
                   >
                     <div
-                      className="game-interactive-area protected-interactive game-board-shell crossword-board-frame mx-auto"
+                      className="game-interactive-area protected-interactive game-board-shell game-mobile-stage crossword-board-frame mx-auto w-full"
                       style={
                         {
-                          "--matrix-board-width": boardLayout?.boardWidth,
-                          "--matrix-board-height": boardLayout?.boardHeight,
-                          "--matrix-board-aspect-ratio": "auto",
-                          "--matrix-cell-size": boardLayout?.cellSize,
-                          "--matrix-grid-gap": boardLayout?.gridGap,
-                          "--matrix-grid-padding": boardLayout?.gridPadding,
-                          "--matrix-board-radius": boardLayout?.boardRadius,
-                          "--matrix-cell-radius": boardLayout?.cellRadius,
-                          "--matrix-letter-size": boardLayout?.cellFontSize,
-                          "--matrix-number-size": boardLayout?.cellNumberSize,
-                          "--matrix-number-offset": boardLayout?.cellNumberOffset,
-                          "--matrix-cell-input-padding":
-                            boardLayout?.cellInsetPadding,
+                          "--game-board-static-max": boardSizing.staticMax,
+                          "--game-board-min": boardSizing.min,
+                          "--game-board-min-mobile": boardSizing.minMobile,
+                          "--game-board-max-by-vh": playboxViewportCaps?.boardMax,
                         } as CSSProperties
                       }
                       onContextMenu={event => event.preventDefault()}
@@ -1191,11 +949,10 @@ export default function Crossword() {
                       <div
                         className="crossword-board-grid"
                         style={{
-                          gridTemplateColumns: `repeat(${boardColumns}, var(--matrix-cell-size, 1fr))`,
-                          gridTemplateRows: `repeat(${boardRows}, var(--matrix-cell-size, 1fr))`,
+                          gridTemplateColumns: `repeat(${boardDimension}, minmax(0, 1fr))`,
                         }}
                       >
-                        {boardCells.map((cell, index) =>
+                        {boardCells.map((cell, displayIndex) =>
                           cell ? (
                             <div
                               key={`cell-${cell.index}`}
@@ -1229,9 +986,7 @@ export default function Crossword() {
                                 onFocus={() => {
                                   updateActiveCell(cell.index);
                                   if (activeCell !== cell.index) {
-                                    setDirection(
-                                      getPreferredDirectionForCell(cell, direction)
-                                    );
+                                    setDirection(cell.acrossId ? "across" : "down");
                                   }
                                 }}
                                 onClick={() => {
@@ -1247,9 +1002,7 @@ export default function Crossword() {
                                   }
 
                                   updateActiveCell(cell.index);
-                                  setDirection(
-                                    getPreferredDirectionForCell(cell, direction)
-                                  );
+                                  setDirection(cell.acrossId ? "across" : "down");
                                 }}
                                 onChange={event =>
                                   handleCellChange(cell.index, event.target.value)
@@ -1267,7 +1020,7 @@ export default function Crossword() {
                             </div>
                           ) : (
                             <div
-                              key={`empty-${index}`}
+                              key={`empty-${displayIndex}`}
                               className="crossword-cell crossword-cell-block"
                             />
                           )
@@ -1275,33 +1028,27 @@ export default function Crossword() {
                       </div>
                     </div>
 
-                    <aside ref={supportRef} className="crossword-playbox-support">
-                      <section
-                        className="crossword-context-card"
-                        aria-live="polite"
-                        aria-label="Dica da Palavra"
-                      >
-                        <div className="crossword-context-head">
-                          <p className="crossword-context-eyebrow">Dica da Palavra</p>
-                          <p className="crossword-context-count">
-                            H {clueListIntegrity.across} • V {clueListIntegrity.down}
-                          </p>
-                        </div>
+                    <section className="crossword-context-card" aria-live="polite">
+                      <div className="crossword-context-head">
+                        <p className="crossword-context-eyebrow">Dica contextual</p>
+                        <p className="crossword-context-count">
+                          H {clueListIntegrity.across} • V {clueListIntegrity.down}
+                        </p>
+                      </div>
 
-                        {activePlacement ? (
-                          <>
-                            <p className="crossword-context-title">
-                              {activeDirectionLabel}{" "}
-                              {activeDirectionIndex >= 0
-                                ? `${activeDirectionIndex + 1}/${activeDirectionClues.length}`
-                                : ""}
-                              {activeClueNumber ? ` • Nº ${activeClueNumber}` : ""}
-                            </p>
-                            <p className="crossword-context-text">{activeClueSummary}</p>
-                            <div className="crossword-context-foot">
-                              <span>{activePlacementLength} letras</span>
-                              <span>{activePlacementCrossings} cruzamentos</span>
-                            </div>
+                      {activePlacement ? (
+                        <>
+                          <p className="crossword-context-title">
+                            {activeDirectionLabel}{" "}
+                            {activeDirectionIndex >= 0
+                              ? `${activeDirectionIndex + 1}/${activeDirectionClues.length}`
+                              : ""}
+                            {activeClueNumber ? ` • Nº ${activeClueNumber}` : ""}
+                          </p>
+                          <p className="crossword-context-text">{activeClueSummary}</p>
+                          <div className="crossword-context-foot">
+                            <span>{activePlacement.entry.answer.length} letras</span>
+                            <span>{activePlacement.crossings} cruzamentos</span>
                             {canToggleDirection ? (
                               <button
                                 type="button"
@@ -1311,58 +1058,52 @@ export default function Crossword() {
                                 Trocar para {activeDirectionToggleLabel}
                               </button>
                             ) : null}
-                          </>
-                        ) : (
-                          <p className="crossword-context-placeholder">
-                            {activeClueSummary}
-                          </p>
-                        )}
+                          </div>
+                        </>
+                      ) : (
+                        <p className="crossword-context-placeholder">
+                          {activeClueSummary}
+                        </p>
+                      )}
 
-                        {clueListIntegrity.hasMissingNumbers ? (
-                          <p className="crossword-context-note">
-                            Algumas pistas sem número explícito receberam numeração
-                            automática para manter a navegação consistente.
-                          </p>
-                        ) : null}
-                        {activeClueUsesFallback ? (
-                          <p className="crossword-context-note">
-                            Dica gerada automaticamente para esta palavra. Vale
-                            completar a base temática depois.
-                          </p>
-                        ) : null}
-                      </section>
+                      {clueListIntegrity.hasMissingNumbers ? (
+                        <p className="crossword-context-note">
+                          Algumas pistas sem número explícito receberam numeração
+                          automática para manter a navegação consistente.
+                        </p>
+                      ) : null}
+                    </section>
 
-                      <div className="game-mobile-primary-actions crossword-playbox-actions">
-                        <button
-                          type="button"
-                          onClick={handleRevealLetter}
-                          className="btn-secondary"
-                        >
-                          Revelar letra
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleRevealWord}
-                          className="btn-secondary"
-                        >
-                          Revelar palavra
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleVerify}
-                          className="btn-secondary"
-                        >
-                          Verificar
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => resetPuzzle(difficulty)}
-                          className="btn-primary"
-                        >
-                          Novo jogo
-                        </button>
-                      </div>
-                    </aside>
+                    <div className="game-mobile-primary-actions crossword-playbox-actions">
+                      <button
+                        type="button"
+                        onClick={handleRevealLetter}
+                        className="btn-secondary"
+                      >
+                        Revelar letra
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRevealWord}
+                        className="btn-secondary"
+                      >
+                        Revelar palavra
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleVerify}
+                        className="btn-secondary"
+                      >
+                        Verificar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => resetPuzzle(difficulty)}
+                        className="btn-primary"
+                      >
+                        Novo jogo
+                      </button>
+                    </div>
                   </div>
 
                   <div className="space-y-3 lg:hidden">

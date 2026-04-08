@@ -544,8 +544,6 @@
     height: var(--matrix-board-height, auto);
     max-width: 100%;
     flex: 0 0 auto;
-    justify-self: center;
-    align-self: start;
   }
 
   .crossword-board-grid {
@@ -623,11 +621,10 @@
   }
 
   .crossword-playbox {
-    --crossword-context-slot-h: 7.6rem;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    --crossword-context-slot-h: 7.15rem;
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
-    align-items: start;
     height: auto;
     max-height: var(--crossword-playbox-max-h, none);
     overflow: hidden;
@@ -644,7 +641,6 @@
   .crossword-playbox-support {
     display: grid;
     gap: 0.5rem;
-    min-width: 0;
   }
 
   .crossword-playbox-actions {
@@ -735,8 +731,7 @@
   }
 
   .crossword-context-toggle {
-    margin-top: 0.55rem;
-    align-self: flex-start;
+    margin-left: auto;
     border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
     border-radius: 999px;
     padding: 0.25rem 0.65rem;
@@ -811,30 +806,26 @@
     }
 
     .crossword-playbox {
-      --crossword-context-slot-h: 10.25rem;
-      grid-template-columns: minmax(0, 1fr) minmax(17.25rem, 18rem);
-      gap: 0.55rem;
-      padding: 0.42rem;
+      --crossword-context-slot-h: 6.55rem;
+      gap: 0.45rem;
+      padding: 0.45rem;
     }
 
     .crossword-playbox-support {
-      align-self: stretch;
+      grid-template-columns: minmax(0, 1fr) minmax(20rem, 21rem);
+      align-items: stretch;
       gap: 0.5rem;
-      padding: 0.5rem;
-      border: 1px solid color-mix(in srgb, var(--border) 85%, transparent);
-      border-radius: 1rem;
-      background: color-mix(in srgb, var(--secondary) 45%, transparent);
     }
 
     .crossword-playbox-actions {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      min-width: 0;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      min-width: 20rem;
     }
 
     .crossword-playbox-actions > :where(.btn-primary, .btn-secondary, .btn-outline) {
       min-height: 40px;
-      padding: 0.58rem 0.66rem;
-      font-size: 0.8rem;
+      padding: 0.58rem 0.72rem;
+      font-size: 0.81rem;
     }
 
     .crossword-game-panel {
