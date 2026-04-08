@@ -134,12 +134,7 @@ export default function Crossword() {
   const [playerError, setPlayerError] = useState("");
   const [savedPosition, setSavedPosition] = useState<number | null>(null);
   const cellRefs = useRef<Array<HTMLInputElement | null>>([]);
-  const playboxRef = useRef<HTMLDivElement | null>(null);
   const shouldFocusActiveCellRef = useRef(false);
-  const [playboxViewportCaps, setPlayboxViewportCaps] = useState<{
-    maxHeight: string;
-    boardMax: string;
-  } | null>(null);
 
   const difficulty = puzzle.difficulty;
   const placements = useMemo(
@@ -247,8 +242,8 @@ export default function Crossword() {
   const topLabel = getBackToTopLabel(language);
   const boardSizing =
     puzzle.width >= 13
-      ? { staticMax: "36rem", min: "17rem", minMobile: "16rem" }
-      : { staticMax: "33rem", min: "16rem", minMobile: "15.5rem" };
+      ? { staticMax: "40rem", min: "19rem", minMobile: "17.5rem" }
+      : { staticMax: "36rem", min: "18rem", minMobile: "17rem" };
   const boardDimension = useMemo(
     () => Math.max(puzzle.width, puzzle.height),
     [puzzle.height, puzzle.width]
@@ -342,71 +337,6 @@ export default function Crossword() {
       window.cancelAnimationFrame(frame);
     };
   }, [activeCell]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    let frame: number | null = null;
-
-    const measure = () => {
-      frame = null;
-      const element = playboxRef.current;
-      if (!element) {
-        return;
-      }
-
-      const desktop = window.matchMedia("(min-width: 1024px)").matches;
-      const viewportHeight = Math.floor(
-        window.visualViewport?.height ?? window.innerHeight
-      );
-      const top = Math.floor(element.getBoundingClientRect().top);
-      const bottomMargin = desktop ? 28 : 14;
-      const available = Math.max(
-        desktop ? 300 : 260,
-        viewportHeight - top - bottomMargin
-      );
-      const reservedForContextAndActions = desktop ? 182 : 160;
-      const boardMax = Math.max(210, available - reservedForContextAndActions);
-
-      const nextCaps = {
-        maxHeight: `${available}px`,
-        boardMax: `${boardMax}px`,
-      };
-
-      setPlayboxViewportCaps(current =>
-        current &&
-        current.maxHeight === nextCaps.maxHeight &&
-        current.boardMax === nextCaps.boardMax
-          ? current
-          : nextCaps
-      );
-    };
-
-    const scheduleMeasure = () => {
-      if (frame !== null) {
-        window.cancelAnimationFrame(frame);
-      }
-      frame = window.requestAnimationFrame(measure);
-    };
-
-    scheduleMeasure();
-    const settleTimer = window.setTimeout(scheduleMeasure, 140);
-    window.addEventListener("resize", scheduleMeasure);
-    window.addEventListener("orientationchange", scheduleMeasure);
-    window.visualViewport?.addEventListener("resize", scheduleMeasure);
-
-    return () => {
-      if (frame !== null) {
-        window.cancelAnimationFrame(frame);
-      }
-      window.clearTimeout(settleTimer);
-      window.removeEventListener("resize", scheduleMeasure);
-      window.removeEventListener("orientationchange", scheduleMeasure);
-      window.visualViewport?.removeEventListener("resize", scheduleMeasure);
-    };
-  }, [boardDimension, difficulty]);
 
   function updateActiveCell(index: number | null, focus = false) {
     shouldFocusActiveCellRef.current = focus;
@@ -863,10 +793,7 @@ export default function Crossword() {
             <GameLanguageNotice />
 
             <section id="ferramenta" className="section-anchor">
-              <div
-                className="card-base game-panel crossword-game-panel relative"
-                data-game-focus
-              >
+              <div className="card-base game-panel relative" data-game-focus>
                 <ConfettiBurst active={completedTime !== null} />
                 <div className="hidden lg:block game-toolbar">
                   <div className="game-toolbar-row">
@@ -926,112 +853,132 @@ export default function Crossword() {
                   </div>
                 </div>
 
-                <div className="mt-3 space-y-3">
+                <div className="mt-4 space-y-4">
                   <div
-                    ref={playboxRef}
-                    className="crossword-playbox"
+                    className="game-interactive-area protected-interactive game-board-shell game-mobile-stage crossword-board-frame mx-auto w-full"
                     style={
                       {
-                        "--crossword-playbox-max-h":
-                          playboxViewportCaps?.maxHeight,
+                        "--game-board-static-max": boardSizing.staticMax,
+                        "--game-board-min": boardSizing.min,
+                        "--game-board-min-mobile": boardSizing.minMobile,
                       } as CSSProperties
                     }
+                    onContextMenu={event => event.preventDefault()}
                   >
                     <div
-                      className="game-interactive-area protected-interactive game-board-shell game-mobile-stage crossword-board-frame mx-auto w-full"
-                      style={
-                        {
-                          "--game-board-static-max": boardSizing.staticMax,
-                          "--game-board-min": boardSizing.min,
-                          "--game-board-min-mobile": boardSizing.minMobile,
-                          "--game-board-max-by-vh": playboxViewportCaps?.boardMax,
-                        } as CSSProperties
-                      }
-                      onContextMenu={event => event.preventDefault()}
+                      className="crossword-board-grid"
+                      style={{
+                        gridTemplateColumns: `repeat(${boardDimension}, minmax(0, 1fr))`,
+                      }}
                     >
-                      <div
-                        className="crossword-board-grid"
-                        style={{
-                          gridTemplateColumns: `repeat(${boardDimension}, minmax(0, 1fr))`,
-                        }}
-                      >
-                        {boardCells.map((cell, displayIndex) =>
-                          cell ? (
-                            <div
-                              key={`cell-${cell.index}`}
-                              className={cn(
-                                "crossword-cell",
-                                activePlacement?.cells.includes(cell.index) &&
-                                  "bg-primary/10",
-                                activeCell === cell.index &&
-                                  "ring-2 ring-primary/35",
-                                wrongCells.includes(cell.index) &&
-                                  "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-200"
-                              )}
-                            >
-                              {cell.number ? (
-                                <span className="crossword-cell-number">
-                                  {cell.number}
-                                </span>
-                              ) : null}
-                              <input
-                                ref={element => {
-                                  cellRefs.current[cell.index] = element;
-                                }}
-                                type="text"
-                                inputMode="text"
-                                autoCapitalize="characters"
-                                autoCorrect="off"
-                                spellCheck={false}
-                                enterKeyHint="next"
-                                maxLength={1}
-                                value={filled[cell.index] ?? ""}
-                                onFocus={() => {
-                                  updateActiveCell(cell.index);
-                                  if (activeCell !== cell.index) {
-                                    setDirection(cell.acrossId ? "across" : "down");
-                                  }
-                                }}
-                                onClick={() => {
-                                  if (
-                                    activeCell === cell.index &&
-                                    cell.acrossId &&
-                                    cell.downId
-                                  ) {
-                                    setDirection(current =>
-                                      current === "across" ? "down" : "across"
-                                    );
-                                    return;
-                                  }
-
-                                  updateActiveCell(cell.index);
+                      {boardCells.map((cell, displayIndex) =>
+                        cell ? (
+                          <div
+                            key={`cell-${cell.index}`}
+                            className={cn(
+                              "crossword-cell",
+                              activePlacement?.cells.includes(cell.index) &&
+                                "bg-primary/10",
+                              activeCell === cell.index &&
+                                "ring-2 ring-primary/35",
+                              wrongCells.includes(cell.index) &&
+                                "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-200"
+                            )}
+                          >
+                            {cell.number ? (
+                              <span className="crossword-cell-number">
+                                {cell.number}
+                              </span>
+                            ) : null}
+                            <input
+                              ref={element => {
+                                cellRefs.current[cell.index] = element;
+                              }}
+                              type="text"
+                              inputMode="text"
+                              autoCapitalize="characters"
+                              autoCorrect="off"
+                              spellCheck={false}
+                              enterKeyHint="next"
+                              maxLength={1}
+                              value={filled[cell.index] ?? ""}
+                              onFocus={() => {
+                                updateActiveCell(cell.index);
+                                if (activeCell !== cell.index) {
                                   setDirection(cell.acrossId ? "across" : "down");
-                                }}
-                                onChange={event =>
-                                  handleCellChange(cell.index, event.target.value)
                                 }
-                                onKeyDown={event =>
-                                  handleCellKeyDown(cell.index, event)
+                              }}
+                              onClick={() => {
+                                if (
+                                  activeCell === cell.index &&
+                                  cell.acrossId &&
+                                  cell.downId
+                                ) {
+                                  setDirection(current =>
+                                    current === "across" ? "down" : "across"
+                                  );
+                                  return;
                                 }
-                                className="crossword-cell-input"
-                                aria-label={
-                                  cell.number
-                                    ? `Casa ${cell.number}`
-                                    : "Casa da palavra cruzada"
-                                }
-                              />
-                            </div>
-                          ) : (
-                            <div
-                              key={`empty-${displayIndex}`}
-                              className="crossword-cell crossword-cell-block"
-                            />
-                          )
-                        )}
-                      </div>
-                    </div>
 
-                    <section className="crossword-context-card" aria-live="polite">
+                                updateActiveCell(cell.index);
+                                setDirection(cell.acrossId ? "across" : "down");
+                              }}
+                              onChange={event =>
+                                handleCellChange(cell.index, event.target.value)
+                              }
+                              onKeyDown={event =>
+                                handleCellKeyDown(cell.index, event)
+                              }
+                              className="crossword-cell-input"
+                              aria-label={
+                                cell.number
+                                  ? `Casa ${cell.number}`
+                                  : "Casa da palavra cruzada"
+                              }
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            key={`empty-${displayIndex}`}
+                            className="crossword-cell crossword-cell-block"
+                          />
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="game-mobile-primary-actions lg:flex lg:flex-wrap lg:gap-2">
+                    <button
+                      type="button"
+                      onClick={handleRevealLetter}
+                      className="btn-secondary"
+                    >
+                      Revelar letra
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRevealWord}
+                      className="btn-secondary"
+                    >
+                      Revelar palavra
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleVerify}
+                      className="btn-secondary"
+                    >
+                      Verificar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => resetPuzzle(difficulty)}
+                      className="btn-primary"
+                    >
+                      Novo jogo
+                    </button>
+                  </div>
+
+                  <section className="crossword-context-card" aria-live="polite">
                     <div className="crossword-context-head">
                       <p className="crossword-context-eyebrow">Dica contextual</p>
                       <p className="crossword-context-count">
@@ -1075,39 +1022,7 @@ export default function Crossword() {
                         automática para manter a navegação consistente.
                       </p>
                     ) : null}
-                    </section>
-
-                    <div className="game-mobile-primary-actions crossword-playbox-actions lg:flex lg:flex-wrap lg:gap-2">
-                      <button
-                        type="button"
-                        onClick={handleRevealLetter}
-                        className="btn-secondary"
-                      >
-                        Revelar letra
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleRevealWord}
-                        className="btn-secondary"
-                      >
-                        Revelar palavra
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleVerify}
-                        className="btn-secondary"
-                      >
-                        Verificar
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => resetPuzzle(difficulty)}
-                        className="btn-primary"
-                      >
-                        Novo jogo
-                      </button>
-                    </div>
-                  </div>
+                  </section>
 
                   <div className="space-y-3 lg:hidden">
                     <div className="game-mobile-status-grid">
