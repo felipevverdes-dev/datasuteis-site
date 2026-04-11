@@ -234,8 +234,8 @@ function buildRoutes(blogPosts) {
     ),
     route(
       "/jogos/",
-      "Jogos Online Grátis | Sudoku, Caça-Palavras e Palavras Cruzadas | Datas Úteis",
-      "Jogue Sudoku, caça-palavras e palavras cruzadas online grátis em uma área organizada para pausas curtas e boa leitura no celular e no computador.",
+      "Jogos Online Grátis | Sudoku, Caça-Palavras, Palavras Cruzadas e Jogo da Velha | Datas Úteis",
+      "Jogue Sudoku, caça-palavras, palavras cruzadas e jogo da velha online grátis em uma área organizada para pausas curtas e boa leitura no celular e no computador.",
       "0.5",
       "monthly",
       { breadcrumbLabel: GAMES_LABEL }
@@ -263,6 +263,14 @@ function buildRoutes(blogPosts) {
       "0.55",
       "weekly",
       { breadcrumbLabel: "Palavras Cruzadas" }
+    ),
+    route(
+      "/jogos/jogo-da-velha/",
+      "Jogo da Velha Online | 2 Jogadores ou Contra o Computador | Datas Úteis",
+      "Jogue sozinho contra o computador ou chame outra pessoa para uma rodada rápida de jogo da velha. Feche linha, coluna ou diagonal e jogue de novo quando quiser.",
+      "0.55",
+      "weekly",
+      { breadcrumbLabel: "Jogo da Velha" }
     ),
     route(
       "/blog/",

@@ -10,12 +10,13 @@ import { toast } from "sonner";
 import { Link } from "wouter";
 import ConfettiBurst from "@/components/ConfettiBurst";
 import Footer from "@/components/Footer";
+import GameMobileProgress from "@/components/games/GameMobileProgress";
+import GamePageHero from "@/components/games/GamePageHero";
 import ResponsiveSecondarySection from "@/components/games/ResponsiveSecondarySection";
 import Header from "@/components/Header";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
 import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
 import GameLanguageNotice from "@/components/layout/GameLanguageNotice";
-import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import {
@@ -54,29 +55,34 @@ interface WordSearchRankingEntry {
 const STORAGE_KEY = "datasuteis_word_search_ranking_v1";
 const FAQ_ITEMS = [
   {
-    question: "O caça-palavras é grátis?",
+    question: "Como jogar caça-palavras?",
     answer:
-      "Sim. O jogo funciona diretamente no navegador, sem cadastro e sem cobrança.",
+      "Procure as palavras da lista e selecione cada uma em linha reta, na horizontal, vertical ou diagonal.",
   },
   {
-    question: "Funciona no celular?",
+    question: "Dá para jogar no celular?",
     answer:
-      "Sim. A seleção usa ponteiro e toque, então a partida funciona tanto no celular quanto no desktop.",
+      "Sim. A seleção funciona por toque e arraste no celular, e por mouse ou teclado no computador.",
   },
   {
-    question: "O ranking salva meu nome?",
+    question: "O jogo muda a cada rodada?",
     answer:
-      "O ranking salva apenas nome/apelido, pontos, tempo, data e dificuldade neste navegador.",
+      "Sim. Cada novo jogo sorteia um tema, uma grade e uma combinação diferente de palavras.",
   },
   {
-    question: "Posso jogar em diferentes dificuldades?",
+    question: "Existe ranking?",
     answer:
-      "Sim. Cada dificuldade gera uma grade maior, com mais palavras e ranking separado.",
+      "Sim. O Top 10 fica salvo localmente neste navegador e separado por dificuldade.",
   },
   {
-    question: "Como funciona a pontuação?",
+    question: "Como funciona a seleção de palavras?",
     answer:
-      "Cada palavra soma pontos pelo tamanho e pelo multiplicador atual de streak. Dicas reduzem um pouco o total final.",
+      "Basta marcar o início e o fim da palavra na mesma direção. Se a seleção bater com a lista da rodada, ela é validada automaticamente.",
+  },
+  {
+    question: "O tema muda?",
+    answer:
+      "Sim. As rodadas alternam categorias como calendário, tecnologia, natureza, culinária e cidade.",
   },
 ] as const;
 
@@ -116,6 +122,13 @@ function isValidRankingEntry(entry: unknown): entry is WordSearchRankingEntry {
     typeof candidate.difficulty === "string"
   );
 }
+
+const DIFFICULTY_LABELS: Record<WordSearchDifficulty, string> = {
+  easy: "Fácil",
+  medium: "Médio",
+  hard: "Difícil",
+  expert: "Expert",
+};
 
 export default function WordSearch() {
   const { language } = useI18n();
@@ -331,6 +344,30 @@ export default function WordSearch() {
     });
   }
 
+  function restartRound() {
+    setLetters([...game.letters]);
+    setFoundIds([]);
+    setElapsed(0);
+    setStartedAt(Date.now());
+    setCompletedTime(null);
+    setScore(0);
+    setStreak(0);
+    setHintsLeft(getWordSearchConfig(difficulty).maxHints);
+    setHintWordId(null);
+    setDrag(null);
+    setPlayerName("");
+    setPlayerError("");
+    setSavedPosition(null);
+    setActiveCell(0);
+    setKeyboardAnchor(null);
+    toast("Rodada reiniciada.");
+    trackAnalyticsEvent("game_restarted", {
+      game_name: "word_search",
+      difficulty,
+      theme: game.category,
+    });
+  }
+
   function commitSelection(selection: number[] | null) {
     if (!selection) {
       setStreak(0);
@@ -460,7 +497,7 @@ export default function WordSearch() {
           empty: "Informe um nome para registrar a partida.",
           minLength: "Use pelo menos 3 caracteres.",
           maxLength: "Use no máximo 12 caracteres.",
-          allowedCharacters: "Use apenas letras, números e espaços.",
+          allowedCharacters: "Use apenas letras, números e espaço.",
           reservedTerms: "Esse nome não pode ser usado no ranking.",
           offensiveTerms: "Escolha um nome mais apropriado para o ranking.",
           repeatedCharacters: "Escolha um nome menos repetitivo.",
@@ -500,6 +537,12 @@ export default function WordSearch() {
 
   const foundWords = new Set(foundIds);
   const foundWordObjects = game.words.filter(word => foundWords.has(word.id));
+  const wordsRemaining = game.words.length - foundIds.length;
+  const progress = Math.round((foundIds.length / game.words.length) * 100);
+  const difficultyLabel = DIFFICULTY_LABELS[difficulty];
+  const highlightedWord = hintWordId
+    ? (game.words.find(word => word.id === hintWordId) ?? null)
+    : null;
   const previewLine =
     drag && getWordSearchSelection(game.size, drag.start, drag.current);
   const navItems = getToolPageNavItems(language);
@@ -582,7 +625,7 @@ export default function WordSearch() {
       </>
     ) : (
       <p className="text-sm text-muted-foreground">
-        Termine uma rodada para tentar entrar no Top 10.
+        Termine a rodada para tentar entrar no Top 10.
       </p>
     );
 
@@ -590,25 +633,14 @@ export default function WordSearch() {
     <div className="min-h-screen bg-background">
       <Header />
       <main id="main-content" role="main" className="relative">
-        <section className="hero-game border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
-          <div className="container mx-auto">
-            <div className="max-w-3xl">
-              <PageIntroNavigation
-                breadcrumbs={breadcrumbs}
-                breadcrumbAriaLabel={navigationLabels.breadcrumb}
-                backLabel={navigationLabels.back}
-                backAriaLabel={navigationLabels.backAria}
-              />
-              <h1 className="mt-2 text-3xl font-bold text-primary md:text-[2.2rem] lg:text-[1.875rem] xl:text-[2.05rem]">
-                Caça-Palavras Online Grátis
-              </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground lg:hidden">
-                Encontre palavras em até 8 direções, use dicas com parcimônia e
-                registre sua melhor pontuação por dificuldade.
-              </p>
-            </div>
-          </div>
-        </section>
+        <GamePageHero
+          breadcrumbs={breadcrumbs}
+          breadcrumbAriaLabel={navigationLabels.breadcrumb}
+          backLabel={navigationLabels.back}
+          backAriaLabel={navigationLabels.backAria}
+          title="Caça-Palavras Online Grátis"
+          mobileSummary="Encontre palavras em linha reta, acompanhe o tema da rodada e registre sua melhor pontuação por dificuldade."
+        />
 
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
@@ -644,14 +676,7 @@ export default function WordSearch() {
                           )}
                           onClick={() => resetForGame(level)}
                         >
-                          {
-                            {
-                              easy: "Fácil",
-                              medium: "Médio",
-                              hard: "Difícil",
-                              expert: "Expert",
-                            }[level]
-                          }
+                          {DIFFICULTY_LABELS[level]}
                         </button>
                       ))}
 
@@ -664,19 +689,25 @@ export default function WordSearch() {
                       <span className="game-meta-chip">
                         Tempo: {formatElapsed(elapsed)}
                       </span>
-                      <span className="game-meta-chip">Pontos: {score}</span>
                       <span className="game-meta-chip">
-                        Multiplicador: {multiplier.toFixed(2)}x
+                        Progresso: {progress}%
                       </span>
+                      <span className="game-meta-chip">Pontos: {score}</span>
                       <span className="game-meta-chip">
                         Palavras: {foundIds.length}/{game.words.length}
                       </span>
+                      <span className="game-meta-chip">Dicas: {hintsLeft}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1fr)_220px]">
-                  <div className="space-y-4">
+                <GameMobileProgress
+                  value={progress}
+                  label="Progresso do caça-palavras"
+                />
+
+                <div className="game-standard-main-grid">
+                  <div className="game-standard-main-column">
                     <div
                       className="game-interactive-area protected-interactive game-board-shell game-mobile-stage relative mx-auto w-full touch-none"
                       style={
@@ -790,6 +821,13 @@ export default function WordSearch() {
                     <div className="game-mobile-primary-actions lg:flex lg:flex-wrap lg:gap-2">
                       <button
                         type="button"
+                        onClick={() => resetForGame(difficulty)}
+                        className="btn-primary"
+                      >
+                        Novo jogo
+                      </button>
+                      <button
+                        type="button"
                         onClick={handleHint}
                         className="btn-secondary"
                       >
@@ -797,17 +835,17 @@ export default function WordSearch() {
                       </button>
                       <button
                         type="button"
+                        onClick={restartRound}
+                        className="btn-secondary"
+                      >
+                        Reiniciar
+                      </button>
+                      <button
+                        type="button"
                         onClick={handleShuffle}
                         className="btn-secondary"
                       >
                         Embaralhar letras livres
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => resetForGame(difficulty)}
-                        className="btn-primary"
-                      >
-                        Novo jogo
                       </button>
                     </div>
 
@@ -818,42 +856,55 @@ export default function WordSearch() {
                     </div>
 
                     <div className="space-y-3 lg:hidden">
-                      <div className="rounded-2xl bg-secondary/60 p-3.5 text-sm text-muted-foreground">
-                        <p className="font-semibold text-foreground">
-                          Tema da rodada: {game.category}
+                      <div className="game-context-card-muted">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Contexto da rodada
                         </p>
-                        <p className="mt-2 leading-6">
-                          Arraste com o dedo para marcar palavras e use dica
-                          apenas quando precisar destravar a grade.
+                        <p className="mt-2 font-semibold text-foreground">
+                          {game.category}
+                        </p>
+                        <p className="mt-1 leading-6">
+                          {highlightedWord
+                            ? `Dica ativa em ${highlightedWord.label}. Feche essa palavra para aproveitar melhor os pontos da rodada.`
+                            : "Arraste com o dedo para marcar palavras em linha reta e comece pelas maiores para abrir a leitura da grade."}
+                        </p>
+                        <p className="mt-2 text-xs leading-5">
+                          Encontradas {foundIds.length} de {game.words.length} •
+                          Restam {wordsRemaining} • Streak atual {streak}.
                         </p>
                       </div>
 
-                      <div className="rounded-2xl bg-secondary/60 p-3.5">
+                      <div className="game-context-card">
                         <div className="flex items-center justify-between gap-3">
                           <h2 className="text-base font-bold">
                             Palavras da rodada
                           </h2>
-                          <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold text-muted-foreground">
+                          <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
                             {foundIds.length}/{game.words.length}
                           </span>
                         </div>
-                        <div className="mt-3 max-h-44 space-y-1.5 overflow-auto pr-1">
+                        <div className="game-side-scroll mt-3 space-y-1.5 overflow-auto pr-1">
                           {game.words.map(word => (
                             <div
                               key={word.id}
                               className={cn(
-                                "rounded-xl px-3 py-2 text-[12px] leading-4 sm:text-[13px] sm:leading-5",
+                                "game-context-item",
                                 foundWords.has(word.id)
                                   ? "bg-accent/15 text-accent line-through"
                                   : hintWordId === word.id
                                     ? "bg-primary/10 text-primary"
-                                    : "bg-background text-foreground"
+                                    : "text-foreground"
                               )}
                             >
                               {word.label}
                             </div>
                           ))}
                         </div>
+                        <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                          {highlightedWord
+                            ? `Dica atual: ${highlightedWord.label}.`
+                            : `Use as ${hintsLeft} dica(s) restantes apenas quando precisar destravar a grade.`}
+                        </p>
                       </div>
 
                       <div className="game-mobile-status-grid">
@@ -868,20 +919,22 @@ export default function WordSearch() {
                           <span className="compact-stat-value">{score}</span>
                         </div>
                         <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Streak</span>
-                          <span className="compact-stat-value">{streak}</span>
+                          <span className="compact-stat-label">Progresso</span>
+                          <span className="compact-stat-value">
+                            {progress}%
+                          </span>
                         </div>
                         <div className="compact-stat compact-stat-tight">
-                          <span className="compact-stat-label">Multiplicador</span>
+                          <span className="compact-stat-label">Dicas</span>
                           <span className="compact-stat-value">
-                            {multiplier.toFixed(2)}x
+                            {hintsLeft}
                           </span>
                         </div>
                       </div>
 
                       <ResponsiveSecondarySection
-                        title="Dificuldade e ajuda"
-                        summaryText="Troque o nivel, veja o tema da rodada e revise os controles."
+                        title="Nivel e ajuda"
+                        summaryText="Troque a dificuldade, revise os controles e acompanhe o tema da rodada."
                         className="lg:hidden"
                       >
                         <div className="space-y-4">
@@ -905,19 +958,13 @@ export default function WordSearch() {
                                 )}
                                 onClick={() => resetForGame(level)}
                               >
-                                {
-                                  {
-                                    easy: "Fácil",
-                                    medium: "Médio",
-                                    hard: "Difícil",
-                                    expert: "Expert",
-                                  }[level]
-                                }
+                                {DIFFICULTY_LABELS[level]}
                               </button>
                             ))}
                           </div>
                           <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                            No teclado físico, use setas para mover, Enter para
+                            Tema atual: <strong>{game.category}</strong>. No
+                            teclado físico, use setas para mover, Enter para
                             marcar o início e Enter novamente para fechar a
                             palavra.
                           </div>
@@ -926,37 +973,74 @@ export default function WordSearch() {
                     </div>
                   </div>
 
-                  <aside className="hidden space-y-3 lg:block">
-                    <div className="rounded-2xl bg-secondary/60 p-3.5 sm:p-4">
-                      <h2 className="text-lg font-bold">Palavras da rodada</h2>
+                  <aside className="game-standard-context-sidebar">
+                    <div className="game-context-card">
+                      <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-lg font-bold">
+                          Contexto da rodada
+                        </h2>
+                        <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+                          {difficultyLabel}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                        Tema atual, andamento da grade e status das dicas.
+                      </p>
+                      <div className="game-context-list">
+                        <div className="game-context-item text-foreground">
+                          <strong>Tema:</strong> {game.category}
+                        </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Encontradas:</strong> {foundIds.length}/
+                          {game.words.length}
+                        </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Restantes:</strong> {wordsRemaining}
+                        </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Multiplicador:</strong>{" "}
+                          {multiplier.toFixed(2)}x
+                        </div>
+                      </div>
+                      <div className="mt-3 rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
+                        {highlightedWord
+                          ? `Dica ativa em ${highlightedWord.label}.`
+                          : `Use as ${hintsLeft} dica(s) restantes apenas quando precisar destravar a rodada.`}
+                      </div>
+                    </div>
+
+                    <div className="game-context-card">
+                      <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-lg font-bold">
+                          Palavras da rodada
+                        </h2>
+                        <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+                          {foundIds.length}/{game.words.length}
+                        </span>
+                      </div>
                       <div className="game-side-scroll mt-3 space-y-1.5 overflow-auto pr-1">
                         {game.words.map(word => (
                           <div
                             key={word.id}
                             className={cn(
-                              "rounded-xl px-3 py-2 text-[12px] leading-4 sm:text-[13px] sm:leading-5",
+                              "game-context-item",
                               foundWords.has(word.id)
                                 ? "bg-accent/15 text-accent line-through"
                                 : hintWordId === word.id
                                   ? "bg-primary/10 text-primary"
-                                  : "bg-background text-foreground"
+                                  : "text-foreground"
                             )}
                           >
                             {word.label}
                           </div>
                         ))}
                       </div>
-                    </div>
-
-                    <div className="rounded-2xl bg-secondary/60 p-3.5 text-sm text-muted-foreground sm:p-4">
-                      <p>
+                      <p className="mt-3 text-sm text-muted-foreground">
                         Streak atual:{" "}
                         <strong className="text-foreground">{streak}</strong>
-                      </p>
-                      <p className="mt-2">
-                        Palavras encontradas:{" "}
+                        {" • "}Multiplicador{" "}
                         <strong className="text-foreground">
-                          {foundIds.length}/{game.words.length}
+                          {multiplier.toFixed(2)}x
                         </strong>
                       </p>
                     </div>
@@ -982,65 +1066,80 @@ export default function WordSearch() {
               </ResponsiveSecondarySection>
             </div>
 
-            <div
-              id="explicacao"
-              className="section-anchor grid gap-3 lg:grid-cols-[minmax(0,1fr)_340px]"
-            >
-              <section className="space-y-3 lg:space-y-6">
+            <div id="explicacao" className="game-standard-editorial-grid">
+              <section className="game-standard-editorial-main">
                 <ResponsiveSecondarySection
-                  title="Como funciona o caca-palavras"
-                  summaryText="Regras basicas, niveis e recursos extras da partida."
+                  title="Como jogar caça-palavras"
+                  summaryText="Fluxo da grade, selecao das palavras e ritmo da rodada."
                 >
                   <p className="mt-3 text-muted-foreground">
                     Procure as palavras da rodada no grid e selecione cada uma
-                    em linha reta. As direções podem seguir horizontal,
-                    vertical ou diagonal, então vale começar pelas palavras
-                    maiores para abrir a leitura da grade.
+                    em linha reta. As direções podem seguir horizontal, vertical
+                    ou diagonal, então vale começar pelas palavras maiores para
+                    abrir a leitura da grade.
                   </p>
-
+                  <p className="mt-3 text-muted-foreground">
+                    Use dica apenas quando quiser destravar uma palavra
+                    específica. No teclado físico, setas movem o foco e Enter
+                    marca o início e o fim da seleção.
+                  </p>
+                </ResponsiveSecondarySection>
+                <ResponsiveSecondarySection
+                  id="exemplos"
+                  title="Tema da rodada"
+                  summaryText="Categoria atual e como as partidas variam."
+                  className="section-anchor"
+                >
+                  <p className="mt-3 text-muted-foreground">
+                    A rodada atual traz palavras sobre{" "}
+                    <strong>{game.category}</strong>. Cada novo jogo pode trocar
+                    o tema e a combinação de palavras, mantendo a leitura da
+                    grade sempre diferente.
+                  </p>
+                  <p className="mt-3 text-muted-foreground">
+                    As dificuldades ampliam o tabuleiro e a quantidade de termos
+                    por rodada, indo de grades 10x10 até 20x20.
+                  </p>
+                </ResponsiveSecondarySection>
+                <ResponsiveSecondarySection
+                  title="Recursos da partida"
+                  summaryText="Dicas, pontuacao, progresso e beneficios do jogo."
+                >
+                  <p className="mt-3 text-muted-foreground">
+                    A partida reúne timer, pontuação, progresso, multiplicador
+                    por streak, dicas controladas e embaralhamento das letras
+                    ainda livres na grade.
+                  </p>
                   <h3 className="mt-6 text-xl font-bold">
-                    Niveis de dificuldade
+                    Beneficios do caça-palavras
                   </h3>
                   <p className="mt-3 text-muted-foreground">
-                    As dificuldades variam de grids 10x10 a 20x20 e aumentam o
-                    número de palavras por partida, o tempo de leitura e a
-                    exigência de atenção visual.
-                  </p>
-
-                  <h3 className="mt-6 text-xl font-bold">Recursos do jogo</h3>
-                  <p className="mt-3 text-muted-foreground">
-                    Há timer, pontuação, multiplicador por streak, três dicas
-                    por partida, embaralhamento das letras não usadas e ranking
-                    salvo localmente por dificuldade.
+                    Caça-palavras funciona bem como pausa curta para foco
+                    visual, leitura rápida e reconhecimento de padrões sem
+                    depender de reflexos extremos.
                   </p>
                   <div className="mt-5 flex flex-wrap gap-3">
+                    <Link href="/jogos/sudoku/" className="btn-secondary">
+                      Alternar para Sudoku
+                    </Link>
+                    <Link
+                      href="/jogos/jogo-da-velha/"
+                      className="btn-secondary"
+                    >
+                      Abrir Jogo da Velha
+                    </Link>
                     <Link
                       href="/blog/beneficios-dos-jogos-de-logica/"
                       className="btn-secondary"
                     >
-                      Benefícios dos jogos de lógica
-                    </Link>
-                    <Link href="/jogos/sudoku/" className="btn-secondary">
-                      Alternar para Sudoku
+                      Ler sobre jogos de lógica
                     </Link>
                   </div>
                 </ResponsiveSecondarySection>
                 <ResponsiveSecondarySection
-                  id="exemplos"
-                  title="Categorias e banco de palavras"
-                  summaryText="Temas usados nas rodadas e variedade de palavras."
-                  className="section-anchor"
-                >
-                  <p className="mt-3 text-muted-foreground">
-                    As rodadas usam categorias como calendário, tecnologia,
-                    natureza, culinária e cidade, com combinações suficientes
-                    para muitas grades diferentes.
-                  </p>
-                </ResponsiveSecondarySection>
-                <ResponsiveSecondarySection
                   id="faq"
                   title="Perguntas frequentes"
-                  summaryText="Respostas rapidas sobre dicas, ranking e celular."
+                  summaryText="Respostas rapidas sobre tema, selecao e ranking."
                   className="section-anchor"
                 >
                   <div className="mt-4 space-y-3">
@@ -1072,30 +1171,30 @@ export default function WordSearch() {
                     <Link href="/jogos/sudoku/" className="btn-secondary">
                       Sudoku
                     </Link>
+                    <Link
+                      href="/jogos/jogo-da-velha/"
+                      className="btn-secondary"
+                    >
+                      Jogo da Velha
+                    </Link>
                   </div>
                 </ResponsiveSecondarySection>
               </section>
 
-              <aside className="hidden space-y-6 lg:block">
+              <aside className="game-standard-editorial-sidebar">
                 <div className="card-base p-6">
                   <h2 className="text-xl font-bold">Top 10 por dificuldade</h2>
                   <div className="mt-4 rounded-2xl bg-secondary px-4 py-3 text-sm font-medium">
-                    Dificuldade:{" "}
-                    {
-                      {
-                        easy: "Fácil",
-                        medium: "Médio",
-                        hard: "Difícil",
-                        expert: "Expert",
-                      }[difficulty]
-                    }
+                    Dificuldade: {difficultyLabel}
                   </div>
                   <div className="mt-4 space-y-3">{rankingList}</div>
                 </div>
 
                 <div className="card-base p-6">
                   <h2 className="text-xl font-bold">Registrar pontuação</h2>
-                  <div className="mt-3 space-y-4">{scoreRegistrationContent}</div>
+                  <div className="mt-3 space-y-4">
+                    {scoreRegistrationContent}
+                  </div>
                 </div>
               </aside>
             </div>

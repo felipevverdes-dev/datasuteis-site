@@ -32,6 +32,7 @@ const WorldClockMarkets = lazy(() => import("./pages/WorldClockMarkets"));
 const WordSearch = lazy(() => import("./pages/WordSearch"));
 const Crossword = lazy(() => import("./pages/Crossword"));
 const Sudoku = lazy(() => import("./pages/Sudoku"));
+const TicTacToe = lazy(() => import("./pages/TicTacToe"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -156,6 +157,8 @@ function Router() {
         <Route path={"/jogos/palavras-cruzadas"} component={Crossword} />
         <Route path={"/jogos/sudoku/"} component={Sudoku} />
         <Route path={"/jogos/sudoku"} component={Sudoku} />
+        <Route path={"/jogos/jogo-da-velha/"} component={TicTacToe} />
+        <Route path={"/jogos/jogo-da-velha"} component={TicTacToe} />
         <Route path={"/jogos/"} component={Games} />
         <Route path={"/jogos"} component={Games} />
         <Route path={"/sobre/"} component={About} />

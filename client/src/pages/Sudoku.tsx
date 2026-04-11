@@ -1,4 +1,4 @@
-import {
+﻿import {
   type CSSProperties,
   useEffect,
   useMemo,
@@ -10,13 +10,14 @@ import { Medal } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "wouter";
 import ConfettiBurst from "@/components/ConfettiBurst";
+import GameMobileProgress from "@/components/games/GameMobileProgress";
+import GamePageHero from "@/components/games/GamePageHero";
 import ResponsiveSecondarySection from "@/components/games/ResponsiveSecondarySection";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import CoreNavigationBlock from "@/components/layout/CoreNavigationBlock";
 import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
 import GameLanguageNotice from "@/components/layout/GameLanguageNotice";
-import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import {
@@ -32,7 +33,6 @@ import {
   getEditableConflicts,
   getSudokuBlock,
   getSudokuColumn,
-  getSudokuDifficultyClues,
   getSudokuRankingForDifficulty,
   getSudokuRankingPlacement,
   getSudokuRow,
@@ -71,7 +71,7 @@ const VALIDATION_MESSAGES = {
   empty: "Informe um nome para registrar a partida.",
   minLength: "Use pelo menos 3 caracteres.",
   maxLength: "Use no máximo 12 caracteres.",
-  allowedCharacters: "Use apenas letras, números e espaços.",
+  allowedCharacters: "Use apenas letras, números e espaço.",
   reservedTerms: "Esse nome não pode ser usado no ranking.",
   offensiveTerms: "Escolha um nome mais apropriado para o ranking.",
   repeatedCharacters: "Escolha um nome menos repetitivo.",
@@ -79,9 +79,14 @@ const VALIDATION_MESSAGES = {
 
 const FAQ_ITEMS = [
   {
-    question: "O Sudoku é grátis?",
+    question: "Como jogar sudoku?",
     answer:
-      "Sim. O jogo roda direto no navegador, sem cadastro e sem cobrança.",
+      "Preencha as células vazias com números de 1 a 9 sem repetir valores na mesma linha, coluna ou bloco 3x3.",
+  },
+  {
+    question: "Tem níveis?",
+    answer:
+      "Sim. Há modos Fácil, Médio, Difícil e Expert, com menos pistas iniciais e mais exigência de dedução conforme o nível sobe.",
   },
   {
     question: "Funciona no celular?",
@@ -89,19 +94,19 @@ const FAQ_ITEMS = [
       "Sim. Toque em uma célula editável para abrir o teclado numérico nativo do aparelho.",
   },
   {
-    question: "Tem níveis de dificuldade?",
+    question: "Posso errar?",
     answer:
-      "Sim. Há modos Fácil, Médio, Difícil e Expert, cada um com menos pistas iniciais e mais exigência de dedução.",
+      "Sim. Você pode testar números livremente, verificar conflitos editáveis e limpar os erros quando quiser reorganizar a grade.",
   },
   {
-    question: "O ranking fica salvo?",
+    question: "Existe ranking?",
     answer:
       "Sim. O Top 10 fica salvo localmente neste navegador, separado por dificuldade.",
   },
   {
-    question: "Como funciona a verificação de progresso?",
+    question: "Como funciona verificação e notas?",
     answer:
-      "A verificação destaca se ainda existem conflitos editáveis e informa o quanto da grade já foi preenchido.",
+      "A verificação destaca conflitos editáveis e informa o progresso da grade. Esta versão foca em preenchimento direto, sem um modo de notas separado.",
   },
 ] as const;
 
@@ -156,6 +161,7 @@ export default function Sudoku() {
 
   const currentDifficulty = session.game.difficulty;
   const difficultyCopy = DIFFICULTY_COPY[currentDifficulty];
+  const clueCount = session.game.clueCount;
   const selectedValue = selectedCell !== null ? session.board[selectedCell] : 0;
   const filledCount = useMemo(
     () => session.board.filter(value => value !== 0).length,
@@ -166,6 +172,32 @@ export default function Sudoku() {
     () => getEditableConflicts(session.board, session.game.puzzle),
     [session.board, session.game.puzzle]
   );
+  const errorCount = conflictSet.size;
+  const remainingCount = 81 - filledCount;
+  const score = Math.max(
+    0,
+    2200 +
+      filledCount * 12 +
+      (40 - clueCount) * 18 -
+      elapsedSeconds * 3 -
+      errorCount * 45
+  );
+  const selectedCellSummary =
+    selectedCell !== null
+      ? `Linha ${getSudokuRow(selectedCell) + 1}, coluna ${getSudokuColumn(selectedCell) + 1}`
+      : "Nenhuma célula selecionada";
+  const selectedCellValueLabel =
+    selectedValue !== 0 ? String(selectedValue) : "vazio";
+  const boardStatusText =
+    completedTime !== null
+      ? `Concluído em ${formatElapsedTime(completedTime)}.`
+      : errorCount > 0
+        ? `${errorCount} conflito(s) editáveis exigem revisão.`
+        : "Grade em andamento sem conflitos editáveis detectados.";
+  const boardSizing = {
+    staticMax: "35.5rem",
+    vhOffset: "31rem",
+  };
   const ranking = useMemo(
     () => getSudokuRankingForDifficulty(rankingEntries, currentDifficulty),
     [currentDifficulty, rankingEntries]
@@ -518,24 +550,24 @@ export default function Sudoku() {
 
   const difficultyButtons = (
     <div className="game-difficulty-row">
-      {(
-        ["easy", "medium", "hard", "expert"] as SudokuDifficulty[]
-      ).map(difficulty => (
-        <button
-          key={difficulty}
-          type="button"
-          aria-label={`Iniciar Sudoku ${DIFFICULTY_COPY[difficulty].label}`}
-          className={cn(
-            "game-difficulty-button",
-            currentDifficulty === difficulty
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-          )}
-          onClick={() => startNewGame(difficulty)}
-        >
-          {DIFFICULTY_COPY[difficulty].label}
-        </button>
-      ))}
+      {(["easy", "medium", "hard", "expert"] as SudokuDifficulty[]).map(
+        difficulty => (
+          <button
+            key={difficulty}
+            type="button"
+            aria-label={`Iniciar Sudoku ${DIFFICULTY_COPY[difficulty].label}`}
+            className={cn(
+              "game-difficulty-button",
+              currentDifficulty === difficulty
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+            )}
+            onClick={() => startNewGame(difficulty)}
+          >
+            {DIFFICULTY_COPY[difficulty].label}
+          </button>
+        )
+      )}
     </div>
   );
 
@@ -592,7 +624,7 @@ export default function Sudoku() {
                 }}
                 maxLength={12}
                 className="input-base w-full"
-                placeholder="Ex.: Felipe"
+                placeholder="Nome ou apelido"
               />
             </label>
 
@@ -623,25 +655,14 @@ export default function Sudoku() {
       <Header />
 
       <main id="main-content" role="main" className="relative">
-        <section className="hero-game border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
-          <div className="container mx-auto">
-            <div className="max-w-3xl">
-              <PageIntroNavigation
-                breadcrumbs={breadcrumbs}
-                breadcrumbAriaLabel={navigationLabels.breadcrumb}
-                backLabel={navigationLabels.back}
-                backAriaLabel={navigationLabels.backAria}
-              />
-              <h1 className="mt-2 text-3xl font-bold text-primary md:text-[2.2rem] lg:text-[1.875rem] xl:text-[2.05rem]">
-                Sudoku Online Grátis
-              </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground lg:hidden">
-                Jogue Sudoku com quatro níveis de dificuldade, timer,
-                verificação de progresso e Top 10 salvo neste navegador.
-              </p>
-            </div>
-          </div>
-        </section>
+        <GamePageHero
+          breadcrumbs={breadcrumbs}
+          breadcrumbAriaLabel={navigationLabels.breadcrumb}
+          backLabel={navigationLabels.back}
+          backAriaLabel={navigationLabels.backAria}
+          title="Sudoku Online Grátis"
+          mobileSummary="Jogue Sudoku com quatro níveis de dificuldade, acompanhe progresso, erros e pontuação e salve seu melhor tempo por dificuldade."
+        />
 
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
@@ -649,188 +670,157 @@ export default function Sudoku() {
           <div className="container mx-auto game-mobile-container game-page-stack">
             <GameLanguageNotice />
 
-            <div
-              id="ferramenta"
-              className="section-anchor grid gap-3 xl:grid-cols-[minmax(0,1fr)_280px] xl:items-start"
-            >
-              <section className="space-y-3 xl:space-y-4">
-                <div className="hidden xl:block card-base game-panel">
-                  <div className="game-toolbar">
-                    <div className="game-toolbar-row">
-                      <div className="game-toolbar-main max-w-2xl">
-                        <p className="game-toolbar-title">Tabuleiro atual</p>
-                        <div className="game-toolbar-copy">
-                          <h2 className="game-toolbar-heading">
-                            {difficultyCopy.label}
-                          </h2>
-                          <p className="game-toolbar-subtitle">
-                            {difficultyCopy.teaser}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="game-difficulty-row">
-                        {(
-                          [
-                            "easy",
-                            "medium",
-                            "hard",
-                            "expert",
-                          ] as SudokuDifficulty[]
-                        ).map(difficulty => (
-                          <button
-                            key={difficulty}
-                            type="button"
-                            aria-label={`Iniciar Sudoku ${DIFFICULTY_COPY[difficulty].label}`}
-                            className={cn(
-                              "game-difficulty-button",
-                              currentDifficulty === difficulty
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                            )}
-                            onClick={() => startNewGame(difficulty)}
-                          >
-                            {DIFFICULTY_COPY[difficulty].label}
-                          </button>
-                        ))}
+            <section id="ferramenta" className="section-anchor">
+              <div
+                className="card-base game-focus-card game-panel"
+                data-game-focus
+              >
+                <ConfettiBurst active={completedTime !== null} />
+                <div className="hidden lg:block game-toolbar">
+                  <div className="game-toolbar-row">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {difficultyButtons}
+                      <div className="game-theme-chip game-theme-chip-compact">
+                        Grade 9x9 • {clueCount} pistas iniciais
                       </div>
                     </div>
 
-                    {completedTime !== null ? (
-                      <div className="rounded-2xl bg-emerald-100 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200">
-                        Tabuleiro concluído em{" "}
-                        <strong>{formatElapsedTime(completedTime)}</strong>.
-                      </div>
-                    ) : null}
+                    <div className="game-meta-row">
+                      <span className="game-meta-chip">
+                        Tempo: {formatElapsedTime(elapsedSeconds)}
+                      </span>
+                      <span className="game-meta-chip">
+                        Progresso: {progress}%
+                      </span>
+                      <span className="game-meta-chip">
+                        Erros: {errorCount}
+                      </span>
+                      <span className="game-meta-chip">Pontos: {score}</span>
+                      <span className="game-meta-chip">
+                        Pistas: {clueCount}
+                      </span>
+                    </div>
                   </div>
+
+                  {completedTime !== null ? (
+                    <div className="rounded-2xl bg-emerald-100 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200">
+                      {boardStatusText}
+                    </div>
+                  ) : null}
                 </div>
 
-                <div
-                  className="card-base game-focus-card game-panel"
-                  data-game-focus
-                >
-                  <ConfettiBurst active={completedTime !== null} />
-                  <div
-                    className="game-interactive-area protected-interactive game-board-shell game-mobile-stage mx-auto"
-                    style={
-                      {
-                        "--game-board-static-max": "44rem",
-                        "--game-board-min": "20rem",
-                        "--game-board-min-mobile": "18rem",
-                      } as CSSProperties
-                    }
-                    onContextMenu={event => event.preventDefault()}
-                  >
+                <GameMobileProgress
+                  value={progress}
+                  label="Progresso do sudoku"
+                />
+
+                <div className="game-standard-main-grid">
+                  <div className="game-standard-main-column">
                     <div
-                      className="grid grid-cols-9 gap-[2px] rounded-[24px] bg-primary/10 p-2 sm:gap-1 sm:p-3"
-                      role="grid"
-                      aria-label="Grade de Sudoku"
+                      className="game-interactive-area protected-interactive game-board-shell game-mobile-stage mx-auto"
+                      style={
+                        {
+                          "--game-board-static-max": boardSizing.staticMax,
+                          "--game-board-vh-offset": boardSizing.vhOffset,
+                        } as CSSProperties
+                      }
+                      onContextMenu={event => event.preventDefault()}
                     >
-                      {session.board.map((value, index) => {
-                        const isSelected = selectedCell === index;
-                        const isGiven = session.game.puzzle[index] !== 0;
-                        const hasConflict = conflictSet.has(index);
-                        const sharesGroup =
-                          selectedCell !== null &&
-                          (getSudokuRow(selectedCell) === getSudokuRow(index) ||
-                            getSudokuColumn(selectedCell) ===
-                              getSudokuColumn(index) ||
-                            getSudokuBlock(selectedCell) ===
-                              getSudokuBlock(index));
-                        const matchesSelectedValue =
-                          selectedValue !== 0 &&
-                          value !== 0 &&
-                          value === selectedValue;
-
-                        return (
-                          <input
-                            key={index}
-                            ref={element => {
-                              cellRefs.current[index] = element;
-                            }}
-                            type="text"
-                            role="gridcell"
-                            inputMode="numeric"
-                            pattern="[1-9]*"
-                            autoComplete="off"
-                            aria-selected={isSelected}
-                            aria-invalid={hasConflict}
-                            aria-readonly={isGiven}
-                            aria-label={`Linha ${getSudokuRow(index) + 1}, coluna ${getSudokuColumn(index) + 1}`}
-                            value={value === 0 ? "" : String(value)}
-                            readOnly={isGiven}
-                            maxLength={1}
-                            onFocus={() => updateSelectedCell(index)}
-                            onClick={() => updateSelectedCell(index)}
-                            onChange={event =>
-                              !isGiven &&
-                              handleCellChange(index, event.target.value)
-                            }
-                            onKeyDown={event => handleCellKeyDown(index, event)}
-                            className={cn(
-                              "aspect-square min-h-10 w-full appearance-none rounded-md border px-0 text-center text-[15px] font-semibold leading-[1.1] transition-colors caret-primary sm:min-h-10 sm:text-lg",
-                              getSudokuRow(index) % 3 === 0 &&
-                                "border-t-2 border-t-primary/35",
-                              getSudokuColumn(index) % 3 === 0 &&
-                                "border-l-2 border-l-primary/35",
-                              (getSudokuRow(index) === 8 ||
-                                getSudokuRow(index) % 3 === 2) &&
-                                "border-b-2 border-b-primary/35",
-                              (getSudokuColumn(index) === 8 ||
-                                getSudokuColumn(index) % 3 === 2) &&
-                                "border-r-2 border-r-primary/35",
-                              isSelected
-                                ? "bg-primary text-primary-foreground ring-2 ring-primary/30"
-                                : hasConflict
-                                  ? "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-200"
-                                  : sharesGroup
-                                    ? "bg-primary/10"
-                                    : matchesSelectedValue
-                                      ? "bg-accent/10"
-                                      : "bg-background hover:bg-secondary/80",
-                              isGiven &&
-                                !isSelected &&
-                                "font-bold text-foreground caret-transparent",
-                              !isGiven &&
-                                !isSelected &&
-                                !hasConflict &&
-                                "text-primary dark:text-sky-200"
-                            )}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="game-meta-row mt-4 hidden justify-center xl:flex">
-                    <span className="game-meta-chip">
-                      9x9
-                    </span>
-                    <span className="game-meta-chip">
-                      {getSudokuDifficultyClues(currentDifficulty)} pistas
-                      iniciais
-                    </span>
-                    <span className="game-meta-chip">
-                      Toque para abrir o teclado numérico nativo
-                    </span>
-                  </div>
-
-                  <div className="mt-4 space-y-3 xl:hidden">
-                    {completedTime !== null ? (
-                      <div className="rounded-2xl bg-emerald-100 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200">
-                        Concluido em{" "}
-                        <strong>{formatElapsedTime(completedTime)}</strong>.
-                      </div>
-                    ) : null}
-
-                    <div className="game-mobile-primary-actions">
-                      <button
-                        type="button"
-                        onClick={() => startNewGame(currentDifficulty)}
-                        className="btn-primary"
+                      <div
+                        className="grid grid-cols-9 gap-[2px] rounded-[24px] bg-primary/10 p-2 sm:gap-1 sm:p-3"
+                        role="grid"
+                        aria-label="Grade de Sudoku"
                       >
-                        Novo jogo
-                      </button>
+                        {session.board.map((value, index) => {
+                          const isSelected = selectedCell === index;
+                          const isGiven = session.game.puzzle[index] !== 0;
+                          const hasConflict = conflictSet.has(index);
+                          const sharesGroup =
+                            selectedCell !== null &&
+                            (getSudokuRow(selectedCell) ===
+                              getSudokuRow(index) ||
+                              getSudokuColumn(selectedCell) ===
+                                getSudokuColumn(index) ||
+                              getSudokuBlock(selectedCell) ===
+                                getSudokuBlock(index));
+                          const matchesSelectedValue =
+                            selectedValue !== 0 &&
+                            value !== 0 &&
+                            value === selectedValue;
+
+                          return (
+                            <input
+                              key={index}
+                              ref={element => {
+                                cellRefs.current[index] = element;
+                              }}
+                              type="text"
+                              role="gridcell"
+                              inputMode="numeric"
+                              pattern="[1-9]*"
+                              autoComplete="off"
+                              aria-selected={isSelected}
+                              aria-invalid={hasConflict}
+                              aria-readonly={isGiven}
+                              aria-label={`Linha ${getSudokuRow(index) + 1}, coluna ${getSudokuColumn(index) + 1}`}
+                              value={value === 0 ? "" : String(value)}
+                              readOnly={isGiven}
+                              maxLength={1}
+                              onFocus={() => updateSelectedCell(index)}
+                              onClick={() => updateSelectedCell(index)}
+                              onChange={event =>
+                                !isGiven &&
+                                handleCellChange(index, event.target.value)
+                              }
+                              onKeyDown={event =>
+                                handleCellKeyDown(index, event)
+                              }
+                              className={cn(
+                                "aspect-square min-h-10 w-full rounded-md border px-0 text-center text-[15px] font-semibold leading-none transition-colors caret-primary sm:min-h-10 sm:text-lg",
+                                getSudokuRow(index) % 3 === 0 &&
+                                  "border-t-2 border-t-primary/35",
+                                getSudokuColumn(index) % 3 === 0 &&
+                                  "border-l-2 border-l-primary/35",
+                                (getSudokuRow(index) === 8 ||
+                                  getSudokuRow(index) % 3 === 2) &&
+                                  "border-b-2 border-b-primary/35",
+                                (getSudokuColumn(index) === 8 ||
+                                  getSudokuColumn(index) % 3 === 2) &&
+                                  "border-r-2 border-r-primary/35",
+                                isSelected
+                                  ? "bg-primary text-primary-foreground ring-2 ring-primary/30"
+                                  : hasConflict
+                                    ? "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-200"
+                                    : sharesGroup
+                                      ? "bg-primary/10"
+                                      : matchesSelectedValue
+                                        ? "bg-accent/10"
+                                        : "bg-background hover:bg-secondary/80",
+                                isGiven &&
+                                  !isSelected &&
+                                  "font-bold text-foreground caret-transparent",
+                                !isGiven &&
+                                  !isSelected &&
+                                  !hasConflict &&
+                                  "text-primary dark:text-sky-200"
+                              )}
+                            />
+                          );
+                        })}
+                      </div>
+
+                      <div className="game-meta-row mt-4 hidden justify-center lg:flex">
+                        <span className="game-meta-chip">9x9</span>
+                        <span className="game-meta-chip">
+                          {clueCount} pistas iniciais
+                        </span>
+                        <span className="game-meta-chip">
+                          Toque para abrir o teclado numérico nativo
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="game-mobile-primary-actions lg:flex lg:flex-wrap lg:gap-2">
                       <button
                         type="button"
                         onClick={handleCheckProgress}
@@ -838,239 +828,181 @@ export default function Sudoku() {
                       >
                         Verificar
                       </button>
+                      <button
+                        type="button"
+                        onClick={handleClearErrors}
+                        className="btn-secondary"
+                      >
+                        Limpar erros
+                      </button>
+                      <button
+                        type="button"
+                        onClick={restartGame}
+                        className="btn-secondary"
+                      >
+                        Reiniciar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => startNewGame(currentDifficulty)}
+                        className="btn-primary"
+                      >
+                        Novo jogo
+                      </button>
                     </div>
 
-                    <div className="game-mobile-status-grid">
-                      <div className="compact-stat compact-stat-tight">
-                        <span className="compact-stat-label">Tempo</span>
-                        <span className="compact-stat-value">
-                          {formatElapsedTime(elapsedSeconds)}
-                        </span>
-                      </div>
-                      <div className="compact-stat compact-stat-tight">
-                        <span className="compact-stat-label">Progresso</span>
-                        <span className="compact-stat-value">{progress}%</span>
-                      </div>
-                      <div className="compact-stat compact-stat-tight">
-                        <span className="compact-stat-label">Preenchidas</span>
-                        <span className="compact-stat-value">{filledCount}/81</span>
-                      </div>
-                      <div className="compact-stat compact-stat-tight">
-                        <span className="compact-stat-label">Conflitos</span>
-                        <span className="compact-stat-value">
-                          {conflictSet.size}
-                        </span>
-                      </div>
+                    <div className="hidden lg:block game-secondary-note">
+                      {boardStatusText} Toque em uma célula editável para abrir
+                      o teclado numérico nativo. No desktop, use as setas para
+                      navegar pela grade.
                     </div>
 
-                    <div className="rounded-2xl bg-secondary/60 px-4 py-3 text-sm text-muted-foreground">
-                      <p className="font-semibold text-foreground">
-                        {difficultyCopy.label}
-                      </p>
-                      <p className="mt-1 leading-6">{difficultyCopy.teaser}</p>
-                      <p className="mt-2 text-xs leading-5">
-                        {getSudokuDifficultyClues(currentDifficulty)} pistas
-                        iniciais e teclado numerico nativo do celular.
-                      </p>
-                    </div>
+                    <div className="space-y-3 lg:hidden">
+                      <div className="game-context-card-muted">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          Status da partida
+                        </p>
+                        <p className="mt-2 font-semibold text-foreground">
+                          {difficultyCopy.label}
+                        </p>
+                        <p className="mt-1 leading-6">{boardStatusText}</p>
+                        <p className="mt-2 text-xs leading-5">
+                          Progresso {progress}% • Restam {remainingCount} casas
+                          para concluir a grade.
+                        </p>
+                      </div>
 
-                    <ResponsiveSecondarySection
-                      title="Mais controles e dificuldades"
-                      summaryText="Troque o nivel, reinicie a grade ou limpe erros editaveis."
-                      className="xl:hidden"
-                    >
-                      <div className="space-y-4">
-                        {difficultyButtons}
-                        <div className="grid gap-2">
-                          <button
-                            type="button"
-                            onClick={restartGame}
-                            className="btn-secondary w-full"
-                          >
-                            Reiniciar jogo
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleClearErrors}
-                            className="btn-secondary w-full"
-                          >
-                            Limpar erros editaveis
-                          </button>
+                      <div className="game-context-card">
+                        <div className="flex items-center justify-between gap-3">
+                          <h2 className="text-base font-bold">
+                            Leitura da grade
+                          </h2>
+                          <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+                            9x9
+                          </span>
                         </div>
-                      </div>
-                    </ResponsiveSecondarySection>
-                  </div>
-                </div>
-              </section>
-
-              <aside className="hidden space-y-4 xl:block">
-                <div className="card-base game-panel">
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-2">
-                    <div className="compact-stat compact-stat-tight">
-                      <span className="compact-stat-label">Tempo</span>
-                      <span className="compact-stat-value">
-                        {formatElapsedTime(elapsedSeconds)}
-                      </span>
-                    </div>
-                    <div className="compact-stat compact-stat-tight">
-                      <span className="compact-stat-label">Progresso</span>
-                      <span className="compact-stat-value">{progress}%</span>
-                    </div>
-                    <div className="compact-stat compact-stat-tight">
-                      <span className="compact-stat-label">Preenchidas</span>
-                      <span className="compact-stat-value">{filledCount}/81</span>
-                    </div>
-                    <div className="compact-stat compact-stat-tight">
-                      <span className="compact-stat-label">Conflitos</span>
-                      <span className="compact-stat-value">
-                        {conflictSet.size}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card-base game-panel">
-                  <div className="grid gap-2">
-                    <button
-                      type="button"
-                      onClick={() => startNewGame(currentDifficulty)}
-                      className="btn-primary w-full"
-                    >
-                      Novo jogo
-                    </button>
-                    <button
-                      type="button"
-                      onClick={restartGame}
-                      className="btn-secondary w-full"
-                    >
-                      Reiniciar jogo
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleClearErrors}
-                      className="btn-secondary w-full"
-                    >
-                      Limpar erros editáveis
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleCheckProgress}
-                      className="btn-secondary w-full"
-                    >
-                      Verificar progresso
-                    </button>
-                  </div>
-                </div>
-
-                <div className="card-base game-panel">
-                  <div className="flex items-center justify-between gap-3">
-                    <h2 className="text-xl font-bold">
-                      Top 10 neste navegador
-                    </h2>
-                    <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
-                      {difficultyCopy.label}
-                    </span>
-                  </div>
-
-                  <div className="mt-4 space-y-3">
-                    {ranking.length ? (
-                      ranking.map((entry, index) => (
-                        <div
-                          key={`${entry.name}-${entry.time}-${entry.date}`}
-                          className="flex items-center justify-between gap-4 rounded-2xl bg-secondary/60 px-4 py-3"
-                        >
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <Medal
-                                className={cn("h-4 w-4", getRankTone(index))}
-                              />
-                              <p className="truncate font-semibold">
-                                {index + 1}. {entry.name}
-                              </p>
-                            </div>
-                            <p className="mt-1 text-xs text-muted-foreground">
-                              {formatDate(entry.date)}
-                            </p>
+                        <div className="game-context-list">
+                          <div className="game-context-item text-foreground">
+                            <strong>Selecionada:</strong> {selectedCellSummary}
                           </div>
-                          <strong className="text-lg">
-                            {formatElapsedTime(entry.time)}
-                          </strong>
+                          <div className="game-context-item text-foreground">
+                            <strong>Valor atual:</strong>{" "}
+                            {selectedCellValueLabel}
+                          </div>
+                          <div className="game-context-item text-foreground">
+                            <strong>Pistas iniciais:</strong> {clueCount}
+                          </div>
                         </div>
-                      ))
-                    ) : (
-                      <p className="rounded-2xl bg-secondary/60 px-4 py-4 text-sm text-muted-foreground">
-                        Ainda não há partidas registradas nesta dificuldade.
-                      </p>
-                    )}
-                  </div>
-                </div>
+                        <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                          Toque em uma célula editável para preencher números de
+                          1 a 9 sem repetir linha, coluna ou bloco.
+                        </p>
+                      </div>
 
-                <div className="card-base game-panel">
-                  <h2 className="text-xl font-bold">Registrar pontuação</h2>
+                      <div className="game-mobile-status-grid">
+                        <div className="compact-stat compact-stat-tight">
+                          <span className="compact-stat-label">Tempo</span>
+                          <span className="compact-stat-value">
+                            {formatElapsedTime(elapsedSeconds)}
+                          </span>
+                        </div>
+                        <div className="compact-stat compact-stat-tight">
+                          <span className="compact-stat-label">Pontos</span>
+                          <span className="compact-stat-value">{score}</span>
+                        </div>
+                        <div className="compact-stat compact-stat-tight">
+                          <span className="compact-stat-label">Progresso</span>
+                          <span className="compact-stat-value">
+                            {progress}%
+                          </span>
+                        </div>
+                        <div className="compact-stat compact-stat-tight">
+                          <span className="compact-stat-label">Erros</span>
+                          <span className="compact-stat-value">
+                            {errorCount}
+                          </span>
+                        </div>
+                      </div>
 
-                  {savedPosition !== null ? (
-                    <div className="mt-4 rounded-2xl bg-accent/10 px-4 py-4 text-sm text-accent">
-                      Sua partida entrou em{" "}
-                      <strong>{savedPosition}º lugar</strong> nesta dificuldade.
+                      <ResponsiveSecondarySection
+                        title="Nivel e ajuda"
+                        summaryText="Troque a dificuldade, reinicie a grade e revise os controles."
+                        className="lg:hidden"
+                      >
+                        <div className="space-y-4">
+                          {difficultyButtons}
+                          <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
+                            {difficultyCopy.teaser} {clueCount} pistas iniciais
+                            nesta rodada.
+                          </div>
+                        </div>
+                      </ResponsiveSecondarySection>
                     </div>
-                  ) : completedTime !== null ? (
-                    <>
-                      <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                        {rankingPlacement
-                          ? `Seu tempo entra em ${rankingPlacement}º lugar nesta dificuldade.`
-                          : "Este tempo não entrou no Top 10 desta dificuldade."}
+                  </div>
+
+                  <aside className="game-standard-context-sidebar">
+                    <div className="game-context-card">
+                      <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-lg font-bold">Status da partida</h2>
+                        <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+                          {difficultyCopy.label}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                        Andamento atual da grade e leitura do tabuleiro.
                       </p>
-
-                      {rankingPlacement ? (
-                        <div className="mt-4 space-y-3">
-                          <label className="block space-y-2">
-                            <span className="text-sm font-semibold">
-                              Nome ou apelido
-                            </span>
-                            <input
-                              type="text"
-                              value={nickname}
-                              onChange={event => {
-                                setNickname(
-                                  sanitizeSudokuNicknameInput(
-                                    event.target.value
-                                  )
-                                );
-                                setNicknameError("");
-                              }}
-                              maxLength={12}
-                              className="input-base w-full"
-                              placeholder="Ex.: Felipe"
-                            />
-                          </label>
-
-                          {nicknameError ? (
-                            <p className="rounded-2xl bg-rose-100 px-4 py-3 text-sm text-rose-700 dark:bg-rose-950/60 dark:text-rose-200">
-                              {nicknameError}
-                            </p>
-                          ) : null}
-
-                          <button
-                            type="button"
-                            onClick={handleSaveRanking}
-                            className="btn-primary w-full"
-                          >
-                            Registrar pontuação
-                          </button>
+                      <div className="game-context-list">
+                        <div className="game-context-item text-foreground">
+                          <strong>Status:</strong> {boardStatusText}
                         </div>
-                      ) : null}
-                    </>
-                  ) : (
-                    <p className="mt-3 text-sm text-muted-foreground">
-                      Termine a partida para tentar entrar no Top 10 desta
-                      dificuldade.
-                    </p>
-                  )}
-                </div>
-              </aside>
-            </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Erros atuais:</strong> {errorCount}
+                        </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Preenchidas:</strong> {filledCount}/81
+                        </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Restantes:</strong> {remainingCount}
+                        </div>
+                      </div>
+                    </div>
 
-            <div className="space-y-3 xl:hidden">
+                    <div className="game-context-card">
+                      <div className="flex items-center justify-between gap-3">
+                        <h2 className="text-lg font-bold">Ajuda rápida</h2>
+                        <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+                          9x9
+                        </span>
+                      </div>
+                      <div className="game-context-list">
+                        <div className="game-context-item text-foreground">
+                          <strong>Selecionada:</strong> {selectedCellSummary}
+                        </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Valor atual:</strong> {selectedCellValueLabel}
+                        </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Bloco:</strong>{" "}
+                          {selectedCell !== null
+                            ? getSudokuBlock(selectedCell) + 1
+                            : "-"}
+                        </div>
+                        <div className="game-context-item text-foreground">
+                          <strong>Pistas iniciais:</strong> {clueCount}
+                        </div>
+                      </div>
+                      <div className="mt-3 rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
+                        Toque em uma célula editável para abrir o teclado
+                        numérico nativo. No desktop, use as setas para navegar
+                        pela grade.
+                      </div>
+                    </div>
+                  </aside>
+                </div>
+              </div>
+            </section>
+
+            <div className="space-y-3 lg:hidden">
               <ResponsiveSecondarySection
                 title="Ranking local"
                 summaryText={`Top 10 do modo ${difficultyCopy.label} salvo neste navegador.`}
@@ -1087,141 +1019,156 @@ export default function Sudoku() {
               </ResponsiveSecondarySection>
             </div>
 
-            <div
-              id="explicacao"
-              className="section-anchor grid gap-3 lg:grid-cols-2"
-            >
-              <ResponsiveSecondarySection
-                title="O que e Sudoku"
-                summaryText="Regras da grade, logica do jogo e niveis de dificuldade."
-                className="h-full"
-              >
-                <p className="mt-3 text-muted-foreground">
-                  Sudoku é um quebra-cabeça de lógica em que cada linha, coluna
-                  e bloco 3x3 deve conter os números de 1 a 9 sem repetição.
-                </p>
-
-                <h2 className="mt-6 text-2xl font-bold">
-                  Como funciona o Sudoku
-                </h2>
-                <p className="mt-3 text-muted-foreground">
-                  O objetivo é completar a grade com dedução, cruzando
-                  informações entre linhas, colunas e blocos. A verificação de
-                  progresso ajuda a identificar conflitos editáveis sem resolver
-                  o tabuleiro por você.
-                </p>
-
-                <h2 className="mt-6 text-2xl font-bold">
-                  Níveis de dificuldade
-                </h2>
-                <div className="mt-4 space-y-3">
-                  {(Object.keys(DIFFICULTY_COPY) as SudokuDifficulty[]).map(
-                    difficulty => (
-                      <div
-                        key={difficulty}
-                        className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground"
-                      >
-                        <strong className="text-foreground">
-                          {DIFFICULTY_COPY[difficulty].label}:
-                        </strong>{" "}
-                        {DIFFICULTY_COPY[difficulty].teaser}
-                      </div>
-                    )
-                  )}
-                </div>
-              </ResponsiveSecondarySection>
-
-              <ResponsiveSecondarySection
-                title="Beneficios e como jogar"
-                summaryText="Vantagens do Sudoku e passos rapidos para comecar."
-                className="h-full"
-              >
-                <div className="mt-4 space-y-3">
-                  <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                    Ajuda a manter foco, atenção aos detalhes e leitura de
-                    padrões.
-                  </div>
-                  <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                    Funciona bem como exercício mental rápido no celular ou no
-                    computador.
-                  </div>
-                  <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                    Estimula raciocínio lógico sem depender de velocidade
-                    extrema.
-                  </div>
-                </div>
-                <div className="mt-5 flex flex-wrap gap-3">
-                  <Link
-                    href="/blog/beneficios-dos-jogos-de-logica/"
-                    className="btn-secondary"
-                  >
-                    Ler sobre jogos de lógica
-                  </Link>
-                  <Link
-                    href="/jogos/palavras-cruzadas/"
-                    className="btn-secondary"
-                  >
-                    Testar palavras cruzadas
-                  </Link>
-                </div>
-
-                <h2 className="mt-6 text-2xl font-bold">Como jogar</h2>
-                <div className="mt-4 space-y-3">
-                  <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                    1. Selecione uma célula vazia e preencha com um número de 1
-                    a 9.
-                  </div>
-                  <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                    2. Observe os destaques de linha, coluna e bloco para evitar
-                    repetições.
-                  </div>
-                  <div className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground">
-                    3. Use o teclado numérico nativo do celular ou o teclado
-                    físico do computador, reinicie o jogo se quiser recomeçar e
-                    registre sua pontuação ao entrar no ranking.
-                  </div>
-                </div>
-              </ResponsiveSecondarySection>
-            </div>
-
-            <ResponsiveSecondarySection
-              id="faq"
-              title="Perguntas frequentes"
-              summaryText="Respostas rapidas sobre celular, ranking e dificuldades."
-              className="section-anchor"
-            >
-              <div className="mt-4 space-y-3">
-                {FAQ_ITEMS.map(item => (
-                  <details
-                    key={item.question}
-                    className="rounded-2xl bg-secondary px-4 py-3"
-                  >
-                    <summary className="font-semibold">{item.question}</summary>
-                    <p className="mt-3 text-sm text-muted-foreground">
-                      {item.answer}
-                    </p>
-                  </details>
-                ))}
-              </div>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/jogos/" className="btn-secondary">
-                  Todos os jogos
-                </Link>
-                <Link href="/jogos/caca-palavras/" className="btn-secondary">
-                  Caça-Palavras
-                </Link>
-                <Link
-                  href="/jogos/palavras-cruzadas/"
-                  className="btn-secondary"
+            <div id="explicacao" className="game-standard-editorial-grid">
+              <section className="game-standard-editorial-main">
+                <ResponsiveSecondarySection
+                  title="Como jogar sudoku"
+                  summaryText="Regras da grade, leitura dos destaques e fluxo da partida."
                 >
-                  Palavras Cruzadas
-                </Link>
-                <Link href="/blog/" className="btn-secondary">
-                  Ir para o blog
-                </Link>
-              </div>
-            </ResponsiveSecondarySection>
+                  <p className="mt-3 text-muted-foreground">
+                    Sudoku é um quebra-cabeça de lógica em que cada linha,
+                    coluna e bloco 3x3 deve conter os números de 1 a 9 sem
+                    repetição.
+                  </p>
+                  <p className="mt-3 text-muted-foreground">
+                    Selecione uma célula vazia, preencha com um número e use os
+                    destaques da própria grade para conferir grupos relacionados
+                    antes de avançar.
+                  </p>
+                </ResponsiveSecondarySection>
+                <ResponsiveSecondarySection
+                  id="exemplos"
+                  title="Como a partida varia"
+                  summaryText="Diferenças entre dificuldades, pistas iniciais e ritmo da grade."
+                  className="section-anchor"
+                >
+                  <p className="mt-3 text-muted-foreground">
+                    O modo atual é <strong>{difficultyCopy.label}</strong>. Cada
+                    dificuldade altera a quantidade de pistas iniciais e muda a
+                    profundidade da dedução necessária para concluir a grade.
+                  </p>
+                  <div className="mt-4 space-y-3">
+                    {(Object.keys(DIFFICULTY_COPY) as SudokuDifficulty[]).map(
+                      difficulty => (
+                        <div
+                          key={difficulty}
+                          className="rounded-2xl bg-secondary px-4 py-3 text-sm text-muted-foreground"
+                        >
+                          <strong className="text-foreground">
+                            {DIFFICULTY_COPY[difficulty].label}:
+                          </strong>{" "}
+                          {DIFFICULTY_COPY[difficulty].teaser}
+                        </div>
+                      )
+                    )}
+                  </div>
+                </ResponsiveSecondarySection>
+                <ResponsiveSecondarySection
+                  title="Recursos da partida"
+                  summaryText="Verificacao, limpeza de erros, pontuacao e beneficios do jogo."
+                >
+                  <p className="mt-3 text-muted-foreground">
+                    A partida reúne timer, progresso, erros atuais, pontuação de
+                    desempenho, verificação de conflitos editáveis e reinício
+                    rápido da grade sem sair da mesma tela.
+                  </p>
+                  <h3 className="mt-6 text-xl font-bold">
+                    Beneficios do sudoku
+                  </h3>
+                  <p className="mt-3 text-muted-foreground">
+                    Sudoku ajuda a manter atenção a padrões, leitura analítica e
+                    raciocínio lógico em pausas curtas no celular ou no
+                    computador.
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <Link
+                      href="/jogos/palavras-cruzadas/"
+                      className="btn-secondary"
+                    >
+                      Testar palavras cruzadas
+                    </Link>
+                    <Link
+                      href="/jogos/jogo-da-velha/"
+                      className="btn-secondary"
+                    >
+                      Abrir Jogo da Velha
+                    </Link>
+                    <Link
+                      href="/blog/beneficios-dos-jogos-de-logica/"
+                      className="btn-secondary"
+                    >
+                      Ler sobre jogos de lógica
+                    </Link>
+                  </div>
+                </ResponsiveSecondarySection>
+                <ResponsiveSecondarySection
+                  id="faq"
+                  title="Perguntas frequentes"
+                  summaryText="Respostas rapidas sobre celular, verificacao e ranking."
+                  className="section-anchor"
+                >
+                  <div className="mt-4 space-y-3">
+                    {FAQ_ITEMS.map(item => (
+                      <details
+                        key={item.question}
+                        className="rounded-2xl bg-secondary px-4 py-3"
+                      >
+                        <summary className="font-semibold">
+                          {item.question}
+                        </summary>
+                        <p className="mt-3 text-sm text-muted-foreground">
+                          {item.answer}
+                        </p>
+                      </details>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link href="/jogos/" className="btn-secondary">
+                      Todos os jogos
+                    </Link>
+                    <Link
+                      href="/jogos/caca-palavras/"
+                      className="btn-secondary"
+                    >
+                      Caça-Palavras
+                    </Link>
+                    <Link
+                      href="/jogos/palavras-cruzadas/"
+                      className="btn-secondary"
+                    >
+                      Palavras Cruzadas
+                    </Link>
+                    <Link
+                      href="/jogos/jogo-da-velha/"
+                      className="btn-secondary"
+                    >
+                      Jogo da Velha
+                    </Link>
+                    <Link href="/blog/" className="btn-secondary">
+                      Ir para o blog
+                    </Link>
+                  </div>
+                </ResponsiveSecondarySection>
+              </section>
+
+              <aside className="game-standard-editorial-sidebar">
+                <div className="card-base p-6">
+                  <h2 className="text-xl font-bold">Top 10 por dificuldade</h2>
+                  <div className="mt-4 rounded-2xl bg-secondary px-4 py-3 text-sm font-medium">
+                    Dificuldade: {difficultyCopy.label}
+                  </div>
+                  <div className="mt-4 space-y-3">{rankingList}</div>
+                </div>
+
+                <div className="card-base p-6">
+                  <h2 className="text-xl font-bold">Registrar pontuação</h2>
+                  <div className="mt-3 space-y-4">
+                    {scoreRegistrationContent}
+                  </div>
+                </div>
+              </aside>
+            </div>
 
             <CoreNavigationBlock />
           </div>

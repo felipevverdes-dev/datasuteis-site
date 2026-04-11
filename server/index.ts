@@ -331,6 +331,7 @@ async function startServer() {
     /^\/jogos\/sudoku\/?$/,
     /^\/jogos\/caca-palavras\/?$/,
     /^\/jogos\/palavras-cruzadas\/?$/,
+    /^\/jogos\/jogo-da-velha\/?$/,
     /^\/blog\/?$/,
     /^\/blog\/[a-z0-9-]+\/?$/,
     /^\/sobre\/?$/,

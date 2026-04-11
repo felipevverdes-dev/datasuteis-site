@@ -521,6 +521,60 @@
     @apply relative overflow-hidden;
   }
 
+  .game-mobile-progress {
+    @apply mt-4 lg:hidden;
+  }
+
+  .game-progress-track {
+    @apply h-3 rounded-full bg-secondary;
+  }
+
+  .game-progress-fill {
+    @apply h-3 rounded-full bg-primary transition-[width];
+  }
+
+  .game-standard-main-grid {
+    @apply mt-4 grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px];
+  }
+
+  .game-standard-main-column {
+    @apply space-y-4;
+  }
+
+  .game-standard-context-sidebar {
+    @apply hidden space-y-3 lg:block;
+  }
+
+  .game-standard-editorial-grid {
+    @apply grid gap-3 lg:grid-cols-[minmax(0,1fr)_340px];
+    scroll-margin-top: 7rem;
+  }
+
+  .game-standard-editorial-main {
+    @apply space-y-3 lg:space-y-6;
+  }
+
+  .game-standard-editorial-sidebar {
+    @apply hidden space-y-6 lg:block;
+  }
+
+  .game-context-card {
+    @apply rounded-lg border border-border bg-card p-3.5 text-card-foreground shadow-sm transition-[transform,box-shadow,border-color] duration-200 sm:p-4;
+    box-shadow: 0 10px 30px -22px rgba(15, 23, 42, 0.28);
+  }
+
+  .game-context-card-muted {
+    @apply rounded-2xl bg-secondary/60 px-4 py-3 text-sm text-muted-foreground;
+  }
+
+  .game-context-list {
+    @apply mt-3 space-y-1.5;
+  }
+
+  .game-context-item {
+    @apply rounded-xl bg-secondary px-3 py-2 text-[12px] leading-4 sm:text-[13px] sm:leading-5;
+  }
+
   .game-mobile-container {
     padding-left: 0.875rem;
     padding-right: 0.875rem;
@@ -893,7 +947,8 @@
       max-height: 18rem;
     }
 
-    .game-mobile-primary-actions > :where(.btn-primary, .btn-secondary, .btn-outline) {
+    .game-mobile-primary-actions
+      > :where(.btn-primary, .btn-secondary, .btn-outline) {
       min-height: 44px;
       padding: 0.68rem 0.88rem;
       font-size: 0.86rem;
@@ -1000,12 +1055,11 @@
     overflow: hidden;
     border-radius: calc(var(--radius) + 0.35rem);
     padding: 0.5rem;
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--secondary) 72%, transparent),
-        transparent 58%
-      );
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--secondary) 72%, transparent),
+      transparent 58%
+    );
   }
 
   .continent-watermark::before {
