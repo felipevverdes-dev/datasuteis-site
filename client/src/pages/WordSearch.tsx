@@ -632,8 +632,7 @@ export default function WordSearch() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-<<<<<<< HEAD
-      <main id="main-content" role="main" className="relative">
+      <main id="main-content" className="relative">
         <GamePageHero
           breadcrumbs={breadcrumbs}
           breadcrumbAriaLabel={navigationLabels.breadcrumb}
@@ -642,28 +641,6 @@ export default function WordSearch() {
           title="Caça-Palavras Online Grátis"
           mobileSummary="Encontre palavras em linha reta, acompanhe o tema da rodada e registre sua melhor pontuação por dificuldade."
         />
-=======
-      <main id="main-content" className="relative">
-        <section className="hero-game border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
-          <div className="container mx-auto">
-            <div className="max-w-3xl">
-              <PageIntroNavigation
-                breadcrumbs={breadcrumbs}
-                breadcrumbAriaLabel={navigationLabels.breadcrumb}
-                backLabel={navigationLabels.back}
-                backAriaLabel={navigationLabels.backAria}
-              />
-              <h1 className="mt-2 text-3xl font-bold text-primary md:text-[2.2rem] lg:text-[1.875rem] xl:text-[2.05rem]">
-                Caça-Palavras Online Grátis
-              </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground lg:hidden">
-                Encontre palavras em até 8 direções, use dicas com parcimônia e
-                registre sua melhor pontuação por dificuldade.
-              </p>
-            </div>
-          </div>
-        </section>
->>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
 
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
@@ -948,13 +925,7 @@ export default function WordSearch() {
                           </span>
                         </div>
                         <div className="compact-stat compact-stat-tight">
-<<<<<<< HEAD
                           <span className="compact-stat-label">Dicas</span>
-=======
-                          <span className="compact-stat-label">
-                            Multiplicador
-                          </span>
->>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
                           <span className="compact-stat-value">
                             {hintsLeft}
                           </span>
@@ -1095,16 +1066,11 @@ export default function WordSearch() {
               </ResponsiveSecondarySection>
             </div>
 
-<<<<<<< HEAD
-            <div id="explicacao" className="game-standard-editorial-grid">
-              <section className="game-standard-editorial-main">
-=======
             <div
               id="explicacao"
-              className="section-anchor grid gap-3 lg:grid-cols-[minmax(0,1fr)_340px]"
+              className="section-anchor game-standard-editorial-grid"
             >
-              <div className="space-y-3 lg:space-y-6">
->>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
+              <div className="game-standard-editorial-main">
                 <ResponsiveSecondarySection
                   title="Como jogar caça-palavras"
                   summaryText="Fluxo da grade, selecao das palavras e ritmo da rodada."
@@ -1114,7 +1080,6 @@ export default function WordSearch() {
                     em linha reta. As direções podem seguir horizontal, vertical
                     ou diagonal, então vale começar pelas palavras maiores para
                     abrir a leitura da grade.
-<<<<<<< HEAD
                   </p>
                   <p className="mt-3 text-muted-foreground">
                     Use dica apenas quando quiser destravar uma palavra
@@ -1147,8 +1112,6 @@ export default function WordSearch() {
                     A partida reúne timer, pontuação, progresso, multiplicador
                     por streak, dicas controladas e embaralhamento das letras
                     ainda livres na grade.
-=======
->>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
                   </p>
                   <h3 className="mt-6 text-xl font-bold">
                     Beneficios do caça-palavras
