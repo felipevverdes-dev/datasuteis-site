@@ -36,7 +36,7 @@ export default function CookieConsentBanner() {
   const { language } = useI18n();
   const copy = COPY[language] ?? COPY.pt;
   const [consent, setConsent] = useState<CookieConsentStatus | null>(() =>
-    readStoredCookieConsent(),
+    readStoredCookieConsent()
   );
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function CookieConsentBanner() {
     return () => {
       window.removeEventListener(
         "datasuteis-consent-updated",
-        handleConsentUpdate,
+        handleConsentUpdate
       );
     };
   }, []);
@@ -63,12 +63,7 @@ export default function CookieConsentBanner() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[70] border-t border-border/70 bg-background/95 shadow-lg backdrop-blur">
-      <div
-        className="container mx-auto flex flex-col gap-2 px-3 py-2.5 md:flex-row md:items-center md:justify-between md:px-4 md:py-3 lg:gap-3 lg:px-5 lg:py-2"
-        style={{
-          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 0.35rem)",
-        }}
-      >
+      <div className="cookie-consent-safe-area container mx-auto flex flex-col gap-2 px-3 py-2.5 md:flex-row md:items-center md:justify-between md:px-4 md:py-3 lg:gap-3 lg:px-5 lg:py-2">
         <p className="max-w-4xl text-[13px] leading-4 text-muted-foreground md:text-sm md:leading-5 lg:text-[11px] lg:leading-4">
           {copy.message}{" "}
           <Link href="/privacidade/" className="font-semibold text-primary">

@@ -82,7 +82,7 @@ const COPY: Record<
       {
         title: "Disponibilidade",
         paragraphs: [
-          "O Datas Úteis é oferecido no estado em que se encontra (\"as is\"), sem garantias de disponibilidade ininterrupta. Manutenções programadas, atualizações de infraestrutura ou problemas técnicos podem causar indisponibilidade temporária.",
+          'O Datas Úteis é oferecido no estado em que se encontra ("as is"), sem garantias de disponibilidade ininterrupta. Manutenções programadas, atualizações de infraestrutura ou problemas técnicos podem causar indisponibilidade temporária.',
           "O projeto se empenha em manter o site acessível e funcional, mas não garante tempo de atividade mínimo nem se responsabiliza por perdas decorrentes de eventual indisponibilidade.",
         ],
       },
@@ -236,7 +236,7 @@ const COPY: Record<
       {
         title: "Disponibilidad",
         paragraphs: [
-          "Datas Úteis se ofrece en el estado en que se encuentra (\"tal cual\"), sin garantías de disponibilidad ininterrumpida. Mantenimientos programados, actualizaciones de infraestructura o problemas técnicos pueden causar indisponibilidad temporal.",
+          'Datas Úteis se ofrece en el estado en que se encuentra ("tal cual"), sin garantías de disponibilidad ininterrumpida. Mantenimientos programados, actualizaciones de infraestructura o problemas técnicos pueden causar indisponibilidad temporal.',
           "El proyecto se esfuerza por mantener el sitio accesible y funcional, pero no garantiza un tiempo de actividad mínimo ni se responsabiliza por pérdidas derivadas de eventual indisponibilidad.",
         ],
       },
@@ -291,7 +291,7 @@ export default function Terms() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main id="main-content" role="main">
+      <main id="main-content">
         <section className="hero border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto">
             <div className="max-w-4xl">
@@ -314,7 +314,7 @@ export default function Terms() {
           </div>
         </section>
 
-        <section className="section-md">
+        <div className="section-md">
           <div className="container mx-auto space-y-6">
             <section className="card-base p-6 md:p-8">
               <div className="space-y-8">
@@ -340,12 +340,24 @@ export default function Terms() {
 
             <CtaFinalBlock
               language={language}
-              title={language === "en" ? "Explore our tools" : language === "es" ? "Explore nuestras herramientas" : "Conheça nossas ferramentas"}
-              buttonLabel={language === "en" ? "Open tools" : language === "es" ? "Abrir herramientas" : "Abrir ferramentas"}
+              title={
+                language === "en"
+                  ? "Explore our tools"
+                  : language === "es"
+                    ? "Explore nuestras herramientas"
+                    : "Conheça nossas ferramentas"
+              }
+              buttonLabel={
+                language === "en"
+                  ? "Open tools"
+                  : language === "es"
+                    ? "Abrir herramientas"
+                    : "Abrir ferramentas"
+              }
               href="/"
             />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

@@ -7,7 +7,11 @@ import FloatingSectionNav from "@/components/layout/FloatingSectionNav";
 import { useI18n } from "@/contexts/LanguageContext";
 import { getGamesNavLabel } from "@/lib/games-nav";
 import PageIntroNavigation from "@/components/layout/PageIntroNavigation";
-import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  getNavigationLabels,
+} from "@/lib/navigation";
 import { getBackToTopLabel } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import type { SupportedLanguage } from "@/lib/site";
@@ -263,11 +267,7 @@ export default function About() {
     {
       id: "historia",
       label:
-        language === "en"
-          ? "About"
-          : language === "es"
-            ? "Sobre"
-            : "Sobre",
+        language === "en" ? "About" : language === "es" ? "Sobre" : "Sobre",
     },
     {
       id: "publico",
@@ -355,7 +355,7 @@ export default function About() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main id="main-content" role="main">
+      <main id="main-content">
         <section className="border-b border-border bg-gradient-to-br from-primary/10 via-background to-background py-8 md:py-10">
           <div className="container mx-auto">
             <PageIntroNavigation
@@ -378,9 +378,12 @@ export default function About() {
 
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
-        <section className="section-md">
+        <div className="section-md">
           <div className="container mx-auto space-y-6">
-            <div id="historia" className="section-anchor grid gap-6 lg:grid-cols-3">
+            <div
+              id="historia"
+              className="section-anchor grid gap-6 lg:grid-cols-3"
+            >
               <article className="card-base p-6">
                 <h2 className="text-2xl font-bold">{copy.originTitle}</h2>
                 <p className="mt-4 text-sm leading-7 text-muted-foreground">
@@ -449,7 +452,7 @@ export default function About() {
             <section id="faq" className="section-anchor card-base p-6">
               <h2 className="text-2xl font-bold">{copy.faqTitle}</h2>
               <div className="mt-6 space-y-3">
-                {copy.faq.map((item) => (
+                {copy.faq.map(item => (
                   <details
                     key={item.question}
                     className="rounded-2xl bg-secondary px-5 py-4"
@@ -503,12 +506,24 @@ export default function About() {
 
             <CtaFinalBlock
               language={language}
-              title={language === "en" ? "Explore our tools" : language === "es" ? "Explore nuestras herramientas" : "Conheça nossas ferramentas"}
-              buttonLabel={language === "en" ? "Open tools" : language === "es" ? "Abrir herramientas" : "Abrir ferramentas"}
+              title={
+                language === "en"
+                  ? "Explore our tools"
+                  : language === "es"
+                    ? "Explore nuestras herramientas"
+                    : "Conheça nossas ferramentas"
+              }
+              buttonLabel={
+                language === "en"
+                  ? "Open tools"
+                  : language === "es"
+                    ? "Abrir herramientas"
+                    : "Abrir ferramentas"
+              }
               href="/"
             />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

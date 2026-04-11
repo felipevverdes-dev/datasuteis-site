@@ -356,7 +356,7 @@ export default function Utilities() {
             : "Usar a calculadora"
       }
     >
-      <section id="ferramenta" className="section-anchor page-stack">
+      <div id="ferramenta" className="section-anchor page-stack">
         <div className="section-card">
           <div className="flex items-center gap-2 text-sm font-semibold text-primary">
             <Sparkles className="h-4 w-4" />
@@ -375,7 +375,7 @@ export default function Utilities() {
                         ? Clock3
                         : card.href === "/utilitarios/horario-mercados/"
                           ? Landmark
-                        : CloudSun;
+                          : CloudSun;
 
               return (
                 <Link
@@ -398,7 +398,7 @@ export default function Utilities() {
             })}
           </div>
         </div>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">

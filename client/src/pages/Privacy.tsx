@@ -41,7 +41,7 @@ export default function Privacy() {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      <main id="main-content" role="main" className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* Hero */}
         <section className="hero bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto px-4">
@@ -61,7 +61,7 @@ export default function Privacy() {
         </section>
 
         {/* Content */}
-        <section className="section-md">
+        <div className="section-md">
           <div className="container mx-auto px-4 max-w-5xl page-stack">
             <div className="prose prose-sm dark:prose-invert max-w-none">
               <div className="card-base p-8 space-y-6">
@@ -107,12 +107,24 @@ export default function Privacy() {
 
             <CtaFinalBlock
               language={language}
-              title={language === "en" ? "Explore our tools" : language === "es" ? "Explore nuestras herramientas" : "Conheça nossas ferramentas"}
-              buttonLabel={language === "en" ? "Open tools" : language === "es" ? "Abrir herramientas" : "Abrir ferramentas"}
+              title={
+                language === "en"
+                  ? "Explore our tools"
+                  : language === "es"
+                    ? "Explore nuestras herramientas"
+                    : "Conheça nossas ferramentas"
+              }
+              buttonLabel={
+                language === "en"
+                  ? "Open tools"
+                  : language === "es"
+                    ? "Abrir herramientas"
+                    : "Abrir ferramentas"
+              }
               href="/"
             />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

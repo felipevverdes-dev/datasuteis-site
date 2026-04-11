@@ -252,7 +252,7 @@ export default function WorldClock() {
         ctaTitle={copy.ctaTitle}
         ctaButtonLabel={copy.ctaButton}
       >
-        <section id="ferramenta" className="section-anchor">
+        <div id="ferramenta" className="section-anchor">
           <div className="section-card world-clock-section-card">
             <div className="flex flex-wrap items-center justify-between gap-2.5">
               <div className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
@@ -317,7 +317,10 @@ export default function WorldClock() {
                 </div>
               </div>
 
-              <div className="continent-watermark" data-continent={activeContinent}>
+              <div
+                className="continent-watermark"
+                data-continent={activeContinent}
+              >
                 {filteredCountries.length ? (
                   <div
                     id="world-clock-country-grid"
@@ -356,11 +359,13 @@ export default function WorldClock() {
               </div>
             </div>
           </div>
-        </section>
+        </div>
 
         <section id="explicacao" className="section-anchor">
           <div className="section-card world-clock-section-card">
-            <h2 className="text-2xl font-bold">{copy.content.timezonesTitle}</h2>
+            <h2 className="text-2xl font-bold">
+              {copy.content.timezonesTitle}
+            </h2>
             <div className="mt-4 page-grid gap-4">
               {copy.content.timezonesItems.map(item => (
                 <article

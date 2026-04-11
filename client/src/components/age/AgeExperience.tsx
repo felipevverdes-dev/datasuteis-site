@@ -294,11 +294,13 @@ function getSummaryGuide(language: SupportedLanguage) {
       items: [
         {
           label: "Exact age",
-          description: "Shows the difference in years, months and days up to the reference date.",
+          description:
+            "Shows the difference in years, months and days up to the reference date.",
         },
         {
           label: "Birth date",
-          description: "Keeps the original date visible so you can confirm the base used in the calculation.",
+          description:
+            "Keeps the original date visible so you can confirm the base used in the calculation.",
         },
         {
           label: "Birth weekday",
@@ -306,7 +308,8 @@ function getSummaryGuide(language: SupportedLanguage) {
         },
         {
           label: "Days alive",
-          description: "Counts the total calendar days from birth to the reference date.",
+          description:
+            "Counts the total calendar days from birth to the reference date.",
         },
       ],
     };
@@ -318,11 +321,13 @@ function getSummaryGuide(language: SupportedLanguage) {
       items: [
         {
           label: "Edad exacta",
-          description: "Muestra la diferencia en años, meses y días hasta la fecha de referencia.",
+          description:
+            "Muestra la diferencia en años, meses y días hasta la fecha de referencia.",
         },
         {
           label: "Fecha de nacimiento",
-          description: "Mantiene visible la fecha base usada en el cálculo para una lectura más clara.",
+          description:
+            "Mantiene visible la fecha base usada en el cálculo para una lectura más clara.",
         },
         {
           label: "Día de nacimiento",
@@ -330,7 +335,8 @@ function getSummaryGuide(language: SupportedLanguage) {
         },
         {
           label: "Días de vida",
-          description: "Cuenta el total de días corridos entre el nacimiento y la fecha de referencia.",
+          description:
+            "Cuenta el total de días corridos entre el nacimiento y la fecha de referencia.",
         },
       ],
     };
@@ -341,19 +347,23 @@ function getSummaryGuide(language: SupportedLanguage) {
     items: [
       {
         label: "Idade exata",
-        description: "Mostra a diferença em anos, meses e dias até a data de referência.",
+        description:
+          "Mostra a diferença em anos, meses e dias até a data de referência.",
       },
       {
         label: "Data de nascimento",
-        description: "Mantém visível a data base usada no cálculo para facilitar a conferência.",
+        description:
+          "Mantém visível a data base usada no cálculo para facilitar a conferência.",
       },
       {
         label: "Dia em que nasceu",
-        description: "Indica em que dia da semana a sua data de nascimento caiu.",
+        description:
+          "Indica em que dia da semana a sua data de nascimento caiu.",
       },
       {
         label: "Dias de vida",
-        description: "Conta o total de dias corridos entre o nascimento e a data de referência.",
+        description:
+          "Conta o total de dias corridos entre o nascimento e a data de referência.",
       },
     ],
   };
@@ -386,11 +396,11 @@ export default function AgeExperience({ variant, path }: AgeExperienceProps) {
   const reference = parseIsoDate(state.reference);
   const hasValidDates = Boolean(
     state.birth &&
-      state.reference &&
-      birth &&
-      reference &&
-      birthValid &&
-      referenceValid
+    state.reference &&
+    birth &&
+    reference &&
+    birthValid &&
+    referenceValid
   );
   const hasInvalidOrder = Boolean(
     hasValidDates && birth && reference && birth > reference
@@ -495,10 +505,10 @@ export default function AgeExperience({ variant, path }: AgeExperienceProps) {
             : "Como saber quando faço 10.000 dias de vida?",
       answer:
         language === "en"
-          ? "Enter your birth date and check the \"Days alive\" result. If you have not yet reached 10,000 days, you can adjust the reference date forward until the counter shows exactly 10,000. The same approach works for other milestones like 15,000 or 20,000 days. As a quick reference, 10,000 days is approximately 27 years and 4 months."
+          ? 'Enter your birth date and check the "Days alive" result. If you have not yet reached 10,000 days, you can adjust the reference date forward until the counter shows exactly 10,000. The same approach works for other milestones like 15,000 or 20,000 days. As a quick reference, 10,000 days is approximately 27 years and 4 months.'
           : language === "es"
-            ? "Ingrese su fecha de nacimiento y consulte el resultado de \"Días de vida\". Si aún no alcanzó los 10.000 días, puede ajustar la fecha de referencia hacia adelante hasta que el contador muestre exactamente 10.000. El mismo enfoque funciona para otros hitos como 15.000 o 20.000 días. Como referencia rápida, 10.000 días equivalen a aproximadamente 27 años y 4 meses."
-            : "Insira sua data de nascimento e consulte o resultado de \"Dias de vida\". Se você ainda não atingiu 10.000 dias, pode ajustar a data de referência para frente até que o contador mostre exatamente 10.000. A mesma abordagem funciona para outros marcos como 15.000 ou 20.000 dias. Como referência rápida, 10.000 dias equivalem a aproximadamente 27 anos e 4 meses.",
+            ? 'Ingrese su fecha de nacimiento y consulte el resultado de "Días de vida". Si aún no alcanzó los 10.000 días, puede ajustar la fecha de referencia hacia adelante hasta que el contador muestre exactamente 10.000. El mismo enfoque funciona para otros hitos como 15.000 o 20.000 días. Como referencia rápida, 10.000 días equivalen a aproximadamente 27 años y 4 meses.'
+            : 'Insira sua data de nascimento e consulte o resultado de "Dias de vida". Se você ainda não atingiu 10.000 dias, pode ajustar a data de referência para frente até que o contador mostre exatamente 10.000. A mesma abordagem funciona para outros marcos como 15.000 ou 20.000 dias. Como referência rápida, 10.000 dias equivalem a aproximadamente 27 anos e 4 meses.',
     },
     {
       question:
@@ -575,7 +585,7 @@ export default function AgeExperience({ variant, path }: AgeExperienceProps) {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
     >
-      <section id="ferramenta" className="section-anchor page-stack">
+      <div id="ferramenta" className="section-anchor page-stack">
         <div className="section-card" data-floating-focus>
           <div className="grid gap-4 md:grid-cols-2">
             <LocalizedDateInput
@@ -713,7 +723,7 @@ export default function AgeExperience({ variant, path }: AgeExperienceProps) {
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">
@@ -767,10 +777,10 @@ export default function AgeExperience({ variant, path }: AgeExperienceProps) {
               <div className="mt-3 space-y-3">
                 <p className="text-sm leading-7 text-muted-foreground">
                   {language === "en"
-                    ? "When an age is displayed as \"30 years, 4 months and 12 days\", each unit has a specific meaning. The years represent complete cycles from one birthday to the next. The months count additional complete calendar months after the last full year. The days are whatever remains after those full months. Because calendar months range from 28 to 31 days, the same number of \"leftover days\" can represent slightly different spans depending on which months are involved."
+                    ? 'When an age is displayed as "30 years, 4 months and 12 days", each unit has a specific meaning. The years represent complete cycles from one birthday to the next. The months count additional complete calendar months after the last full year. The days are whatever remains after those full months. Because calendar months range from 28 to 31 days, the same number of "leftover days" can represent slightly different spans depending on which months are involved.'
                     : language === "es"
-                      ? "Cuando una edad se muestra como \"30 años, 4 meses y 12 días\", cada unidad tiene un significado específico. Los años representan ciclos completos de un cumpleaños al siguiente. Los meses cuentan meses calendario completos adicionales después del último año completo. Los días son lo que queda después de esos meses completos. Como los meses del calendario van de 28 a 31 días, la misma cantidad de \"días restantes\" puede representar períodos ligeramente diferentes según los meses involucrados."
-                      : "Quando uma idade é exibida como \"30 anos, 4 meses e 12 dias\", cada unidade tem um significado específico. Os anos representam ciclos completos de um aniversário ao seguinte. Os meses contam meses-calendário completos adicionais após o último ano completo. Os dias são o que sobra depois desses meses completos. Como os meses do calendário variam de 28 a 31 dias, a mesma quantidade de \"dias restantes\" pode representar períodos ligeiramente diferentes dependendo dos meses envolvidos."}
+                      ? 'Cuando una edad se muestra como "30 años, 4 meses y 12 días", cada unidad tiene un significado específico. Los años representan ciclos completos de un cumpleaños al siguiente. Los meses cuentan meses calendario completos adicionales después del último año completo. Los días son lo que queda después de esos meses completos. Como los meses del calendario van de 28 a 31 días, la misma cantidad de "días restantes" puede representar períodos ligeramente diferentes según los meses involucrados.'
+                      : 'Quando uma idade é exibida como "30 anos, 4 meses e 12 dias", cada unidade tem um significado específico. Os anos representam ciclos completos de um aniversário ao seguinte. Os meses contam meses-calendário completos adicionais após o último ano completo. Os dias são o que sobra depois desses meses completos. Como os meses do calendário variam de 28 a 31 dias, a mesma quantidade de "dias restantes" pode representar períodos ligeiramente diferentes dependendo dos meses envolvidos.'}
                 </p>
                 <p className="text-sm leading-7 text-muted-foreground">
                   {language === "en"
@@ -920,10 +930,10 @@ export default function AgeExperience({ variant, path }: AgeExperienceProps) {
               <div className="mt-3 space-y-3">
                 <p className="text-sm leading-7 text-muted-foreground">
                   {language === "en"
-                    ? "\"What day of the week was I born?\" is one of the most common curiosity-driven questions people search online. While birth certificates often list the date, they rarely mention the weekday. Our calculator fills that gap instantly. You can also check the birth weekday for family members and friends, turning it into a fun conversation topic at gatherings or even a quick icebreaker at social events."
+                    ? '"What day of the week was I born?" is one of the most common curiosity-driven questions people search online. While birth certificates often list the date, they rarely mention the weekday. Our calculator fills that gap instantly. You can also check the birth weekday for family members and friends, turning it into a fun conversation topic at gatherings or even a quick icebreaker at social events.'
                     : language === "es"
-                      ? "\"¿En qué día de la semana nací?\" es una de las preguntas de curiosidad más comunes que la gente busca en internet. Aunque los certificados de nacimiento suelen indicar la fecha, rara vez mencionan el día de la semana. Nuestra calculadora llena ese vacío al instante. También puede verificar el día de nacimiento de familiares y amigos, convirtiéndolo en un tema de conversación divertido en reuniones o incluso una forma rápida de romper el hielo en eventos sociales."
-                      : "\"Em que dia da semana eu nasci?\" é uma das perguntas de curiosidade mais comuns que as pessoas pesquisam na internet. Embora certidões de nascimento costumem informar a data, raramente mencionam o dia da semana. Nossa calculadora preenche essa lacuna instantaneamente. Você também pode verificar o dia de nascimento de familiares e amigos, transformando isso em um tema divertido de conversa em reuniões ou até em uma forma rápida de quebrar o gelo em eventos sociais."}
+                      ? '"¿En qué día de la semana nací?" es una de las preguntas de curiosidad más comunes que la gente busca en internet. Aunque los certificados de nacimiento suelen indicar la fecha, rara vez mencionan el día de la semana. Nuestra calculadora llena ese vacío al instante. También puede verificar el día de nacimiento de familiares y amigos, convirtiéndolo en un tema de conversación divertido en reuniones o incluso una forma rápida de romper el hielo en eventos sociales.'
+                      : '"Em que dia da semana eu nasci?" é uma das perguntas de curiosidade mais comuns que as pessoas pesquisam na internet. Embora certidões de nascimento costumem informar a data, raramente mencionam o dia da semana. Nossa calculadora preenche essa lacuna instantaneamente. Você também pode verificar o dia de nascimento de familiares e amigos, transformando isso em um tema divertido de conversa em reuniões ou até em uma forma rápida de quebrar o gelo em eventos sociais.'}
                 </p>
               </div>
             </div>

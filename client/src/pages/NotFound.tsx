@@ -31,7 +31,9 @@ export default function NotFound({ seoPath }: NotFoundProps) {
     schema: buildBreadcrumbSchema(
       [
         { label: navigationLabels.home, href: "/" },
-        ...(effectiveSeoPath === "/404/" ? [{ label: "404", href: "/404/" }] : [{ label: "404" }]),
+        ...(effectiveSeoPath === "/404/"
+          ? [{ label: "404", href: "/404/" }]
+          : [{ label: "404" }]),
       ],
       effectiveSeoPath
     ),
@@ -43,7 +45,6 @@ export default function NotFound({ seoPath }: NotFoundProps) {
 
       <main
         id="main-content"
-        role="main"
         className="flex flex-1 items-center justify-center"
       >
         <div className="container mx-auto px-4 py-20 text-center">
@@ -55,7 +56,9 @@ export default function NotFound({ seoPath }: NotFoundProps) {
               backAriaLabel={navigationLabels.backAria}
             />
           </div>
-          <h1 className="mb-4 text-6xl font-bold text-primary md:text-8xl">404</h1>
+          <h1 className="mb-4 text-6xl font-bold text-primary md:text-8xl">
+            404
+          </h1>
           <h2 className="mb-4 text-2xl font-bold md:text-4xl">
             {t("pages.notFound.title")}
           </h2>
@@ -70,8 +73,20 @@ export default function NotFound({ seoPath }: NotFoundProps) {
         <div className="container mx-auto px-4 pb-12">
           <CtaFinalBlock
             language={language}
-            title={language === "en" ? "Find what you need" : language === "es" ? "Encuentre lo que necesita" : "Encontre o que você precisa"}
-            buttonLabel={language === "en" ? "Go to calculator" : language === "es" ? "Ir a la calculadora" : "Ir para a calculadora"}
+            title={
+              language === "en"
+                ? "Find what you need"
+                : language === "es"
+                  ? "Encuentre lo que necesita"
+                  : "Encontre o que você precisa"
+            }
+            buttonLabel={
+              language === "en"
+                ? "Go to calculator"
+                : language === "es"
+                  ? "Ir a la calculadora"
+                  : "Ir para a calculadora"
+            }
           />
         </div>
       </main>

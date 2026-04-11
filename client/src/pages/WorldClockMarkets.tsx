@@ -183,7 +183,7 @@ export default function WorldClockMarkets() {
       ctaButtonLabel={pageCopy.ctaButton}
       ctaHref="/utilitarios/horario-mundial/"
     >
-      <section id="ferramenta" className="section-anchor">
+      <div id="ferramenta" className="section-anchor">
         <div className="section-card world-clock-section-card">
           <div className="flex flex-wrap items-center justify-between gap-2.5">
             <div className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
@@ -274,13 +274,11 @@ export default function WorldClockMarkets() {
             ) : null}
           </div>
         </div>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card world-clock-section-card">
-          <h2 className="text-2xl font-bold">
-            {pageCopy.content.introTitle}
-          </h2>
+          <h2 className="text-2xl font-bold">{pageCopy.content.introTitle}</h2>
           <div className="mt-4 page-grid gap-4">
             {pageCopy.content.introItems.map(item => (
               <article

@@ -43,7 +43,7 @@ const HomeMomentSummary = lazy(
 
 function HomeMomentSummaryFallback() {
   return (
-    <section
+    <div
       id="momento"
       className="section-anchor min-h-[24rem] rounded-3xl border border-border bg-card p-6 shadow-sm md:min-h-[22rem]"
       aria-busy="true"
@@ -57,7 +57,7 @@ function HomeMomentSummaryFallback() {
         <div className="h-5 w-1/3 animate-pulse rounded-full bg-secondary" />
         <div className="h-8 w-24 animate-pulse rounded-full bg-secondary" />
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -204,8 +204,7 @@ const COPY: Record<
           "Na área de idade, a ferramenta mostra anos, meses e dias com base na data informada.",
       },
       {
-        question:
-          "Posso usar a ferramenta para planejar prazos?",
+        question: "Posso usar a ferramenta para planejar prazos?",
         answer:
           "Sim. O site ajuda a planejar prazos e rotinas, mas regras legais específicas devem ser validadas no seu contexto.",
       },
@@ -333,8 +332,7 @@ const COPY: Record<
       "Calcule días hábiles en segundos (con feriados automáticos) | Datas Úteis",
     seoDescription:
       "Calculadora de días hábiles rápida y precisa con feriados nacionales, estatales y municipales. Sin errores. Ideal para empresas, plazos y planificación.",
-    heroTitle:
-      "Calcule días hábiles en segundos\n(con feriados automáticos)",
+    heroTitle: "Calcule días hábiles en segundos\n(con feriados automáticos)",
     heroSubtitle:
       "Sin errores. Rápido. Ideal para empresas, plazos y planificación.",
     heroCta: "Calcular ahora",
@@ -400,8 +398,7 @@ const COPY: Record<
           "Calculadora de días hábiles, calendario con feriados, simulador de escalas de trabajo, calculadora de edad, juegos y utilidades de apoyo.",
       },
       {
-        question:
-          "¿La calculadora de días hábiles considera feriados?",
+        question: "¿La calculadora de días hábiles considera feriados?",
         answer:
           "Sí. La lectura estándar considera feriados nacionales y permite filtros por estado y municipio.",
       },
@@ -412,12 +409,10 @@ const COPY: Record<
       },
       {
         question: "¿Qué escalas puedo simular?",
-        answer:
-          "Puede simular 5x2, 6x1, 12x36 y otras variaciones de jornada.",
+        answer: "Puede simular 5x2, 6x1, 12x36 y otras variaciones de jornada.",
       },
       {
-        question:
-          "¿El sitio muestra feriados estatales y municipales?",
+        question: "¿El sitio muestra feriados estatales y municipales?",
         answer:
           "En la calculadora, puede seleccionar estado y municipio para incluir feriados locales en el cálculo.",
       },
@@ -428,12 +423,10 @@ const COPY: Record<
       },
       {
         question: "¿Cómo calcular mi edad exacta?",
-        answer:
-          "En el área de edad, el resultado muestra años, meses y días.",
+        answer: "En el área de edad, el resultado muestra años, meses y días.",
       },
       {
-        question:
-          "¿Puedo usar la herramienta para planear plazos?",
+        question: "¿Puedo usar la herramienta para planear plazos?",
         answer:
           "Sí. El sitio ayuda a planear plazos y rutinas, pero las reglas legales deben validarse en su contexto.",
       },
@@ -476,7 +469,7 @@ export default function Home() {
   useEffect(() => {
     let cancelled = false;
     void fetchBusinessDayStates()
-      .then((items) => {
+      .then(items => {
         if (!cancelled) setStates(items);
       })
       .catch(() => {
@@ -709,7 +702,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main id="main-content" role="main" className="relative">
+      <main id="main-content" className="relative">
         {/* ═══════════════ HERO ═══════════════ */}
         <section className="hero-conversion border-b border-border">
           <div className="container mx-auto">
@@ -749,15 +742,15 @@ export default function Home() {
         >
           <div className="section-card calculator-card">
             <h2 className="flex items-center gap-3 text-2xl font-bold">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <Calculator className="h-5 w-5" />
-              </div>
+              </span>
               {copy.calcTitle}
             </h2>
 
             <form
               className="mt-6"
-              onSubmit={(e) => {
+              onSubmit={e => {
                 e.preventDefault();
                 void handleCalculate();
               }}
@@ -770,7 +763,7 @@ export default function Home() {
                   <input
                     type="date"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    onChange={e => setStartDate(e.target.value)}
                     className="input-base input-touch w-full"
                     id="home-start-date"
                   />
@@ -783,7 +776,7 @@ export default function Home() {
                   <input
                     type="date"
                     value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
+                    onChange={e => setEndDate(e.target.value)}
                     className="input-base input-touch w-full"
                     id="home-end-date"
                   />
@@ -795,17 +788,15 @@ export default function Home() {
                   </span>
                   <select
                     value={stateCode}
-                    onChange={(e) => setStateCode(e.target.value)}
+                    onChange={e => setStateCode(e.target.value)}
                     className="input-base input-touch w-full"
                     disabled={statesLoading}
                     id="home-state-select"
                   >
                     <option value="">
-                      {statesLoading
-                        ? copy.stateLoading
-                        : copy.stateSelect}
+                      {statesLoading ? copy.stateLoading : copy.stateSelect}
                     </option>
-                    {states.map((item) => (
+                    {states.map(item => (
                       <option key={item.code} value={item.code}>
                         {item.code} - {item.name}
                       </option>
@@ -897,16 +888,13 @@ export default function Home() {
         <FloatingSectionNav items={homeNavItems} topLabel={topLabel} />
 
         {/* ═══════════════ MAIN CONTENT ═══════════════ */}
-        <section className="section-md">
+        <div className="section-md">
           <div className="container mx-auto page-stack">
             {/* ── Primary tools ── */}
-            <section
-              id="principais"
-              className="section-anchor section-card"
-            >
+            <section id="principais" className="section-anchor section-card">
               <h2 className="text-3xl font-bold">{copy.primaryTitle}</h2>
               <div className="mt-6 page-grid">
-                {primaryCards.map((card) => {
+                {primaryCards.map(card => {
                   const Icon = card.icon;
                   return (
                     <Link
@@ -917,9 +905,7 @@ export default function Home() {
                       <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                         <Icon className="h-5 w-5" />
                       </div>
-                      <h3 className="mt-5 text-2xl font-bold">
-                        {card.title}
-                      </h3>
+                      <h3 className="mt-5 text-2xl font-bold">{card.title}</h3>
                       <p className="mt-3 text-sm leading-6 text-muted-foreground">
                         {card.description}
                       </p>
@@ -939,19 +925,16 @@ export default function Home() {
             </Suspense>
 
             {/* ── Support cards ── */}
-            <section
-              id="adicionais"
-              className="section-anchor section-card"
-            >
-              <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+            <section id="adicionais" className="section-anchor section-card">
+              <h2 className="flex items-center gap-2 text-sm font-semibold text-primary">
                 <Sparkles className="h-4 w-4" />
                 {copy.supportTitle}
-              </div>
+              </h2>
               <p className="mt-3 max-w-3xl text-muted-foreground">
                 {copy.supportDescription}
               </p>
               <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {supportCards.map((card) => {
+                {supportCards.map(card => {
                   const Icon = card.icon;
                   return (
                     <Link
@@ -962,9 +945,7 @@ export default function Home() {
                       <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                         <Icon className="h-4 w-4" />
                       </div>
-                      <h3 className="mt-4 text-xl font-bold">
-                        {card.title}
-                      </h3>
+                      <h3 className="mt-4 text-xl font-bold">{card.title}</h3>
                       <p className="mt-3 text-sm leading-6 text-muted-foreground">
                         {card.description}
                       </p>
@@ -983,13 +964,8 @@ export default function Home() {
             />
 
             {/* ── SEO content block ── */}
-            <section
-              id="conteudo-seo"
-              className="section-anchor section-card"
-            >
-              <h2 className="text-3xl font-bold">
-                {copy.seoContentTitle}
-              </h2>
+            <section id="conteudo-seo" className="section-anchor section-card">
+              <h2 className="text-3xl font-bold">{copy.seoContentTitle}</h2>
               <div className="mt-6 space-y-4 text-base leading-7 text-muted-foreground">
                 {copy.seoContentBody.map((paragraph, i) => (
                   <p key={i}>{paragraph}</p>
@@ -1018,7 +994,10 @@ export default function Home() {
                   {copy.heroCta}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link href="/blog/dias-uteis-o-que-sao/" className="btn-outline">
+                <Link
+                  href="/blog/dias-uteis-o-que-sao/"
+                  className="btn-outline"
+                >
                   {language === "en"
                     ? "Business days guide"
                     : language === "es"
@@ -1029,13 +1008,10 @@ export default function Home() {
             </section>
 
             {/* ── About ── */}
-            <section
-              id="sobre"
-              className="section-anchor section-card"
-            >
+            <section id="sobre" className="section-anchor section-card">
               <h2 className="text-3xl font-bold">{copy.aboutTitle}</h2>
               <div className="mt-6 grid gap-5 md:grid-cols-3">
-                {copy.aboutItems.map((item) => (
+                {copy.aboutItems.map(item => (
                   <article
                     key={item.title}
                     className="rounded-3xl bg-secondary p-5"
@@ -1050,13 +1026,10 @@ export default function Home() {
             </section>
 
             {/* ── Blog teasers ── */}
-            <section
-              id="blog"
-              className="section-anchor section-card"
-            >
+            <section id="blog" className="section-anchor section-card">
               <h2 className="text-3xl font-bold">{copy.blogTitle}</h2>
               <div className="mt-5 grid gap-4 md:grid-cols-3">
-                {posts.map((post) => (
+                {posts.map(post => (
                   <Link
                     key={post.slug}
                     href={`/blog/${post.slug}/`}
@@ -1067,9 +1040,7 @@ export default function Home() {
                       <span>•</span>
                       <span>{post.readTime}</span>
                     </div>
-                    <h3 className="mt-3 text-xl font-bold">
-                      {post.title}
-                    </h3>
+                    <h3 className="mt-3 text-xl font-bold">{post.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">
                       {post.excerpt}
                     </p>
@@ -1087,20 +1058,15 @@ export default function Home() {
             />
 
             {/* ── FAQ ── */}
-            <section
-              id="faq"
-              className="section-anchor section-card"
-            >
+            <section id="faq" className="section-anchor section-card">
               <h2 className="text-3xl font-bold">{copy.faqTitle}</h2>
               <div className="mt-5 space-y-3">
-                {copy.faqItems.map((item) => (
+                {copy.faqItems.map(item => (
                   <details
                     key={item.question}
                     className="rounded-2xl bg-secondary px-5 py-4"
                   >
-                    <summary className="font-semibold">
-                      {item.question}
-                    </summary>
+                    <summary className="font-semibold">{item.question}</summary>
                     <p className="mt-3 text-sm leading-6 text-muted-foreground">
                       {item.answer}
                     </p>
@@ -1124,7 +1090,7 @@ export default function Home() {
               </div>
             </section>
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

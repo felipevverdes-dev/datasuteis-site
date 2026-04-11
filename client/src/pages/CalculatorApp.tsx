@@ -407,7 +407,7 @@ export default function CalculatorApp() {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
     >
-      <section id="ferramenta" className="section-anchor">
+      <div id="ferramenta" className="section-anchor">
         <div className="section-card">
           <div className="mx-auto max-w-4xl">
             <div className="flex flex-wrap justify-center gap-2">
@@ -989,7 +989,7 @@ export default function CalculatorApp() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">

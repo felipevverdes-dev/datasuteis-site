@@ -14,7 +14,11 @@ import {
   fetchHolidayMonthSnapshot,
   type HolidayCalculationWarning,
 } from "@/lib/holiday-service";
-import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  getNavigationLabels,
+} from "@/lib/navigation";
 import { useI18n } from "@/contexts/LanguageContext";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import {
@@ -464,7 +468,7 @@ export default function Schedule() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main id="main-content" role="main">
+      <main id="main-content">
         <section className="hero border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto max-w-4xl text-center">
             <h1 className="hero-title text-primary">{t("scale_title")}</h1>
@@ -474,9 +478,9 @@ export default function Schedule() {
 
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
-        <section className="section-md">
+        <div className="section-md">
           <div className="container mx-auto page-stack">
-            <section id="ferramenta" className="section-anchor">
+            <div id="ferramenta" className="section-anchor">
               <PageIntroNavigation
                 breadcrumbs={breadcrumbs}
                 breadcrumbAriaLabel={navigationLabels.breadcrumb}
@@ -815,7 +819,11 @@ export default function Schedule() {
                     </div>
                   </div>
 
-                  <AdSlot id="ads-schedule-content" minHeight={100} format="auto" />
+                  <AdSlot
+                    id="ads-schedule-content"
+                    minHeight={100}
+                    format="auto"
+                  />
                 </aside>
 
                 <div className="space-y-6">
@@ -1303,7 +1311,7 @@ export default function Schedule() {
                   )}
                 </div>
               </div>
-            </section>
+            </div>
 
             <section id="explicacao" className="section-anchor">
               <div className="card-base p-6">
@@ -1633,15 +1641,32 @@ export default function Schedule() {
 
             <CoreNavigationBlock />
 
-            <AdSlot id="ads-schedule-bottom" className="my-4" minHeight={100} format="auto" />
+            <AdSlot
+              id="ads-schedule-bottom"
+              className="my-4"
+              minHeight={100}
+              format="auto"
+            />
 
             <CtaFinalBlock
               language={language}
-              title={language === "en" ? "Need to calculate business days?" : language === "es" ? "¿Necesita calcular días hábiles?" : "Precisa calcular dias úteis?"}
-              buttonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+              title={
+                language === "en"
+                  ? "Need to calculate business days?"
+                  : language === "es"
+                    ? "¿Necesita calcular días hábiles?"
+                    : "Precisa calcular dias úteis?"
+              }
+              buttonLabel={
+                language === "en"
+                  ? "Open calculator"
+                  : language === "es"
+                    ? "Abrir calculadora"
+                    : "Abrir calculadora"
+              }
             />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

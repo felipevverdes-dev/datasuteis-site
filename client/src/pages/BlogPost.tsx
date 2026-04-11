@@ -78,8 +78,8 @@ export default function BlogPost({ params }: BlogPostPageProps) {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main id="main-content" role="main">
-        <section className="section-md">
+      <main id="main-content">
+        <div className="section-md">
           <div className="container mx-auto max-w-5xl page-stack">
             <PageIntroNavigation
               breadcrumbs={breadcrumbs}
@@ -111,7 +111,11 @@ export default function BlogPost({ params }: BlogPostPageProps) {
                   />
                 </section>
 
-                <AdSlot id="ads-blogpost-content" minHeight={100} format="auto" />
+                <AdSlot
+                  id="ads-blogpost-content"
+                  minHeight={100}
+                  format="auto"
+                />
               </div>
 
               <aside className="space-y-6">
@@ -165,15 +169,32 @@ export default function BlogPost({ params }: BlogPostPageProps) {
 
             <CoreNavigationBlock />
 
-            <AdSlot id="ads-blogpost-bottom" className="my-4" minHeight={100} format="auto" />
+            <AdSlot
+              id="ads-blogpost-bottom"
+              className="my-4"
+              minHeight={100}
+              format="auto"
+            />
 
             <CtaFinalBlock
               language={language}
-              title={language === "en" ? "Calculate business days now" : language === "es" ? "Calcule días hábiles ahora" : "Calcule dias úteis agora"}
-              buttonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+              title={
+                language === "en"
+                  ? "Calculate business days now"
+                  : language === "es"
+                    ? "Calcule días hábiles ahora"
+                    : "Calcule dias úteis agora"
+              }
+              buttonLabel={
+                language === "en"
+                  ? "Open calculator"
+                  : language === "es"
+                    ? "Abrir calculadora"
+                    : "Abrir calculadora"
+              }
             />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

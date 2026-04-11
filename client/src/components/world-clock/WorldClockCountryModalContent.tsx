@@ -1,7 +1,5 @@
 import type { SupportedLanguage } from "@/lib/site";
-import {
-  getWorldClockPageCopy,
-} from "@/lib/world-clock-copy";
+import { getWorldClockPageCopy } from "@/lib/world-clock-copy";
 import type { CountryProfileContent } from "@/lib/world-clock-country-details";
 
 interface WorldClockCountryModalContentProps {
@@ -57,7 +55,7 @@ export default function WorldClockCountryModalContent({
         </p>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <article className="rounded-2xl bg-secondary p-5">
           <h3 className="text-lg font-bold">{copy.quickFacts}</h3>
           <dl className="mt-4 space-y-3 text-sm leading-6">
@@ -79,7 +77,9 @@ export default function WorldClockCountryModalContent({
               <dt className="font-semibold text-foreground">
                 {copy.population}
               </dt>
-              <dd className="text-muted-foreground">{detail.quickFacts.population}</dd>
+              <dd className="text-muted-foreground">
+                {detail.quickFacts.population}
+              </dd>
             </div>
             <div>
               <dt className="font-semibold text-foreground">
@@ -93,7 +93,9 @@ export default function WorldClockCountryModalContent({
               <dt className="font-semibold text-foreground">
                 {copy.capitalAltitude}
               </dt>
-              <dd className="text-muted-foreground">{detail.quickFacts.capitalAltitude}</dd>
+              <dd className="text-muted-foreground">
+                {detail.quickFacts.capitalAltitude}
+              </dd>
             </div>
           </dl>
         </article>
@@ -135,9 +137,9 @@ export default function WorldClockCountryModalContent({
             </div>
           </dl>
         </article>
-      </section>
+      </div>
 
-      <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <article className="rounded-2xl bg-secondary p-5">
           <h3 className="text-lg font-bold">{copy.keyFacts}</h3>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-muted-foreground">
@@ -159,7 +161,7 @@ export default function WorldClockCountryModalContent({
             ))}
           </ul>
         </article>
-      </section>
+      </div>
     </div>
   );
 }

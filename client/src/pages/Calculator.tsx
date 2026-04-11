@@ -16,7 +16,11 @@ import {
   type BusinessDayStateOption,
 } from "@/lib/business-day-service";
 import { formatIsoDate, parseIsoDate } from "@/lib/date-utils";
-import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  getNavigationLabels,
+} from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 
@@ -140,9 +144,9 @@ export default function Calculator() {
         "¿El sábado cuenta como día hábil?"
       ),
       answer: t(
-        "Depende do contexto. Na maioria das convenções trabalhistas e bancárias, sábado não é dia útil. Porém, em alguns setores do comércio e em certas convenções coletivas, o sábado pode ser considerado dia útil. Esta calculadora permite marcar a opção \"Contar sábado como dia útil\" para atender ambos os cenários.",
-        "It depends on the context. In most labor and banking conventions, Saturday is not a business day. However, in some retail sectors and certain collective agreements, Saturday may be considered a working day. This calculator lets you check the \"Count Saturday as business day\" option to handle both scenarios.",
-        "Depende del contexto. En la mayoría de las convenciones laborales y bancarias, el sábado no es día hábil. Sin embargo, en algunos sectores del comercio y en ciertos convenios colectivos, el sábado puede considerarse día hábil. Esta calculadora permite marcar la opción \"Contar sábado como día hábil\" para atender ambos escenarios."
+        'Depende do contexto. Na maioria das convenções trabalhistas e bancárias, sábado não é dia útil. Porém, em alguns setores do comércio e em certas convenções coletivas, o sábado pode ser considerado dia útil. Esta calculadora permite marcar a opção "Contar sábado como dia útil" para atender ambos os cenários.',
+        'It depends on the context. In most labor and banking conventions, Saturday is not a business day. However, in some retail sectors and certain collective agreements, Saturday may be considered a working day. This calculator lets you check the "Count Saturday as business day" option to handle both scenarios.',
+        'Depende del contexto. En la mayoría de las convenciones laborales y bancarias, el sábado no es día hábil. Sin embargo, en algunos sectores del comercio y en ciertos convenios colectivos, el sábado puede considerarse día hábil. Esta calculadora permite marcar la opción "Contar sábado como día hábil" para atender ambos escenarios.'
       ),
     },
     {
@@ -164,9 +168,9 @@ export default function Calculator() {
         "¿Cómo contar plazos judiciales en días hábiles?"
       ),
       answer: t(
-        "Desde 2016, o Código de Processo Civil brasileiro (art. 219) determina que os prazos processuais são contados em dias úteis, excluindo o dia do início e incluindo o dia do vencimento. Use o modo \"Somar dias úteis\" informando a data da intimação como data inicial e a quantidade de dias do prazo. Lembre-se de que o prazo só começa a correr no primeiro dia útil seguinte à publicação.",
-        "Since 2016, the Brazilian Code of Civil Procedure (art. 219) determines that procedural deadlines are counted in business days, excluding the start day and including the due date. Use the \"Add business days\" mode with the notification date as the start date and the number of deadline days. Remember that the deadline only starts running on the first business day after publication.",
-        "Desde 2016, el Código de Proceso Civil brasileño (art. 219) determina que los plazos procesales se cuentan en días hábiles, excluyendo el día de inicio e incluyendo el día de vencimiento. Use el modo \"Sumar días hábiles\" con la fecha de notificación como fecha inicial y la cantidad de días del plazo. Recuerde que el plazo solo comienza a correr en el primer día hábil siguiente a la publicación."
+        'Desde 2016, o Código de Processo Civil brasileiro (art. 219) determina que os prazos processuais são contados em dias úteis, excluindo o dia do início e incluindo o dia do vencimento. Use o modo "Somar dias úteis" informando a data da intimação como data inicial e a quantidade de dias do prazo. Lembre-se de que o prazo só começa a correr no primeiro dia útil seguinte à publicação.',
+        'Since 2016, the Brazilian Code of Civil Procedure (art. 219) determines that procedural deadlines are counted in business days, excluding the start day and including the due date. Use the "Add business days" mode with the notification date as the start date and the number of deadline days. Remember that the deadline only starts running on the first business day after publication.',
+        'Desde 2016, el Código de Proceso Civil brasileño (art. 219) determina que los plazos procesales se cuentan en días hábiles, excluyendo el día de inicio e incluyendo el día de vencimiento. Use el modo "Sumar días hábiles" con la fecha de notificación como fecha inicial y la cantidad de días del plazo. Recuerde que el plazo solo comienza a correr en el primer día hábil siguiente a la publicación.'
       ),
     },
     {
@@ -507,11 +511,15 @@ export default function Calculator() {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
       language={language}
-      ctaTitle={t("Precisa do calendário?", "Need the calendar?", "¿Necesita el calendario?")}
+      ctaTitle={t(
+        "Precisa do calendário?",
+        "Need the calendar?",
+        "¿Necesita el calendario?"
+      )}
       ctaButtonLabel={t("Ver calendário", "View calendar", "Ver calendario")}
       ctaHref="/calendario/"
     >
-      <section id="ferramenta" className="section-anchor page-stack">
+      <div id="ferramenta" className="section-anchor page-stack">
         <form
           className="section-card"
           onSubmit={event => {
@@ -1010,7 +1018,7 @@ export default function Calculator() {
             </>
           ) : null}
         </form>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">
@@ -1070,9 +1078,9 @@ export default function Calculator() {
               </p>
               <p className="text-sm leading-7 text-muted-foreground">
                 {t(
-                  "A diferença entre um dia útil e um dia corrido pode parecer simples, mas tem impacto direto no cumprimento de prazos. Quando um contrato estabelece que o pagamento deve ser feito em \"5 dias úteis\", isso significa que finais de semana e feriados não entram na contagem. Dependendo do período, 5 dias úteis podem representar 7, 8 ou até 9 dias corridos — especialmente em semanas com feriados prolongados como Carnaval ou Semana Santa.",
-                  "The difference between a business day and a calendar day may seem simple, but it directly affects deadline compliance. When a contract states that payment must be made within \"5 business days,\" weekends and holidays are excluded from the count. Depending on the period, 5 business days can represent 7, 8 or even 9 calendar days — especially during weeks with extended holidays like Carnival or Holy Week.",
-                  "La diferencia entre un día hábil y un día corrido puede parecer simple, pero tiene impacto directo en el cumplimiento de plazos. Cuando un contrato establece que el pago debe hacerse en \"5 días hábiles\", eso significa que fines de semana y feriados no entran en el conteo. Dependiendo del período, 5 días hábiles pueden representar 7, 8 o hasta 9 días corridos — especialmente en semanas con feriados prolongados como Carnaval o Semana Santa."
+                  'A diferença entre um dia útil e um dia corrido pode parecer simples, mas tem impacto direto no cumprimento de prazos. Quando um contrato estabelece que o pagamento deve ser feito em "5 dias úteis", isso significa que finais de semana e feriados não entram na contagem. Dependendo do período, 5 dias úteis podem representar 7, 8 ou até 9 dias corridos — especialmente em semanas com feriados prolongados como Carnaval ou Semana Santa.',
+                  'The difference between a business day and a calendar day may seem simple, but it directly affects deadline compliance. When a contract states that payment must be made within "5 business days," weekends and holidays are excluded from the count. Depending on the period, 5 business days can represent 7, 8 or even 9 calendar days — especially during weeks with extended holidays like Carnival or Holy Week.',
+                  'La diferencia entre un día hábil y un día corrido puede parecer simple, pero tiene impacto directo en el cumplimiento de plazos. Cuando un contrato establece que el pago debe hacerse en "5 días hábiles", eso significa que fines de semana y feriados no entran en el conteo. Dependiendo del período, 5 días hábiles pueden representar 7, 8 o hasta 9 días corridos — especialmente en semanas con feriados prolongados como Carnaval o Semana Santa.'
                 )}
               </p>
               <p className="text-sm leading-7 text-muted-foreground">
@@ -1103,9 +1111,9 @@ export default function Calculator() {
               </p>
               <p className="text-sm leading-7 text-muted-foreground">
                 {t(
-                  "Essa distinção é fundamental na prática. Um boleto com vencimento em \"10 dias corridos\" e outro em \"10 dias úteis\" terão datas de pagamento diferentes. Em meses com muitos feriados, como novembro (Finados, Proclamação da República) e abril (Páscoa, Tiradentes), a diferença pode ser de vários dias. Por isso, é essencial saber qual tipo de prazo está sendo utilizado antes de calcular uma data limite.",
-                  "This distinction is fundamental in practice. A payment slip due in \"10 calendar days\" and another in \"10 business days\" will have different payment dates. In months with many holidays, such as November (All Souls' Day, Republic Day) and April (Easter, Tiradentes Day), the difference can be several days. That's why it's essential to know which type of deadline is being used before calculating a due date.",
-                  "Esta distinción es fundamental en la práctica. Un boleto con vencimiento en \"10 días corridos\" y otro en \"10 días hábiles\" tendrán fechas de pago diferentes. En meses con muchos feriados, como noviembre (Finados, Proclamación de la República) y abril (Pascua, Tiradentes), la diferencia puede ser de varios días. Por eso, es esencial saber qué tipo de plazo se está utilizando antes de calcular una fecha límite."
+                  'Essa distinção é fundamental na prática. Um boleto com vencimento em "10 dias corridos" e outro em "10 dias úteis" terão datas de pagamento diferentes. Em meses com muitos feriados, como novembro (Finados, Proclamação da República) e abril (Páscoa, Tiradentes), a diferença pode ser de vários dias. Por isso, é essencial saber qual tipo de prazo está sendo utilizado antes de calcular uma data limite.',
+                  'This distinction is fundamental in practice. A payment slip due in "10 calendar days" and another in "10 business days" will have different payment dates. In months with many holidays, such as November (All Souls\' Day, Republic Day) and April (Easter, Tiradentes Day), the difference can be several days. That\'s why it\'s essential to know which type of deadline is being used before calculating a due date.',
+                  'Esta distinción es fundamental en la práctica. Un boleto con vencimiento en "10 días corridos" y otro en "10 días hábiles" tendrán fechas de pago diferentes. En meses con muchos feriados, como noviembre (Finados, Proclamación de la República) y abril (Pascua, Tiradentes), la diferencia puede ser de varios días. Por eso, es esencial saber qué tipo de plazo se está utilizando antes de calcular una fecha límite.'
                 )}
               </p>
               <p className="text-sm leading-7 text-muted-foreground">
@@ -1143,9 +1151,9 @@ export default function Calculator() {
               </p>
               <p className="text-sm leading-7 text-muted-foreground">
                 {t(
-                  "Além dos feriados oficiais, existem os pontos facultativos — datas como Carnaval (que não é feriado nacional por lei) e Quarta-feira de Cinzas (meio expediente). Os pontos facultativos não são obrigatórios para a iniciativa privada, mas muitas empresas e a maioria dos órgãos públicos os observam. Nesta calculadora, você pode ativar a opção \"Considerar ponto facultativo\" para incluí-los no cálculo quando necessário.",
-                  "Beyond official holidays, there are optional holidays — dates like Carnival (which is not a national holiday by law) and Ash Wednesday (half day). Optional holidays are not mandatory for the private sector, but many companies and most government agencies observe them. In this calculator, you can enable the \"Consider optional points\" option to include them in the calculation when needed.",
-                  "Además de los feriados oficiales, existen los puntos facultativos — fechas como Carnaval (que no es feriado nacional por ley) y Miércoles de Ceniza (medio día). Los puntos facultativos no son obligatorios para la iniciativa privada, pero muchas empresas y la mayoría de los organismos públicos los observan. En esta calculadora, puede activar la opción \"Considerar punto facultativo\" para incluirlos en el cálculo cuando sea necesario."
+                  'Além dos feriados oficiais, existem os pontos facultativos — datas como Carnaval (que não é feriado nacional por lei) e Quarta-feira de Cinzas (meio expediente). Os pontos facultativos não são obrigatórios para a iniciativa privada, mas muitas empresas e a maioria dos órgãos públicos os observam. Nesta calculadora, você pode ativar a opção "Considerar ponto facultativo" para incluí-los no cálculo quando necessário.',
+                  'Beyond official holidays, there are optional holidays — dates like Carnival (which is not a national holiday by law) and Ash Wednesday (half day). Optional holidays are not mandatory for the private sector, but many companies and most government agencies observe them. In this calculator, you can enable the "Consider optional points" option to include them in the calculation when needed.',
+                  'Además de los feriados oficiales, existen los puntos facultativos — fechas como Carnaval (que no es feriado nacional por ley) y Miércoles de Ceniza (medio día). Los puntos facultativos no son obligatorios para la iniciativa privada, pero muchas empresas y la mayoría de los organismos públicos los observan. En esta calculadora, puede activar la opción "Considerar punto facultativo" para incluirlos en el cálculo cuando sea necesario.'
                 )}
               </p>
             </div>
@@ -1176,9 +1184,9 @@ export default function Calculator() {
               </p>
               <p className="text-sm leading-7 text-muted-foreground">
                 {t(
-                  "Profissionais de logística e e-commerce usam a calculadora para estimar prazos de entrega realistas. Quando uma transportadora informa que o prazo é de \"7 dias úteis\", o comprador precisa saber a data real de chegada para se planejar. Além disso, setores como construção civil, administração pública e gestão de projetos dependem dessa contagem para criar cronogramas confiáveis e cumprir obrigações contratuais sem surpresas.",
-                  "Logistics and e-commerce professionals use the calculator to estimate realistic delivery deadlines. When a carrier states a delivery time of \"7 business days,\" the buyer needs to know the actual arrival date for planning. Additionally, sectors like construction, public administration and project management depend on this count to create reliable schedules and meet contractual obligations without surprises.",
-                  "Profesionales de logística y e-commerce usan la calculadora para estimar plazos de entrega realistas. Cuando una transportadora informa que el plazo es de \"7 días hábiles\", el comprador necesita saber la fecha real de llegada para planificarse. Además, sectores como construcción civil, administración pública y gestión de proyectos dependen de este conteo para crear cronogramas confiables y cumplir obligaciones contractuales sin sorpresas."
+                  'Profissionais de logística e e-commerce usam a calculadora para estimar prazos de entrega realistas. Quando uma transportadora informa que o prazo é de "7 dias úteis", o comprador precisa saber a data real de chegada para se planejar. Além disso, setores como construção civil, administração pública e gestão de projetos dependem dessa contagem para criar cronogramas confiáveis e cumprir obrigações contratuais sem surpresas.',
+                  'Logistics and e-commerce professionals use the calculator to estimate realistic delivery deadlines. When a carrier states a delivery time of "7 business days," the buyer needs to know the actual arrival date for planning. Additionally, sectors like construction, public administration and project management depend on this count to create reliable schedules and meet contractual obligations without surprises.',
+                  'Profesionales de logística y e-commerce usan la calculadora para estimar plazos de entrega realistas. Cuando una transportadora informa que el plazo es de "7 días hábiles", el comprador necesita saber la fecha real de llegada para planificarse. Además, sectores como construcción civil, administración pública y gestión de proyectos dependen de este conteo para crear cronogramas confiables y cumplir obligaciones contractuales sin sorpresas.'
                 )}
               </p>
             </div>
@@ -1214,9 +1222,9 @@ export default function Calculator() {
               </h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">
                 {t(
-                  "Você comprou um produto online e a loja informou que o prazo de entrega é de 5 dias úteis. A compra foi feita na sexta-feira. Para descobrir quando o produto chega, use o modo \"Somar dias úteis\", informe a data da compra como data inicial e coloque 5 na quantidade de dias. A calculadora vai pular o sábado e o domingo automaticamente e mostrar que a entrega será na sexta-feira seguinte — desde que não haja feriados no meio. Se houver um feriado na quarta-feira, por exemplo, o prazo se estende para a segunda-feira da semana posterior.",
-                  "You bought a product online and the store said the delivery time is 5 business days. The purchase was made on Friday. To find out when the product arrives, use the \"Add business days\" mode, enter the purchase date as the start date and put 5 as the number of days. The calculator will automatically skip Saturday and Sunday and show that delivery will be the following Friday — as long as there are no holidays in between. If there's a holiday on Wednesday, for example, the deadline extends to Monday of the next week.",
-                  "Usted compró un producto en línea y la tienda informó que el plazo de entrega es de 5 días hábiles. La compra fue hecha el viernes. Para descubrir cuándo llega el producto, use el modo \"Sumar días hábiles\", informe la fecha de compra como fecha inicial y coloque 5 en la cantidad de días. La calculadora va a saltar el sábado y el domingo automáticamente y mostrar que la entrega será el viernes siguiente — siempre que no haya feriados en el medio. Si hay un feriado el miércoles, por ejemplo, el plazo se extiende al lunes de la semana posterior."
+                  'Você comprou um produto online e a loja informou que o prazo de entrega é de 5 dias úteis. A compra foi feita na sexta-feira. Para descobrir quando o produto chega, use o modo "Somar dias úteis", informe a data da compra como data inicial e coloque 5 na quantidade de dias. A calculadora vai pular o sábado e o domingo automaticamente e mostrar que a entrega será na sexta-feira seguinte — desde que não haja feriados no meio. Se houver um feriado na quarta-feira, por exemplo, o prazo se estende para a segunda-feira da semana posterior.',
+                  'You bought a product online and the store said the delivery time is 5 business days. The purchase was made on Friday. To find out when the product arrives, use the "Add business days" mode, enter the purchase date as the start date and put 5 as the number of days. The calculator will automatically skip Saturday and Sunday and show that delivery will be the following Friday — as long as there are no holidays in between. If there\'s a holiday on Wednesday, for example, the deadline extends to Monday of the next week.',
+                  'Usted compró un producto en línea y la tienda informó que el plazo de entrega es de 5 días hábiles. La compra fue hecha el viernes. Para descubrir cuándo llega el producto, use el modo "Sumar días hábiles", informe la fecha de compra como fecha inicial y coloque 5 en la cantidad de días. La calculadora va a saltar el sábado y el domingo automáticamente y mostrar que la entrega será el viernes siguiente — siempre que no haya feriados en el medio. Si hay un feriado el miércoles, por ejemplo, el plazo se extiende al lunes de la semana posterior.'
                 )}
               </p>
             </article>
@@ -1231,9 +1239,9 @@ export default function Calculator() {
               </h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">
                 {t(
-                  "Um contrato de prestação de serviços determina que a empresa tem 30 dias úteis para entregar o projeto após a assinatura. O contrato foi assinado no dia 3 de março. Usando o modo \"Somar dias úteis\" com a data inicial de 3 de março e 30 dias, a calculadora mostrará a data exata de vencimento, considerando todos os feriados do período (como Carnaval e eventuais feriados estaduais). Isso evita surpresas e permite que ambas as partes tenham clareza sobre o prazo real.",
-                  "A service contract determines the company has 30 business days to deliver the project after signing. The contract was signed on March 3rd. Using \"Add business days\" mode with March 3rd as the start date and 30 days, the calculator will show the exact due date, considering all holidays in the period (such as Carnival and any state holidays). This avoids surprises and ensures both parties are clear about the actual deadline.",
-                  "Un contrato de prestación de servicios determina que la empresa tiene 30 días hábiles para entregar el proyecto tras la firma. El contrato fue firmado el 3 de marzo. Usando el modo \"Sumar días hábiles\" con la fecha inicial del 3 de marzo y 30 días, la calculadora mostrará la fecha exacta de vencimiento, considerando todos los feriados del período (como Carnaval y eventuales feriados estatales). Esto evita sorpresas y permite que ambas partes tengan claridad sobre el plazo real."
+                  'Um contrato de prestação de serviços determina que a empresa tem 30 dias úteis para entregar o projeto após a assinatura. O contrato foi assinado no dia 3 de março. Usando o modo "Somar dias úteis" com a data inicial de 3 de março e 30 dias, a calculadora mostrará a data exata de vencimento, considerando todos os feriados do período (como Carnaval e eventuais feriados estaduais). Isso evita surpresas e permite que ambas as partes tenham clareza sobre o prazo real.',
+                  'A service contract determines the company has 30 business days to deliver the project after signing. The contract was signed on March 3rd. Using "Add business days" mode with March 3rd as the start date and 30 days, the calculator will show the exact due date, considering all holidays in the period (such as Carnival and any state holidays). This avoids surprises and ensures both parties are clear about the actual deadline.',
+                  'Un contrato de prestación de servicios determina que la empresa tiene 30 días hábiles para entregar el proyecto tras la firma. El contrato fue firmado el 3 de marzo. Usando el modo "Sumar días hábiles" con la fecha inicial del 3 de marzo y 30 días, la calculadora mostrará la fecha exacta de vencimiento, considerando todos los feriados del período (como Carnaval y eventuales feriados estatales). Esto evita sorpresas y permite que ambas partes tengan claridad sobre el plazo real.'
                 )}
               </p>
             </article>
@@ -1248,9 +1256,9 @@ export default function Calculator() {
               </h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">
                 {t(
-                  "A legislação trabalhista brasileira (CLT, art. 459) determina que o salário deve ser pago até o 5º dia útil do mês subsequente ao trabalhado. Para descobrir essa data, use o modo \"Somar dias úteis\" com o último dia do mês anterior como data inicial e 5 dias. Por exemplo, para o salário de janeiro, informe 31 de janeiro como data inicial. Se fevereiro começar com feriados municipais ou se o dia 1º cair em um sábado, a data do 5º dia útil pode mudar significativamente. O filtro de município garante que feriados locais sejam considerados no cálculo.",
-                  "Brazilian labor law (CLT, art. 459) determines that salaries must be paid by the 5th business day of the month following the work period. To find this date, use \"Add business days\" mode with the last day of the previous month as the start date and 5 days. For example, for January's salary, enter January 31st as the start date. If February starts with municipal holidays or if the 1st falls on a Saturday, the 5th business day date can change significantly. The municipality filter ensures local holidays are considered in the calculation.",
-                  "La legislación laboral brasileña (CLT, art. 459) determina que el salario debe pagarse hasta el 5º día hábil del mes siguiente al trabajado. Para descubrir esa fecha, use el modo \"Sumar días hábiles\" con el último día del mes anterior como fecha inicial y 5 días. Por ejemplo, para el salario de enero, informe el 31 de enero como fecha inicial. Si febrero comienza con feriados municipales o si el día 1º cae en sábado, la fecha del 5º día hábil puede cambiar significativamente. El filtro de municipio garantiza que los feriados locales se consideren en el cálculo."
+                  'A legislação trabalhista brasileira (CLT, art. 459) determina que o salário deve ser pago até o 5º dia útil do mês subsequente ao trabalhado. Para descobrir essa data, use o modo "Somar dias úteis" com o último dia do mês anterior como data inicial e 5 dias. Por exemplo, para o salário de janeiro, informe 31 de janeiro como data inicial. Se fevereiro começar com feriados municipais ou se o dia 1º cair em um sábado, a data do 5º dia útil pode mudar significativamente. O filtro de município garante que feriados locais sejam considerados no cálculo.',
+                  'Brazilian labor law (CLT, art. 459) determines that salaries must be paid by the 5th business day of the month following the work period. To find this date, use "Add business days" mode with the last day of the previous month as the start date and 5 days. For example, for January\'s salary, enter January 31st as the start date. If February starts with municipal holidays or if the 1st falls on a Saturday, the 5th business day date can change significantly. The municipality filter ensures local holidays are considered in the calculation.',
+                  'La legislación laboral brasileña (CLT, art. 459) determina que el salario debe pagarse hasta el 5º día hábil del mes siguiente al trabajado. Para descubrir esa fecha, use el modo "Sumar días hábiles" con el último día del mes anterior como fecha inicial y 5 días. Por ejemplo, para el salario de enero, informe el 31 de enero como fecha inicial. Si febrero comienza con feriados municipales o si el día 1º cae en sábado, la fecha del 5º día hábil puede cambiar significativamente. El filtro de municipio garantiza que los feriados locales se consideren en el cálculo.'
                 )}
               </p>
             </article>
@@ -1265,9 +1273,9 @@ export default function Calculator() {
               </h3>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">
                 {t(
-                  "Um advogado recebeu a intimação de uma decisão desfavorável na terça-feira e precisa interpor recurso de apelação dentro de 15 dias úteis (CPC, art. 1.003). De acordo com a regra processual, o prazo começa a contar no primeiro dia útil seguinte à intimação. Use o modo \"Somar dias úteis\" informando a data da intimação como data inicial e 15 como quantidade de dias. A calculadora irá pular automaticamente sábados, domingos e feriados, mostrando a data final do prazo. Se houver um feriado forense ou suspensão de expediente no período, lembre-se de que esses dias também não contam como úteis para prazos judiciais.",
+                  'Um advogado recebeu a intimação de uma decisão desfavorável na terça-feira e precisa interpor recurso de apelação dentro de 15 dias úteis (CPC, art. 1.003). De acordo com a regra processual, o prazo começa a contar no primeiro dia útil seguinte à intimação. Use o modo "Somar dias úteis" informando a data da intimação como data inicial e 15 como quantidade de dias. A calculadora irá pular automaticamente sábados, domingos e feriados, mostrando a data final do prazo. Se houver um feriado forense ou suspensão de expediente no período, lembre-se de que esses dias também não contam como úteis para prazos judiciais.',
                   "A lawyer received notification of an unfavorable decision on Tuesday and needs to file an appeal within 15 business days (CPC, art. 1,003). According to procedural rules, the deadline starts on the first business day after notification. Use \"Add business days\" mode with the notification date as the start date and 15 as the number of days. The calculator will automatically skip Saturdays, Sundays and holidays, showing the final deadline date. If there's a court holiday or suspension of operations during the period, remember that those days also don't count as business days for judicial deadlines.",
-                  "Un abogado recibió la intimación de una decisión desfavorable el martes y necesita interponer recurso de apelación dentro de 15 días hábiles (CPC, art. 1.003). De acuerdo con la regla procesal, el plazo comienza a contar en el primer día hábil siguiente a la intimación. Use el modo \"Sumar días hábiles\" informando la fecha de la intimación como fecha inicial y 15 como cantidad de días. La calculadora saltará automáticamente sábados, domingos y feriados, mostrando la fecha final del plazo. Si hay un feriado forense o suspensión de expediente en el período, recuerde que esos días tampoco cuentan como hábiles para plazos judiciales."
+                  'Un abogado recibió la intimación de una decisión desfavorable el martes y necesita interponer recurso de apelación dentro de 15 días hábiles (CPC, art. 1.003). De acuerdo con la regla procesal, el plazo comienza a contar en el primer día hábil siguiente a la intimación. Use el modo "Sumar días hábiles" informando la fecha de la intimación como fecha inicial y 15 como cantidad de días. La calculadora saltará automáticamente sábados, domingos y feriados, mostrando la fecha final del plazo. Si hay un feriado forense o suspensión de expediente en el período, recuerde que esos días tampoco cuentan como hábiles para plazos judiciales.'
                 )}
               </p>
             </article>

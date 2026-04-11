@@ -21,7 +21,11 @@ import {
   type HolidayCalculationWarning,
 } from "@/lib/holiday-service";
 import { WidgetApiError } from "@/lib/home-widgets";
-import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  getNavigationLabels,
+} from "@/lib/navigation";
 import { getBackToTopLabel } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import NotFound from "@/pages/NotFound";
@@ -53,7 +57,11 @@ function getHolidayScopeLabel(
   scope: AppliedHolidayItem["scope"]
 ) {
   if (scope === "state") {
-    return language === "en" ? "State" : language === "es" ? "Estatal" : "Estadual";
+    return language === "en"
+      ? "State"
+      : language === "es"
+        ? "Estatal"
+        : "Estadual";
   }
   if (scope === "municipal") {
     return language === "en"
@@ -69,10 +77,17 @@ function getHolidayScopeLabel(
         ? "Facultativo"
         : "Facultativo";
   }
-  return language === "en" ? "National" : language === "es" ? "Nacional" : "Nacional";
+  return language === "en"
+    ? "National"
+    : language === "es"
+      ? "Nacional"
+      : "Nacional";
 }
 
-function getWarningMessage(language: string, warning: HolidayCalculationWarning) {
+function getWarningMessage(
+  language: string,
+  warning: HolidayCalculationWarning
+) {
   if (warning.code === "municipal_holidays_unavailable") {
     return language === "en"
       ? `Municipal holidays for ${warning.year} are not available yet.`
@@ -95,13 +110,19 @@ export default function Calendar({ params }: CalendarProps) {
   const currentDate = new Date();
   const routeYear = parseRouteYear(params?.year);
   const year = routeYear ?? currentDate.getFullYear();
-  const monthFromRoute = params?.month ? getMonthNumberFromSlug(params.month) : null;
+  const monthFromRoute = params?.month
+    ? getMonthNumberFromSlug(params.month)
+    : null;
 
-  if ((params?.year && routeYear === null) || (params?.month && !monthFromRoute)) {
+  if (
+    (params?.year && routeYear === null) ||
+    (params?.month && !monthFromRoute)
+  ) {
     return <NotFound />;
   }
 
-  const month = monthFromRoute ?? (params?.year ? 1 : currentDate.getMonth() + 1);
+  const month =
+    monthFromRoute ?? (params?.year ? 1 : currentDate.getMonth() + 1);
   const isLandingPage = !params?.year && !params?.month;
   const isYearPage = Boolean(params?.year && !params?.month);
   const locality = useHolidayLocality({ autoDetect: true });
@@ -154,7 +175,9 @@ export default function Calendar({ params }: CalendarProps) {
       label: navigationLabels.calendar,
       ...(isLandingPage ? {} : { href: "/calendario/" }),
     },
-    ...(isLandingPage ? [] : [{ label: isYearPage ? String(year) : monthLabel }]),
+    ...(isLandingPage
+      ? []
+      : [{ label: isYearPage ? String(year) : monthLabel }]),
   ];
   const pageTitle =
     language === "en"
@@ -170,7 +193,11 @@ export default function Calendar({ params }: CalendarProps) {
         : `Consulte o calendário ${year} com feriados nacionais, estaduais e municipais. Troque mês e localidade para planejar prazos e verificar fins de semana.`;
   const monthPath = `/calendario/${year}/${getMonthSlug(month)}/`;
   const yearPath = `/calendario/${year}/`;
-  const path = isLandingPage ? "/calendario/" : isYearPage ? yearPath : monthPath;
+  const path = isLandingPage
+    ? "/calendario/"
+    : isYearPage
+      ? yearPath
+      : monthPath;
   const faqItems = [
     {
       question:
@@ -287,33 +314,31 @@ export default function Calendar({ params }: CalendarProps) {
   ];
 
   usePageSeo({
-    title:
-      isLandingPage
+    title: isLandingPage
+      ? language === "en"
+        ? `${year} Calendar with Holidays and Weekends | Datas Úteis`
+        : language === "es"
+          ? `Calendario ${year} con Feriados y Fines de Semana | Datas Úteis`
+          : `Calendário ${year} com Feriados e Fins de Semana | Datas Úteis`
+      : isYearPage
         ? language === "en"
-          ? `${year} Calendar with Holidays and Weekends | Datas Úteis`
+          ? `${year} Holiday Calendar | Datas Úteis`
           : language === "es"
-            ? `Calendario ${year} con Feriados y Fines de Semana | Datas Úteis`
-            : `Calendário ${year} com Feriados e Fins de Semana | Datas Úteis`
-        : isYearPage
-          ? language === "en"
-            ? `${year} Holiday Calendar | Datas Úteis`
-            : language === "es"
-              ? `Calendario ${year} con Feriados | Datas Úteis`
-              : `Calendário ${year} com Feriados | Datas Úteis`
+            ? `Calendario ${year} con Feriados | Datas Úteis`
+            : `Calendário ${year} com Feriados | Datas Úteis`
         : language === "en"
           ? `${monthLabel} holiday calendar | Datas Úteis`
           : language === "es"
             ? `Calendario de ${monthLabel} | Datas Úteis`
             : `Calendário de ${monthLabel} | Datas Úteis`,
-    description:
-      isLandingPage
-        ? pageDescription
-        : isYearPage
-          ? language === "en"
-            ? `Review the ${year} calendar and switch months, weekends and local holidays in one place.`
-            : language === "es"
-              ? `Consulte el calendario de ${year} y cambie meses, fines de semana y feriados locales en un solo lugar.`
-              : `Consulte o calendário de ${year} e navegue por meses, finais de semana e feriados locais em uma única página.`
+    description: isLandingPage
+      ? pageDescription
+      : isYearPage
+        ? language === "en"
+          ? `Review the ${year} calendar and switch months, weekends and local holidays in one place.`
+          : language === "es"
+            ? `Consulte el calendario de ${year} y cambie meses, fines de semana y feriados locales en un solo lugar.`
+            : `Consulte o calendário de ${year} e navegue por meses, finais de semana e feriados locais em uma única página.`
         : language === "en"
           ? `Review weekends and local holidays for ${monthLabel}.`
           : language === "es"
@@ -326,7 +351,11 @@ export default function Calendar({ params }: CalendarProps) {
       "@graph": [
         {
           "@type": "WebPage",
-          name: isLandingPage ? pageTitle : isYearPage ? String(year) : monthLabel,
+          name: isLandingPage
+            ? pageTitle
+            : isYearPage
+              ? String(year)
+              : monthLabel,
           url: `https://datasuteis.com.br${path}`,
         },
         {
@@ -349,11 +378,11 @@ export default function Calendar({ params }: CalendarProps) {
                     { label: navigationLabels.calendar, href: "/calendario/" },
                     { label: String(year), href: path },
                   ]
-              : [
-                  { label: navigationLabels.home, href: "/" },
-                  { label: navigationLabels.calendar, href: "/calendario/" },
-                  { label: monthLabel, href: path },
-                ]
+                : [
+                    { label: navigationLabels.home, href: "/" },
+                    { label: navigationLabels.calendar, href: "/calendario/" },
+                    { label: monthLabel, href: path },
+                  ]
           ),
         },
         buildFaqPageSchema(faqItems),
@@ -451,8 +480,20 @@ export default function Calendar({ params }: CalendarProps) {
 
   return (
     <PageShell
-      eyebrow={language === "en" ? "Calendar" : language === "es" ? "Calendario" : "Calendario"}
-      title={isLandingPage ? pageTitle : isYearPage ? `${pageTitle} ${year}` : monthLabel}
+      eyebrow={
+        language === "en"
+          ? "Calendar"
+          : language === "es"
+            ? "Calendario"
+            : "Calendario"
+      }
+      title={
+        isLandingPage
+          ? pageTitle
+          : isYearPage
+            ? `${pageTitle} ${year}`
+            : monthLabel
+      }
       description={
         isLandingPage
           ? pageDescription
@@ -462,11 +503,11 @@ export default function Calendar({ params }: CalendarProps) {
               : language === "es"
                 ? "Abra el año seleccionado y use el selector de mes para consultar feriados locales y fines de semana."
                 : "Abra o ano selecionado e use o seletor de mês para consultar feriados locais e finais de semana."
-          : language === "en"
-            ? "Open the month with local holidays, weekends and weekday rhythm in one view."
-            : language === "es"
-              ? "Abra el mes con feriados locales, fines de semana y ritmo de días hábiles en una sola vista."
-              : "Abra o mês com feriados locais, fins de semana e ritmo de dias úteis em uma única leitura."
+            : language === "en"
+              ? "Open the month with local holidays, weekends and weekday rhythm in one view."
+              : language === "es"
+                ? "Abra el mes con feriados locales, fines de semana y ritmo de días hábiles en una sola vista."
+                : "Abra o mês com feriados locais, fins de semana e ritmo de dias úteis em uma única leitura."
       }
       navItems={navItems}
       topLabel={topLabel}
@@ -475,19 +516,37 @@ export default function Calendar({ params }: CalendarProps) {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
       language={language}
-      ctaTitle={language === "en" ? "Calculate business-day intervals" : language === "es" ? "Calcule intervalos de días hábiles" : "Calcule intervalos de dias úteis"}
-      ctaButtonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+      ctaTitle={
+        language === "en"
+          ? "Calculate business-day intervals"
+          : language === "es"
+            ? "Calcule intervalos de días hábiles"
+            : "Calcule intervalos de dias úteis"
+      }
+      ctaButtonLabel={
+        language === "en"
+          ? "Open calculator"
+          : language === "es"
+            ? "Abrir calculadora"
+            : "Abrir calculadora"
+      }
     >
-      <section id="ferramenta" className="section-anchor page-stack">
+      <div id="ferramenta" className="section-anchor page-stack">
         <div className="section-card">
           <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_160px]">
             <label className="space-y-2">
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {language === "en" ? "Month" : language === "es" ? "Mes" : "Mes"}
+                {language === "en"
+                  ? "Month"
+                  : language === "es"
+                    ? "Mes"
+                    : "Mes"}
               </span>
               <select
                 value={String(month)}
-                onChange={event => goToCalendar(year, Number(event.target.value))}
+                onChange={event =>
+                  goToCalendar(year, Number(event.target.value))
+                }
                 className="input-base w-full"
               >
                 {monthOptions.map(option => (
@@ -504,7 +563,9 @@ export default function Calendar({ params }: CalendarProps) {
               </span>
               <select
                 value={String(year)}
-                onChange={event => goToCalendar(Number(event.target.value), month)}
+                onChange={event =>
+                  goToCalendar(Number(event.target.value), month)
+                }
                 className="input-base w-full"
               >
                 {YEARS.map(optionYear => (
@@ -520,14 +581,20 @@ export default function Calendar({ params }: CalendarProps) {
             <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {language === "en" ? "Local base" : language === "es" ? "Base local" : "Base local"}
+                  {language === "en"
+                    ? "Local base"
+                    : language === "es"
+                      ? "Base local"
+                      : "Base local"}
                 </p>
                 <div className="mt-2 flex items-center gap-2 text-sm font-semibold">
                   <MapPin className="h-4 w-4 text-primary" />
                   <span>{locality.localityLabel}</span>
                 </div>
                 {localityHint ? (
-                  <p className="mt-1 text-xs text-muted-foreground">{localityHint}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {localityHint}
+                  </p>
                 ) : null}
               </div>
 
@@ -537,7 +604,9 @@ export default function Calendar({ params }: CalendarProps) {
                 className="btn-secondary inline-flex items-center gap-2"
                 disabled={locality.detecting}
               >
-                <RefreshCw className={`h-4 w-4 ${locality.detecting ? "animate-spin" : ""}`} />
+                <RefreshCw
+                  className={`h-4 w-4 ${locality.detecting ? "animate-spin" : ""}`}
+                />
                 {language === "en"
                   ? "Use my location"
                   : language === "es"
@@ -549,7 +618,11 @@ export default function Calendar({ params }: CalendarProps) {
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <label className="space-y-2">
                 <span className="text-sm font-semibold">
-                  {language === "en" ? "State" : language === "es" ? "Estado" : "Estado"}
+                  {language === "en"
+                    ? "State"
+                    : language === "es"
+                      ? "Estado"
+                      : "Estado"}
                 </span>
                 <select
                   value={locality.stateCode}
@@ -595,12 +668,15 @@ export default function Calendar({ params }: CalendarProps) {
                     locality.selectMunicipality(
                       locality.municipalities.find(
                         item =>
-                          item.name.toLowerCase() === nextValue.trim().toLowerCase()
+                          item.name.toLowerCase() ===
+                          nextValue.trim().toLowerCase()
                       ) ?? null
                     );
                   }}
                   className="input-base w-full"
-                  disabled={!locality.stateCode || locality.municipalitiesLoading}
+                  disabled={
+                    !locality.stateCode || locality.municipalitiesLoading
+                  }
                   placeholder={
                     !locality.stateCode
                       ? language === "en"
@@ -624,10 +700,14 @@ export default function Calendar({ params }: CalendarProps) {
             </div>
 
             {locality.statesError ? (
-              <p className="mt-3 text-sm text-amber-700">{locality.statesError}</p>
+              <p className="mt-3 text-sm text-amber-700">
+                {locality.statesError}
+              </p>
             ) : null}
             {locality.municipalitiesError ? (
-              <p className="mt-3 text-sm text-amber-700">{locality.municipalitiesError}</p>
+              <p className="mt-3 text-sm text-amber-700">
+                {locality.municipalitiesError}
+              </p>
             ) : null}
           </div>
 
@@ -642,7 +722,11 @@ export default function Calendar({ params }: CalendarProps) {
               </p>
               <p className="mt-1 text-muted-foreground">
                 {monthData.holidayBreakdown.national}{" "}
-                {language === "en" ? "national" : language === "es" ? "nacionales" : "nacionais"}
+                {language === "en"
+                  ? "national"
+                  : language === "es"
+                    ? "nacionales"
+                    : "nacionais"}
                 {locality.stateCode
                   ? `, ${monthData.holidayBreakdown.state} ${
                       language === "en"
@@ -753,14 +837,14 @@ export default function Calendar({ params }: CalendarProps) {
                     className="rounded-2xl bg-secondary px-4 py-3 text-sm"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <p className="font-semibold">
-                        {item.name}
-                      </p>
+                      <p className="font-semibold">{item.name}</p>
                       <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold text-muted-foreground">
                         {getHolidayScopeLabel(language, item.scope)}
                       </span>
                     </div>
-                    <p className="mt-1 text-muted-foreground">{formatDate(item.date)}</p>
+                    <p className="mt-1 text-muted-foreground">
+                      {formatDate(item.date)}
+                    </p>
                   </div>
                 ))
               ) : (
@@ -788,7 +872,7 @@ export default function Calendar({ params }: CalendarProps) {
             </div>
           ) : null}
         </div>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">

@@ -798,7 +798,9 @@
     font-weight: 600;
     color: var(--primary);
     background: color-mix(in srgb, var(--background) 92%, transparent);
-    transition: background-color 160ms ease, color 160ms ease;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
   }
 
   .crossword-context-toggle:hover {
@@ -885,7 +887,8 @@
       min-width: 0;
     }
 
-    .crossword-playbox-actions > :where(.btn-primary, .btn-secondary, .btn-outline) {
+    .crossword-playbox-actions
+      > :where(.btn-primary, .btn-secondary, .btn-outline) {
       min-height: 40px;
       padding: 0.58rem 0.66rem;
       font-size: 0.8rem;
@@ -1152,9 +1155,15 @@
     scroll-margin-top: 7rem;
   }
 
+  .cookie-consent-safe-area {
+    padding-bottom: 0.35rem;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.35rem);
+  }
+
   .floating-section-nav {
     @apply fixed bottom-3 right-3 z-40 flex flex-col items-end;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.65rem);
+    bottom: 0.65rem;
+    bottom: calc(env(safe-area-inset-bottom) + 0.65rem);
   }
 
   .floating-section-row {

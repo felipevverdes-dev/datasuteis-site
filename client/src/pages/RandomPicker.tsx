@@ -412,7 +412,7 @@ export default function RandomPicker() {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
     >
-      <section id="ferramenta" className="section-anchor">
+      <div id="ferramenta" className="section-anchor">
         <div className="section-card">
           <div className="flex flex-wrap gap-3">
             <button
@@ -546,7 +546,7 @@ export default function RandomPicker() {
             </article>
           </div>
         </div>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">

@@ -124,7 +124,7 @@ export default function Contact() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main id="main-content" role="main">
+      <main id="main-content">
         <section className="hero border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto">
             <div className="max-w-4xl">
@@ -144,7 +144,7 @@ export default function Contact() {
           </div>
         </section>
 
-        <section className="section-md">
+        <div className="section-md">
           <div className="container mx-auto space-y-6">
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_0.9fr]">
               <section className="card-base p-6">
@@ -192,11 +192,23 @@ export default function Contact() {
 
             <CtaFinalBlock
               language={language}
-              title={language === "en" ? "Need to calculate business days?" : language === "es" ? "¿Necesita calcular días hábiles?" : "Precisa calcular dias úteis?"}
-              buttonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+              title={
+                language === "en"
+                  ? "Need to calculate business days?"
+                  : language === "es"
+                    ? "¿Necesita calcular días hábiles?"
+                    : "Precisa calcular dias úteis?"
+              }
+              buttonLabel={
+                language === "en"
+                  ? "Open calculator"
+                  : language === "es"
+                    ? "Abrir calculadora"
+                    : "Abrir calculadora"
+              }
             />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

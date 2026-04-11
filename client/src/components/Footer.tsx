@@ -16,10 +16,19 @@ export default function Footer() {
   const utilitiesNavLabel = getUtilitiesNavLabel(language);
   const ageNavLabel = getAgeNavLabel(language);
   const contactPageLabel =
-    language === "en" ? "Contact page" : language === "es" ? "Página de contacto" : "Página de contato";
+    language === "en"
+      ? "Contact page"
+      : language === "es"
+        ? "Página de contacto"
+        : "Página de contato";
   const termsLabel =
-    language === "en" ? "Terms of use" : language === "es" ? "Términos de uso" : "Termos de uso";
-  const homeLabel = language === "en" ? "Home" : language === "es" ? "Inicio" : "Home";
+    language === "en"
+      ? "Terms of use"
+      : language === "es"
+        ? "Términos de uso"
+        : "Termos de uso";
+  const homeLabel =
+    language === "en" ? "Home" : language === "es" ? "Inicio" : "Home";
   const privacyLabel =
     language === "en"
       ? "Privacy policy"
@@ -58,23 +67,26 @@ export default function Footer() {
         : "Informar correção";
 
   return (
-    <footer
-      role="contentinfo"
-      className="mt-20 border-t border-border bg-secondary/35"
-    >
+    <footer className="mt-20 border-t border-border bg-secondary/35">
       <div className="container mx-auto px-4 py-12">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))]">
           <div className="space-y-4">
-            <Brand href="/" logoClassName="h-10 w-[148px] sm:h-11 sm:w-[163px]" />
+            <Brand
+              href="/"
+              logoClassName="h-10 w-[148px] sm:h-11 sm:w-[163px]"
+            />
             <p className="max-w-md text-sm leading-6 text-muted-foreground">
               {t("components.footer.description")}
             </p>
           </div>
 
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <nav aria-labelledby="footer-tools-heading">
+            <p
+              id="footer-tools-heading"
+              className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            >
               {t("components.footer.tools")}
-            </h2>
+            </p>
             <div className="mt-4 space-y-3 text-sm">
               <Link
                 href="/"
@@ -107,12 +119,15 @@ export default function Footer() {
                 {ageNavLabel}
               </Link>
             </div>
-          </div>
+          </nav>
 
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <nav aria-labelledby="footer-related-heading">
+            <p
+              id="footer-related-heading"
+              className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            >
               {relatedLabel}
-            </h2>
+            </p>
             <div className="mt-4 space-y-3 text-sm">
               <Link
                 href="/quinto-dia-util/"
@@ -151,12 +166,15 @@ export default function Footer() {
                 {t("components.footer.cltScales")}
               </Link>
             </div>
-          </div>
+          </nav>
 
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <nav aria-labelledby="footer-institutional-heading">
+            <p
+              id="footer-institutional-heading"
+              className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground"
+            >
               {institutionalLabel}
-            </h2>
+            </p>
             <div className="mt-4 space-y-3 text-sm">
               <Link
                 href="/sobre/"
@@ -201,7 +219,7 @@ export default function Footer() {
                 {correctionsLabel}
               </a>
             </div>
-          </div>
+          </nav>
         </div>
 
         <div className="mt-8 border-t border-border pt-6 text-sm text-muted-foreground">

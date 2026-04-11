@@ -1,7 +1,10 @@
 import { Link } from "wouter";
 import PageShell from "@/components/layout/PageShell";
 import { useI18n } from "@/contexts/LanguageContext";
-import { getBusinessDayYearSummary, getFifthBusinessDay } from "@/lib/business-days";
+import {
+  getBusinessDayYearSummary,
+  getFifthBusinessDay,
+} from "@/lib/business-days";
 import {
   MAX_SUPPORTED_YEAR,
   MIN_SUPPORTED_YEAR,
@@ -11,7 +14,11 @@ import {
   parseRouteYear,
   shiftMonth,
 } from "@/lib/date-utils";
-import { buildBreadcrumbSchema, buildFaqPageSchema, getNavigationLabels } from "@/lib/navigation";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  getNavigationLabels,
+} from "@/lib/navigation";
 import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
 import { usePageSeo } from "@/lib/seo";
 import NotFound from "@/pages/NotFound";
@@ -29,8 +36,14 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
   const month = params?.month ? getMonthNumberFromSlug(params.month) : null;
   const navItems = getToolPageNavItems(language);
   const topLabel = getBackToTopLabel(language);
-  const monthWord = language === "en" ? "Month" : language === "es" ? "Mes" : "Mês";
-  const fifthWord = language === "en" ? "Fifth business day" : language === "es" ? "Quinto día hábil" : "5º dia útil";
+  const monthWord =
+    language === "en" ? "Month" : language === "es" ? "Mes" : "Mês";
+  const fifthWord =
+    language === "en"
+      ? "Fifth business day"
+      : language === "es"
+        ? "Quinto día hábil"
+        : "5º dia útil";
 
   if ((params?.year && routeYear === null) || (params?.month && !month)) {
     return <NotFound />;
@@ -72,10 +85,15 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
         : language === "es"
           ? "Explore páginas de quinto día hábil por año y mes."
           : "Explore páginas de 5º dia útil por ano e mês.";
-  const path = month ? `/quinto-dia-util/${year}/${getMonthSlug(month)}/` : params?.year ? `/quinto-dia-util/${year}/` : "/quinto-dia-util/";
-  const nearbyYears = Array.from({ length: 5 }, (_, index) => year - 2 + index).filter(
-    item => item >= MIN_SUPPORTED_YEAR && item <= MAX_SUPPORTED_YEAR
-  );
+  const path = month
+    ? `/quinto-dia-util/${year}/${getMonthSlug(month)}/`
+    : params?.year
+      ? `/quinto-dia-util/${year}/`
+      : "/quinto-dia-util/";
+  const nearbyYears = Array.from(
+    { length: 5 },
+    (_, index) => year - 2 + index
+  ).filter(item => item >= MIN_SUPPORTED_YEAR && item <= MAX_SUPPORTED_YEAR);
   const previous = month ? shiftMonth(year, month, -1) : null;
   const next = month ? shiftMonth(year, month, 1) : null;
   const breadcrumbs = [
@@ -136,27 +154,46 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
     description,
     path,
     keywords: [
-      language === "en" ? "fifth business day" : language === "es" ? "quinto día hábil" : "quinto dia útil",
-      language === "en" ? "business day by month" : language === "es" ? "día hábil por mes" : "dia útil por mês",
+      language === "en"
+        ? "fifth business day"
+        : language === "es"
+          ? "quinto día hábil"
+          : "quinto dia útil",
+      language === "en"
+        ? "business day by month"
+        : language === "es"
+          ? "día hábil por mes"
+          : "dia útil por mês",
     ],
     schema: {
       "@context": "https://schema.org",
       "@graph": [
-        { "@type": "WebPage", name: title, url: `https://datasuteis.com.br${path}`, description },
+        {
+          "@type": "WebPage",
+          name: title,
+          url: `https://datasuteis.com.br${path}`,
+          description,
+        },
         {
           ...buildBreadcrumbSchema(
             month || params?.year
               ? [
                   { label: navigationLabels.home, href: "/" },
                   { label: navigationLabels.simulators },
-                  { label: navigationLabels.businessDays, href: "/dias-uteis/" },
+                  {
+                    label: navigationLabels.businessDays,
+                    href: "/dias-uteis/",
+                  },
                   { label: fifthWord, href: "/quinto-dia-util/" },
                   { label: title, href: path },
                 ]
               : [
                   { label: navigationLabels.home, href: "/" },
                   { label: navigationLabels.simulators },
-                  { label: navigationLabels.businessDays, href: "/dias-uteis/" },
+                  {
+                    label: navigationLabels.businessDays,
+                    href: "/dias-uteis/",
+                  },
                   { label: fifthWord, href: "/quinto-dia-util/" },
                 ]
           ),
@@ -175,7 +212,13 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
 
   return (
     <PageShell
-      eyebrow={language === "en" ? "Fifth business day" : language === "es" ? "Quinto día hábil" : "5º dia útil"}
+      eyebrow={
+        language === "en"
+          ? "Fifth business day"
+          : language === "es"
+            ? "Quinto día hábil"
+            : "5º dia útil"
+      }
       title={title}
       description={description}
       navItems={navItems}
@@ -185,10 +228,22 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
       language={language}
-      ctaTitle={language === "en" ? "Calculate business days between any dates" : language === "es" ? "Calcule días hábiles entre cualquier fecha" : "Calcule dias úteis entre quaisquer datas"}
-      ctaButtonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+      ctaTitle={
+        language === "en"
+          ? "Calculate business days between any dates"
+          : language === "es"
+            ? "Calcule días hábiles entre cualquier fecha"
+            : "Calcule dias úteis entre quaisquer datas"
+      }
+      ctaButtonLabel={
+        language === "en"
+          ? "Open calculator"
+          : language === "es"
+            ? "Abrir calculadora"
+            : "Abrir calculadora"
+      }
     >
-      <section id="ferramenta" className="section-anchor page-stack">
+      <div id="ferramenta" className="section-anchor page-stack">
         {month ? (
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_320px]">
             <div className="section-card">
@@ -200,20 +255,79 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
               </div>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <Link href={`/dias-uteis/${year}/${getMonthSlug(month)}/`} className="rounded-2xl bg-secondary px-4 py-4 font-semibold transition-colors hover:bg-secondary/80">{language === "en" ? "Open the month page" : language === "es" ? "Abrir la página del mes" : "Abrir a página do mês"}</Link>
-                <Link href="/calcular/" className="rounded-2xl bg-secondary px-4 py-4 font-semibold transition-colors hover:bg-secondary/80">{language === "en" ? "Calculate date intervals" : language === "es" ? "Calcular intervalos" : "Calcular intervalos de datas"}</Link>
+                <Link
+                  href={`/dias-uteis/${year}/${getMonthSlug(month)}/`}
+                  className="rounded-2xl bg-secondary px-4 py-4 font-semibold transition-colors hover:bg-secondary/80"
+                >
+                  {language === "en"
+                    ? "Open the month page"
+                    : language === "es"
+                      ? "Abrir la página del mes"
+                      : "Abrir a página do mês"}
+                </Link>
+                <Link
+                  href="/calcular/"
+                  className="rounded-2xl bg-secondary px-4 py-4 font-semibold transition-colors hover:bg-secondary/80"
+                >
+                  {language === "en"
+                    ? "Calculate date intervals"
+                    : language === "es"
+                      ? "Calcular intervalos"
+                      : "Calcular intervalos de datas"}
+                </Link>
               </div>
             </div>
 
             <aside className="section-card">
-              <h2 className="text-2xl font-bold">{language === "en" ? "Month navigation" : language === "es" ? "Navegación del mes" : "Navegação do mês"}</h2>
+              <h2 className="text-2xl font-bold">
+                {language === "en"
+                  ? "Month navigation"
+                  : language === "es"
+                    ? "Navegación del mes"
+                    : "Navegação do mês"}
+              </h2>
               <div className="mt-5 space-y-3">
-                {previous ? <Link href={`/quinto-dia-util/${previous.year}/${getMonthSlug(previous.month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{language === "en" ? "Previous month" : language === "es" ? "Mes anterior" : "Mês anterior"}</Link> : null}
-                {next ? <Link href={`/quinto-dia-util/${next.year}/${getMonthSlug(next.month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{language === "en" ? "Next month" : language === "es" ? "Mes siguiente" : "Próximo mês"}</Link> : null}
+                {previous ? (
+                  <Link
+                    href={`/quinto-dia-util/${previous.year}/${getMonthSlug(previous.month)}/`}
+                    className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80"
+                  >
+                    {language === "en"
+                      ? "Previous month"
+                      : language === "es"
+                        ? "Mes anterior"
+                        : "Mês anterior"}
+                  </Link>
+                ) : null}
+                {next ? (
+                  <Link
+                    href={`/quinto-dia-util/${next.year}/${getMonthSlug(next.month)}/`}
+                    className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80"
+                  >
+                    {language === "en"
+                      ? "Next month"
+                      : language === "es"
+                        ? "Mes siguiente"
+                        : "Próximo mês"}
+                  </Link>
+                ) : null}
                 {[-1, 1]
                   .map(offset => year + offset)
-                  .filter(item => item >= MIN_SUPPORTED_YEAR && item <= MAX_SUPPORTED_YEAR)
-                  .map(item => <Link key={item} href={`/quinto-dia-util/${item}/${getMonthSlug(month)}/`} className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80">{getMonthLabel(item, month, language, { includeYear: true })}</Link>)}
+                  .filter(
+                    item =>
+                      item >= MIN_SUPPORTED_YEAR && item <= MAX_SUPPORTED_YEAR
+                  )
+                  .map(item => (
+                    <Link
+                      key={item}
+                      href={`/quinto-dia-util/${item}/${getMonthSlug(month)}/`}
+                      className="block rounded-2xl bg-secondary px-4 py-4 transition-colors hover:bg-secondary/80"
+                    >
+                      {getMonthLabel(item, month, language, {
+                        includeYear: true,
+                      })}
+                    </Link>
+                  ))}
               </div>
             </aside>
           </div>
@@ -221,7 +335,11 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
           <div className="section-card">
             <div className="mb-6 flex flex-wrap gap-3">
               {nearbyYears.map(item => (
-                <Link key={item} href={`/quinto-dia-util/${item}/`} className={`rounded-full px-4 py-2 text-sm font-semibold ${item === year ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"}`}>
+                <Link
+                  key={item}
+                  href={`/quinto-dia-util/${item}/`}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold ${item === year ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"}`}
+                >
                   {item}
                 </Link>
               ))}
@@ -232,15 +350,38 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
                   <tr className="border-b border-border text-muted-foreground">
                     <th className="px-3 py-3">{monthWord}</th>
                     <th className="px-3 py-3">{fifthWord}</th>
-                    <th className="px-3 py-3">{language === "en" ? "Month page" : language === "es" ? "Página del mes" : "Página do mês"}</th>
+                    <th className="px-3 py-3">
+                      {language === "en"
+                        ? "Month page"
+                        : language === "es"
+                          ? "Página del mes"
+                          : "Página do mês"}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {yearSummary.months.map(item => (
                     <tr key={item.month} className="border-b border-border/70">
-                      <td className="px-3 py-3">{getMonthLabel(year, item.month, language)}</td>
-                      <td className="px-3 py-3">{item.fifthBusinessDay ? formatDate(item.fifthBusinessDay) : "-"}</td>
-                      <td className="px-3 py-3"><Link href={`/quinto-dia-util/${year}/${getMonthSlug(item.month)}/`} className="font-semibold text-primary">{language === "en" ? "Open" : language === "es" ? "Abrir" : "Abrir"}</Link></td>
+                      <td className="px-3 py-3">
+                        {getMonthLabel(year, item.month, language)}
+                      </td>
+                      <td className="px-3 py-3">
+                        {item.fifthBusinessDay
+                          ? formatDate(item.fifthBusinessDay)
+                          : "-"}
+                      </td>
+                      <td className="px-3 py-3">
+                        <Link
+                          href={`/quinto-dia-util/${year}/${getMonthSlug(item.month)}/`}
+                          className="font-semibold text-primary"
+                        >
+                          {language === "en"
+                            ? "Open"
+                            : language === "es"
+                              ? "Abrir"
+                              : "Abrir"}
+                        </Link>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -248,26 +389,74 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
             </div>
           </div>
         )}
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">
-          <h2 className="text-3xl font-bold">{language === "en" ? "How this page helps" : language === "es" ? "Cómo ayuda esta página" : "Como esta página ajuda"}</h2>
+          <h2 className="text-3xl font-bold">
+            {language === "en"
+              ? "How this page helps"
+              : language === "es"
+                ? "Cómo ayuda esta página"
+                : "Como esta página ajuda"}
+          </h2>
           <div className="mt-5 page-grid">
-            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">{language === "en" ? "The annual table shows the fifth business day month by month for the selected year." : language === "es" ? "La tabla anual muestra el quinto día hábil mes a mes para el año seleccionado." : "A tabela anual mostra o 5º dia útil mês a mês para o ano selecionado."}</article>
-            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">{language === "en" ? "Monthly pages help compare the same month across different years." : language === "es" ? "Las páginas mensuales ayudan a comparar el mismo mes en años distintos." : "As páginas mensais ajudam a comparar o mesmo mês em anos diferentes."}</article>
-            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">{language === "en" ? "Open past years, the current year and future years whenever you need to compare the same month." : language === "es" ? "Abra años pasados, el actual y años futuros siempre que necesite comparar el mismo mes." : "Abra anos passados, o ano atual e anos futuros sempre que precisar comparar o mesmo mês."}</article>
+            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">
+              {language === "en"
+                ? "The annual table shows the fifth business day month by month for the selected year."
+                : language === "es"
+                  ? "La tabla anual muestra el quinto día hábil mes a mes para el año seleccionado."
+                  : "A tabela anual mostra o 5º dia útil mês a mês para o ano selecionado."}
+            </article>
+            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">
+              {language === "en"
+                ? "Monthly pages help compare the same month across different years."
+                : language === "es"
+                  ? "Las páginas mensuales ayudan a comparar el mismo mes en años distintos."
+                  : "As páginas mensais ajudam a comparar o mesmo mês em anos diferentes."}
+            </article>
+            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">
+              {language === "en"
+                ? "Open past years, the current year and future years whenever you need to compare the same month."
+                : language === "es"
+                  ? "Abra años pasados, el actual y años futuros siempre que necesite comparar el mismo mes."
+                  : "Abra anos passados, o ano atual e anos futuros sempre que precisar comparar o mesmo mês."}
+            </article>
           </div>
         </div>
       </section>
 
       <section id="exemplos" className="section-anchor">
         <div className="section-card">
-          <h2 className="text-3xl font-bold">{language === "en" ? "Examples" : language === "es" ? "Ejemplos" : "Exemplos"}</h2>
+          <h2 className="text-3xl font-bold">
+            {language === "en"
+              ? "Examples"
+              : language === "es"
+                ? "Ejemplos"
+                : "Exemplos"}
+          </h2>
           <div className="mt-5 page-grid">
-            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">{language === "en" ? `What is the fifth business day of ${getMonthLabel(year, month ?? 1, language, { includeYear: true })}?` : language === "es" ? `¿Cuál es el quinto día hábil de ${getMonthLabel(year, month ?? 1, language, { includeYear: true })}?` : `Qual é o 5º dia útil de ${getMonthLabel(year, month ?? 1, language, { includeYear: true })}?`}</article>
-            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">{language === "en" ? "How does the fifth business day change from one year to another?" : language === "es" ? "¿Cómo cambia el quinto día hábil de un año a otro?" : "Como o 5º dia útil muda de um ano para outro?"}</article>
-            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">{language === "en" ? "Which month should I compare with the business-day calculator?" : language === "es" ? "¿Qué mes debo comparar con la calculadora?" : "Qual mês devo comparar com a calculadora de dias úteis?"}</article>
+            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">
+              {language === "en"
+                ? `What is the fifth business day of ${getMonthLabel(year, month ?? 1, language, { includeYear: true })}?`
+                : language === "es"
+                  ? `¿Cuál es el quinto día hábil de ${getMonthLabel(year, month ?? 1, language, { includeYear: true })}?`
+                  : `Qual é o 5º dia útil de ${getMonthLabel(year, month ?? 1, language, { includeYear: true })}?`}
+            </article>
+            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">
+              {language === "en"
+                ? "How does the fifth business day change from one year to another?"
+                : language === "es"
+                  ? "¿Cómo cambia el quinto día hábil de un año a otro?"
+                  : "Como o 5º dia útil muda de um ano para outro?"}
+            </article>
+            <article className="rounded-3xl bg-secondary p-5 text-sm leading-6 text-muted-foreground">
+              {language === "en"
+                ? "Which month should I compare with the business-day calculator?"
+                : language === "es"
+                  ? "¿Qué mes debo comparar con la calculadora?"
+                  : "Qual mês devo comparar com a calculadora de dias úteis?"}
+            </article>
           </div>
         </div>
       </section>
@@ -277,9 +466,14 @@ export default function FifthBusinessDay({ params }: FifthBusinessDayProps) {
           <h2 className="text-3xl font-bold">FAQ</h2>
           <div className="mt-5 space-y-3">
             {faqItems.map(item => (
-              <details key={item.question} className="rounded-2xl bg-secondary px-5 py-4">
+              <details
+                key={item.question}
+                className="rounded-2xl bg-secondary px-5 py-4"
+              >
                 <summary className="font-semibold">{item.question}</summary>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.answer}</p>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  {item.answer}
+                </p>
               </details>
             ))}
           </div>

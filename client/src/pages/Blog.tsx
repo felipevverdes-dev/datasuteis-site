@@ -35,11 +35,7 @@ export default function Blog() {
     {
       id: "apoio",
       label:
-        language === "en"
-          ? "Support"
-          : language === "es"
-            ? "Apoyo"
-            : "Apoio",
+        language === "en" ? "Support" : language === "es" ? "Apoyo" : "Apoio",
     },
   ];
 
@@ -76,7 +72,7 @@ export default function Blog() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main id="main-content" role="main">
+      <main id="main-content">
         <section className="hero border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto">
             <div className="mx-auto max-w-3xl text-center">
@@ -92,7 +88,7 @@ export default function Blog() {
 
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
-        <section className="section-md">
+        <div className="section-md">
           <div className="container mx-auto page-stack">
             <PageIntroNavigation
               breadcrumbs={breadcrumbs}
@@ -155,25 +151,45 @@ export default function Blog() {
                   </div>
                 </div>
 
-                <AdSlot id="ads-blog-sidebar" minHeight={250} format="rectangle" />
+                <AdSlot
+                  id="ads-blog-sidebar"
+                  minHeight={250}
+                  format="rectangle"
+                />
               </aside>
             </div>
 
             <CoreNavigationBlock />
 
-            <AdSlot id="ads-blog-bottom" className="my-4" minHeight={100} format="auto" />
+            <AdSlot
+              id="ads-blog-bottom"
+              className="my-4"
+              minHeight={100}
+              format="auto"
+            />
 
             <CtaFinalBlock
               language={language}
-              title={language === "en" ? "Ready to calculate business days?" : language === "es" ? "¿Listo para calcular días hábiles?" : "Pronto para calcular dias úteis?"}
-              buttonLabel={language === "en" ? "Open calculator" : language === "es" ? "Abrir calculadora" : "Abrir calculadora"}
+              title={
+                language === "en"
+                  ? "Ready to calculate business days?"
+                  : language === "es"
+                    ? "¿Listo para calcular días hábiles?"
+                    : "Pronto para calcular dias úteis?"
+              }
+              buttonLabel={
+                language === "en"
+                  ? "Open calculator"
+                  : language === "es"
+                    ? "Abrir calculadora"
+                    : "Abrir calculadora"
+              }
             />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />
     </div>
   );
 }
-

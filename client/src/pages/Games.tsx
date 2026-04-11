@@ -314,7 +314,7 @@ export default function Games() {
       }
       ctaHref="/"
     >
-      <section id="ferramenta" className="section-anchor">
+      <div id="ferramenta" className="section-anchor">
         <div className="section-card">
           <div className="page-grid">
             {copy.cards.map(game => {
@@ -349,7 +349,7 @@ export default function Games() {
             })}
           </div>
         </div>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">

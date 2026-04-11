@@ -57,7 +57,7 @@ export default function PageShell({
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main id="main-content" role="main" className="relative">
+      <main id="main-content" className="relative">
         <section className="hero border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
           <div className="container mx-auto">
             <div className="max-w-4xl">
@@ -74,7 +74,7 @@ export default function PageShell({
           <FloatingSectionNav items={navItems} topLabel={topLabel} />
         ) : null}
 
-        <section className="section-md">
+        <div className="section-md">
           <div className="container mx-auto page-stack">
             {breadcrumbs?.length &&
             breadcrumbAriaLabel &&
@@ -108,7 +108,7 @@ export default function PageShell({
               />
             )}
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

@@ -654,6 +654,7 @@ export default function Sudoku() {
     <div className="min-h-screen bg-background">
       <Header />
 
+<<<<<<< HEAD
       <main id="main-content" role="main" className="relative">
         <GamePageHero
           breadcrumbs={breadcrumbs}
@@ -663,13 +664,36 @@ export default function Sudoku() {
           title="Sudoku Online Grátis"
           mobileSummary="Jogue Sudoku com quatro níveis de dificuldade, acompanhe progresso, erros e pontuação e salve seu melhor tempo por dificuldade."
         />
+=======
+      <main id="main-content" className="relative">
+        <section className="hero-game border-b border-border bg-gradient-to-br from-primary/10 via-background to-background">
+          <div className="container mx-auto">
+            <div className="max-w-3xl">
+              <PageIntroNavigation
+                breadcrumbs={breadcrumbs}
+                breadcrumbAriaLabel={navigationLabels.breadcrumb}
+                backLabel={navigationLabels.back}
+                backAriaLabel={navigationLabels.backAria}
+              />
+              <h1 className="mt-2 text-3xl font-bold text-primary md:text-[2.2rem] lg:text-[1.875rem] xl:text-[2.05rem]">
+                Sudoku Online Grátis
+              </h1>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground lg:hidden">
+                Jogue Sudoku com quatro níveis de dificuldade, timer,
+                verificação de progresso e Top 10 salvo neste navegador.
+              </p>
+            </div>
+          </div>
+        </section>
+>>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
 
         <FloatingSectionNav items={navItems} topLabel={topLabel} />
 
-        <section className="section-game">
+        <div className="section-game">
           <div className="container mx-auto game-mobile-container game-page-stack">
             <GameLanguageNotice />
 
+<<<<<<< HEAD
             <section id="ferramenta" className="section-anchor">
               <div
                 className="card-base game-focus-card game-panel"
@@ -682,6 +706,52 @@ export default function Sudoku() {
                       {difficultyButtons}
                       <div className="game-theme-chip game-theme-chip-compact">
                         Grade 9x9 • {clueCount} pistas iniciais
+=======
+            <div
+              id="ferramenta"
+              className="section-anchor grid gap-3 xl:grid-cols-[minmax(0,1fr)_280px] xl:items-start"
+            >
+              <div className="space-y-3 xl:space-y-4">
+                <div className="hidden xl:block card-base game-panel">
+                  <div className="game-toolbar">
+                    <div className="game-toolbar-row">
+                      <div className="game-toolbar-main max-w-2xl">
+                        <p className="game-toolbar-title">Tabuleiro atual</p>
+                        <div className="game-toolbar-copy">
+                          <h2 className="game-toolbar-heading">
+                            {difficultyCopy.label}
+                          </h2>
+                          <p className="game-toolbar-subtitle">
+                            {difficultyCopy.teaser}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="game-difficulty-row">
+                        {(
+                          [
+                            "easy",
+                            "medium",
+                            "hard",
+                            "expert",
+                          ] as SudokuDifficulty[]
+                        ).map(difficulty => (
+                          <button
+                            key={difficulty}
+                            type="button"
+                            aria-label={`Iniciar Sudoku ${DIFFICULTY_COPY[difficulty].label}`}
+                            className={cn(
+                              "game-difficulty-button",
+                              currentDifficulty === difficulty
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                            )}
+                            onClick={() => startNewGame(difficulty)}
+                          >
+                            {DIFFICULTY_COPY[difficulty].label}
+                          </button>
+                        ))}
+>>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
                       </div>
                     </div>
 
@@ -726,10 +796,113 @@ export default function Sudoku() {
                       }
                       onContextMenu={event => event.preventDefault()}
                     >
+<<<<<<< HEAD
                       <div
                         className="grid grid-cols-9 gap-[2px] rounded-[24px] bg-primary/10 p-2 sm:gap-1 sm:p-3"
                         role="grid"
                         aria-label="Grade de Sudoku"
+=======
+                      {session.board.map((value, index) => {
+                        const isSelected = selectedCell === index;
+                        const isGiven = session.game.puzzle[index] !== 0;
+                        const hasConflict = conflictSet.has(index);
+                        const sharesGroup =
+                          selectedCell !== null &&
+                          (getSudokuRow(selectedCell) === getSudokuRow(index) ||
+                            getSudokuColumn(selectedCell) ===
+                              getSudokuColumn(index) ||
+                            getSudokuBlock(selectedCell) ===
+                              getSudokuBlock(index));
+                        const matchesSelectedValue =
+                          selectedValue !== 0 &&
+                          value !== 0 &&
+                          value === selectedValue;
+
+                        return (
+                          <input
+                            key={index}
+                            ref={element => {
+                              cellRefs.current[index] = element;
+                            }}
+                            type="text"
+                            role="gridcell"
+                            inputMode="numeric"
+                            pattern="[1-9]*"
+                            autoComplete="off"
+                            aria-selected={isSelected}
+                            aria-invalid={hasConflict}
+                            aria-readonly={isGiven}
+                            aria-label={`Linha ${getSudokuRow(index) + 1}, coluna ${getSudokuColumn(index) + 1}`}
+                            value={value === 0 ? "" : String(value)}
+                            readOnly={isGiven}
+                            maxLength={1}
+                            onFocus={() => updateSelectedCell(index)}
+                            onClick={() => updateSelectedCell(index)}
+                            onChange={event =>
+                              !isGiven &&
+                              handleCellChange(index, event.target.value)
+                            }
+                            onKeyDown={event => handleCellKeyDown(index, event)}
+                            className={cn(
+                              "aspect-square min-h-10 w-full appearance-none rounded-md border px-0 text-center text-[15px] font-semibold leading-[1.1] transition-colors caret-primary sm:min-h-10 sm:text-lg",
+                              getSudokuRow(index) % 3 === 0 &&
+                                "border-t-2 border-t-primary/35",
+                              getSudokuColumn(index) % 3 === 0 &&
+                                "border-l-2 border-l-primary/35",
+                              (getSudokuRow(index) === 8 ||
+                                getSudokuRow(index) % 3 === 2) &&
+                                "border-b-2 border-b-primary/35",
+                              (getSudokuColumn(index) === 8 ||
+                                getSudokuColumn(index) % 3 === 2) &&
+                                "border-r-2 border-r-primary/35",
+                              isSelected
+                                ? "bg-primary text-primary-foreground ring-2 ring-primary/30"
+                                : hasConflict
+                                  ? "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-200"
+                                  : sharesGroup
+                                    ? "bg-primary/10"
+                                    : matchesSelectedValue
+                                      ? "bg-accent/10"
+                                      : "bg-background hover:bg-secondary/80",
+                              isGiven &&
+                                !isSelected &&
+                                "font-bold text-foreground caret-transparent",
+                              !isGiven &&
+                                !isSelected &&
+                                !hasConflict &&
+                                "text-primary dark:text-sky-200"
+                            )}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="game-meta-row mt-4 hidden justify-center xl:flex">
+                    <span className="game-meta-chip">9x9</span>
+                    <span className="game-meta-chip">
+                      {getSudokuDifficultyClues(currentDifficulty)} pistas
+                      iniciais
+                    </span>
+                    <span className="game-meta-chip">
+                      Toque para abrir o teclado numérico nativo
+                    </span>
+                  </div>
+
+                  <div className="mt-4 space-y-3 xl:hidden">
+                    {completedTime !== null ? (
+                      <div className="rounded-2xl bg-emerald-100 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200">
+                        Concluido em{" "}
+                        <strong>{formatElapsedTime(completedTime)}</strong>.
+                      </div>
+                    ) : null}
+
+                    <div className="game-mobile-primary-actions">
+                      <button
+                        type="button"
+                        onClick={() => startNewGame(currentDifficulty)}
+                        className="btn-primary"
+>>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
                       >
                         {session.board.map((value, index) => {
                           const isSelected = selectedCell === index;
@@ -851,10 +1024,36 @@ export default function Sudoku() {
                       </button>
                     </div>
 
+<<<<<<< HEAD
                     <div className="hidden lg:block game-secondary-note">
                       {boardStatusText} Toque em uma célula editável para abrir
                       o teclado numérico nativo. No desktop, use as setas para
                       navegar pela grade.
+=======
+                    <div className="game-mobile-status-grid">
+                      <div className="compact-stat compact-stat-tight">
+                        <span className="compact-stat-label">Tempo</span>
+                        <span className="compact-stat-value">
+                          {formatElapsedTime(elapsedSeconds)}
+                        </span>
+                      </div>
+                      <div className="compact-stat compact-stat-tight">
+                        <span className="compact-stat-label">Progresso</span>
+                        <span className="compact-stat-value">{progress}%</span>
+                      </div>
+                      <div className="compact-stat compact-stat-tight">
+                        <span className="compact-stat-label">Preenchidas</span>
+                        <span className="compact-stat-value">
+                          {filledCount}/81
+                        </span>
+                      </div>
+                      <div className="compact-stat compact-stat-tight">
+                        <span className="compact-stat-label">Conflitos</span>
+                        <span className="compact-stat-value">
+                          {conflictSet.size}
+                        </span>
+                      </div>
+>>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
                     </div>
 
                     <div className="space-y-3 lg:hidden">
@@ -881,6 +1080,7 @@ export default function Sudoku() {
                             9x9
                           </span>
                         </div>
+<<<<<<< HEAD
                         <div className="game-context-list">
                           <div className="game-context-item text-foreground">
                             <strong>Selecionada:</strong> {selectedCellSummary}
@@ -891,6 +1091,104 @@ export default function Sudoku() {
                           </div>
                           <div className="game-context-item text-foreground">
                             <strong>Pistas iniciais:</strong> {clueCount}
+=======
+                      </div>
+                    </ResponsiveSecondarySection>
+                  </div>
+                </div>
+              </div>
+
+              <aside className="hidden space-y-4 xl:block">
+                <div className="card-base game-panel">
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-2">
+                    <div className="compact-stat compact-stat-tight">
+                      <span className="compact-stat-label">Tempo</span>
+                      <span className="compact-stat-value">
+                        {formatElapsedTime(elapsedSeconds)}
+                      </span>
+                    </div>
+                    <div className="compact-stat compact-stat-tight">
+                      <span className="compact-stat-label">Progresso</span>
+                      <span className="compact-stat-value">{progress}%</span>
+                    </div>
+                    <div className="compact-stat compact-stat-tight">
+                      <span className="compact-stat-label">Preenchidas</span>
+                      <span className="compact-stat-value">
+                        {filledCount}/81
+                      </span>
+                    </div>
+                    <div className="compact-stat compact-stat-tight">
+                      <span className="compact-stat-label">Conflitos</span>
+                      <span className="compact-stat-value">
+                        {conflictSet.size}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="card-base game-panel">
+                  <div className="grid gap-2">
+                    <button
+                      type="button"
+                      onClick={() => startNewGame(currentDifficulty)}
+                      className="btn-primary w-full"
+                    >
+                      Novo jogo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={restartGame}
+                      className="btn-secondary w-full"
+                    >
+                      Reiniciar jogo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleClearErrors}
+                      className="btn-secondary w-full"
+                    >
+                      Limpar erros editáveis
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCheckProgress}
+                      className="btn-secondary w-full"
+                    >
+                      Verificar progresso
+                    </button>
+                  </div>
+                </div>
+
+                <div className="card-base game-panel">
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="text-xl font-bold">
+                      Top 10 neste navegador
+                    </h2>
+                    <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-muted-foreground">
+                      {difficultyCopy.label}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+                    {ranking.length ? (
+                      ranking.map((entry, index) => (
+                        <div
+                          key={`${entry.name}-${entry.time}-${entry.date}`}
+                          className="flex items-center justify-between gap-4 rounded-2xl bg-secondary/60 px-4 py-3"
+                        >
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <Medal
+                                className={cn("h-4 w-4", getRankTone(index))}
+                              />
+                              <p className="truncate font-semibold">
+                                {index + 1}. {entry.name}
+                              </p>
+                            </div>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                              {formatDate(entry.date)}
+                            </p>
+>>>>>>> a1934ab (Ajuste do site para os padrões do W3C Validator)
                           </div>
                         </div>
                         <p className="mt-3 text-xs leading-5 text-muted-foreground">
@@ -1172,7 +1470,7 @@ export default function Sudoku() {
 
             <CoreNavigationBlock />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

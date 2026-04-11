@@ -380,7 +380,7 @@ export default function Weather() {
       backButtonLabel={navigationLabels.back}
       backButtonAriaLabel={navigationLabels.backAria}
     >
-      <section id="ferramenta" className="section-anchor">
+      <div id="ferramenta" className="section-anchor">
         <div className="section-card">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
@@ -464,7 +464,7 @@ export default function Weather() {
             </article>
           </div>
         </div>
-      </section>
+      </div>
 
       <section id="explicacao" className="section-anchor">
         <div className="section-card">

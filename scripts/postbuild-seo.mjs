@@ -902,6 +902,13 @@ function injectPrerenderMarkup(html, prerenderMarkup) {
   );
 }
 
+function normalizeVoidElements(html) {
+  return html.replace(
+    /<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)(\s[^>]*)?\s*\/>/gi,
+    (_match, tagName, attributes = "") => `<${tagName}${attributes}>`
+  );
+}
+
 async function readBuildAssetHints() {
   const assetsDir = path.join(DIST_DIR, "assets");
   const files = await fs.readdir(assetsDir);
@@ -1027,6 +1034,7 @@ async function writeRouteHtml(template, item, prerenderMap, assetHints) {
     content,
     prerenderMap.get(item.pathname) ?? ""
   );
+  content = normalizeVoidElements(content);
 
   const filePath =
     item.pathname === "/"
