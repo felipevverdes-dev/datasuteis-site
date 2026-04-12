@@ -1,0 +1,60 @@
+import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+interface UtilityMetricCardProps {
+  label: string;
+  value: string;
+  helper?: string;
+  icon?: ReactNode;
+  tone?: "default" | "primary" | "success" | "warning" | "danger";
+  className?: string;
+}
+
+const TONE_CLASSNAME: Record<
+  NonNullable<UtilityMetricCardProps["tone"]>,
+  string
+> = {
+  default: "bg-card",
+  primary: "bg-primary/10 border-primary/15",
+  success: "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-900",
+  warning: "bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-900",
+  danger: "bg-rose-50 border-rose-200 dark:bg-rose-950/30 dark:border-rose-900",
+};
+
+export default function UtilityMetricCard({
+  label,
+  value,
+  helper,
+  icon,
+  tone = "default",
+  className,
+}: UtilityMetricCardProps) {
+  return (
+    <article
+      className={cn(
+        "rounded-3xl border p-5 shadow-sm",
+        TONE_CLASSNAME[tone],
+        className
+      )}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            {label}
+          </p>
+          <p className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
+            {value}
+          </p>
+        </div>
+        {icon ? (
+          <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-background/70 text-primary">
+            {icon}
+          </div>
+        ) : null}
+      </div>
+      {helper ? (
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">{helper}</p>
+      ) : null}
+    </article>
+  );
+}

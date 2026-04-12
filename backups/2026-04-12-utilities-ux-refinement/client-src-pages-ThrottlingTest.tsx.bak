@@ -1,0 +1,537 @@
+import { useMemo, useState } from "react";
+import {
+  Activity,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Gauge,
+  LoaderCircle,
+  ShieldAlert,
+  Wifi,
+} from "lucide-react";
+import AdSlot from "@/components/AdSlot";
+import ThrottlingVerdictBadge from "@/components/utilities/ThrottlingVerdictBadge";
+import UtilityMetricCard from "@/components/utilities/UtilityMetricCard";
+import PageShell from "@/components/layout/PageShell";
+import { useI18n } from "@/contexts/LanguageContext";
+import { trackAnalyticsEvent } from "@/lib/analytics";
+import {
+  formatLatency,
+  formatPercent,
+  formatSpeed,
+  getVerdictLabel,
+  runThrottlingDiagnostics,
+  type ThrottlingProgressState,
+  type ThrottlingSummary,
+} from "@/lib/network-diagnostics";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  getNavigationLabels,
+} from "@/lib/navigation";
+import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
+import { usePageSeo } from "@/lib/seo";
+
+const PAGE_PATH = "/utilitarios/teste-de-throttling/";
+
+const FAQ_ITEMS = [
+  {
+    question: "Esse teste prova que a operadora está limitando minha internet?",
+    answer:
+      "Não. Ele mostra indícios de possível diferenciação de tráfego. O resultado ajuda na análise, mas não funciona como prova definitiva.",
+  },
+  {
+    question: "Por que o teste roda mais de uma vez?",
+    answer:
+      "Porque uma medição isolada pode pegar um pico ou uma queda momentânea. Repetir três rodadas ajuda a filtrar ruído.",
+  },
+  {
+    question: "Wi-Fi pode atrapalhar?",
+    answer:
+      "Sim. Interferência do roteador, distância, aparelhos conectados e paredes podem distorcer velocidade, latência e jitter.",
+  },
+  {
+    question: "O que é traffic shaping?",
+    answer:
+      "É uma forma de tratar tipos de tráfego de maneiras diferentes. Em alguns cenários, certos fluxos podem receber prioridade menor que outros.",
+  },
+  {
+    question: "Se der inconclusivo, o que vale fazer?",
+    answer:
+      "Vale repetir em outro horário, testar com cabo em vez de Wi-Fi e comparar com a conexão em outro aparelho, se possível.",
+  },
+];
+
+function getVerdictTone(summary: ThrottlingSummary | null) {
+  if (!summary) {
+    return "default" as const;
+  }
+
+  switch (summary.verdict) {
+    case "strong_indication":
+      return "danger" as const;
+    case "moderate_indication":
+      return "warning" as const;
+    case "no_relevant_evidence":
+      return "success" as const;
+    default:
+      return "default" as const;
+  }
+}
+
+export default function ThrottlingTest() {
+  const { language } = useI18n();
+  const navigationLabels = getNavigationLabels(language);
+  const navItems = getToolPageNavItems(language);
+  const topLabel = getBackToTopLabel(language);
+  const breadcrumbs = [
+    { label: navigationLabels.home, href: "/" },
+    { label: navigationLabels.utilities, href: "/utilitarios/" },
+    { label: "Teste de throttling" },
+  ];
+
+  const [summary, setSummary] = useState<ThrottlingSummary | null>(null);
+  const [progress, setProgress] = useState<ThrottlingProgressState | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [error, setError] = useState("");
+
+  usePageSeo({
+    title: "Sua operadora está limitando sua internet? Faça o teste de throttling",
+    description:
+      "Descubra se há indícios de limitação de velocidade na sua conexão com nosso teste avançado.",
+    path: PAGE_PATH,
+    keywords: [
+      "teste de throttling",
+      "traffic shaping",
+      "internet limitada",
+      "operadora limitando internet",
+      "latência jitter packet loss",
+      "teste de velocidade avançado",
+    ],
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        name: "Teste se sua internet está sendo limitada (throttling)",
+        url: `https://datasuteis.com.br${PAGE_PATH}`,
+        description:
+          "Ferramenta online para medir download, upload, latência, jitter e possíveis indícios de diferenciação de tráfego.",
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name: "Teste de throttling",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web",
+        url: `https://datasuteis.com.br${PAGE_PATH}`,
+        description:
+          "Teste comparativo com fluxo padrão e fluxo ofuscado para procurar indícios de possível limitação seletiva.",
+      },
+      buildBreadcrumbSchema([
+        { label: navigationLabels.home, href: "/" },
+        { label: navigationLabels.utilities, href: "/utilitarios/" },
+        { label: "Teste de throttling", href: PAGE_PATH },
+      ]),
+      buildFaqPageSchema(FAQ_ITEMS),
+    ],
+  });
+
+  async function handleStartTest() {
+    setIsRunning(true);
+    setError("");
+    setSummary(null);
+    setProgress({
+      currentRound: 1,
+      currentStep: 0,
+      totalSteps: 18,
+      percent: 0,
+      label: "Preparando a medição...",
+    });
+
+    trackAnalyticsEvent("utility_throttling_started");
+
+    try {
+      const result = await runThrottlingDiagnostics(nextProgress => {
+        setProgress(nextProgress);
+      });
+
+      setSummary(result);
+      trackAnalyticsEvent("utility_throttling_finished", {
+        verdict: result.verdict,
+        download_gap_percent: result.normalVsObfuscatedDownloadGapPercent,
+        upload_gap_percent: result.normalVsObfuscatedUploadGapPercent,
+        latency_gap_percent: result.normalVsObfuscatedLatencyGapPercent,
+      });
+    } catch {
+      setError(
+        "O teste não conseguiu terminar agora. Verifique a conexão e tente novamente em instantes."
+      );
+      trackAnalyticsEvent("utility_throttling_error");
+    } finally {
+      setIsRunning(false);
+    }
+  }
+
+  const verdictTone = getVerdictTone(summary);
+  const flowComparison = useMemo(() => {
+    if (!summary) {
+      return null;
+    }
+
+    return [
+      {
+        label: "Download",
+        normal: formatSpeed(summary.averageNormal.downloadMbps),
+        obfuscated: formatSpeed(summary.averageObfuscated.downloadMbps),
+        gap: formatPercent(summary.normalVsObfuscatedDownloadGapPercent),
+      },
+      {
+        label: "Upload",
+        normal: formatSpeed(summary.averageNormal.uploadMbps),
+        obfuscated: formatSpeed(summary.averageObfuscated.uploadMbps),
+        gap: formatPercent(summary.normalVsObfuscatedUploadGapPercent),
+      },
+      {
+        label: "Latência sob carga",
+        normal: formatLatency(summary.averageNormal.loadedLatencyMs),
+        obfuscated: formatLatency(summary.averageObfuscated.loadedLatencyMs),
+        gap: formatPercent(summary.normalVsObfuscatedLatencyGapPercent),
+      },
+    ];
+  }, [summary]);
+
+  return (
+    <PageShell
+      eyebrow="Utilitários"
+      title="Teste se sua internet está sendo limitada (throttling)"
+      description="Compare fluxo padrão e fluxo ofuscado em três rodadas para procurar indícios de possível diferenciação de tráfego."
+      navItems={navItems}
+      topLabel={topLabel}
+      breadcrumbs={breadcrumbs}
+      breadcrumbAriaLabel={navigationLabels.breadcrumb}
+      backButtonLabel={navigationLabels.back}
+      backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle="Quer ver os dados básicos da sua conexão também?"
+      ctaButtonLabel="Abrir Qual é meu IP"
+      ctaHref="/utilitarios/qual-e-meu-ip/"
+    >
+      <section id="ferramenta" className="section-anchor">
+        <div className="section-card">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold text-primary">
+                Diagnóstico comparativo
+              </p>
+              <h2 className="mt-1 text-3xl font-bold">Fluxo padrão x fluxo ofuscado</h2>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void handleStartTest()}
+              className="btn-primary"
+              disabled={isRunning}
+            >
+              {isRunning ? (
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Gauge className="mr-2 h-4 w-4" />
+              )}
+              Iniciar teste
+            </button>
+          </div>
+
+          <div className="mt-5 rounded-3xl bg-secondary px-5 py-4 text-sm leading-6 text-muted-foreground">
+            O teste mede download, upload, latência, jitter e perda de pacotes em três rodadas. O resultado mostra apenas <strong className="text-foreground">indícios</strong> de possível limitação seletiva, nunca uma certeza definitiva.
+          </div>
+
+          <div className="mt-5 grid gap-3 lg:grid-cols-2">
+            <div className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">Antes de começar</h3>
+              <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+                <li>Use cabo de rede se puder. No Wi-Fi, o resultado pode oscilar bastante.</li>
+                <li>Feche streaming, backup em nuvem e downloads paralelos antes de rodar.</li>
+                <li>Se o resultado vier forte ou inconclusivo, repita em horários diferentes.</li>
+              </ul>
+            </div>
+            <div className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">Como ler o teste</h3>
+              <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+                <li>Se o fluxo ofuscado ficar repetidamente melhor, o teste sobe o nível de alerta.</li>
+                <li>Se a conexão variar muito por congestionamento, o resultado tende a ficar inconclusivo.</li>
+                <li>O ideal é olhar o conjunto: velocidade, latência sob carga, jitter e repetição do padrão.</li>
+              </ul>
+            </div>
+          </div>
+
+          {progress ? (
+            <div className="mt-6 rounded-3xl border border-border p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    Progresso do teste
+                  </p>
+                  <p className="mt-2 font-semibold text-foreground">
+                    {progress.label}
+                  </p>
+                </div>
+                <span className="rounded-full bg-secondary px-3 py-1 text-sm font-semibold">
+                  {progress.currentStep}/{progress.totalSteps}
+                </span>
+              </div>
+              <div className="mt-4 h-3 rounded-full bg-secondary">
+                <div
+                  className="h-3 rounded-full bg-primary transition-[width]"
+                  style={{ width: `${progress.percent}%` }}
+                />
+              </div>
+            </div>
+          ) : null}
+
+          {error ? (
+            <div className="mt-5 rounded-3xl bg-rose-100 px-5 py-4 text-sm leading-6 text-rose-800 dark:bg-rose-950/40 dark:text-rose-200">
+              {error}
+            </div>
+          ) : null}
+
+          {summary ? (
+            <div className="mt-6 space-y-6">
+              <div className="rounded-3xl border border-border p-6">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                      Resultado final
+                    </p>
+                    <h3 className="mt-2 text-3xl font-bold">
+                      {getVerdictLabel(summary.verdict)}
+                    </h3>
+                    <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
+                      {summary.explanation}
+                    </p>
+                  </div>
+                  <ThrottlingVerdictBadge verdict={summary.verdict} />
+                </div>
+
+                <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                  {summary.reasons.map(reason => (
+                    <div
+                      key={reason}
+                      className="rounded-2xl bg-secondary px-4 py-3 text-sm leading-6 text-muted-foreground"
+                    >
+                      {reason}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <UtilityMetricCard
+                  label="Download médio do fluxo padrão"
+                  value={formatSpeed(summary.averageNormal.downloadMbps)}
+                  helper={`Fluxo padrão. Fluxo ofuscado: ${formatSpeed(summary.averageObfuscated.downloadMbps)}`}
+                  icon={<ArrowDownToLine className="h-5 w-5" />}
+                  tone={verdictTone}
+                />
+                <UtilityMetricCard
+                  label="Upload médio do fluxo padrão"
+                  value={formatSpeed(summary.averageNormal.uploadMbps)}
+                  helper={`Fluxo padrão. Fluxo ofuscado: ${formatSpeed(summary.averageObfuscated.uploadMbps)}`}
+                  icon={<ArrowUpFromLine className="h-5 w-5" />}
+                  tone={verdictTone}
+                />
+                <UtilityMetricCard
+                  label="Latência média"
+                  value={formatLatency(summary.overallPingMs)}
+                  helper={`Jitter médio: ${formatLatency(summary.overallJitterMs)}`}
+                  icon={<Activity className="h-5 w-5" />}
+                  tone={verdictTone}
+                />
+                <UtilityMetricCard
+                  label="Perda de pacotes"
+                  value={formatPercent(summary.overallPacketLossPercent)}
+                  helper="Percentual médio de tentativas de ping sem resposta dentro da janela do teste."
+                  icon={<Wifi className="h-5 w-5" />}
+                />
+                <UtilityMetricCard
+                  label="Vantagem do fluxo ofuscado no download"
+                  value={formatPercent(summary.normalVsObfuscatedDownloadGapPercent)}
+                  helper="Valor positivo indica que o fluxo ofuscado teve média mais alta."
+                  icon={<Gauge className="h-5 w-5" />}
+                  tone={verdictTone}
+                />
+                <UtilityMetricCard
+                  label="Vantagem do fluxo ofuscado no upload"
+                  value={formatPercent(summary.normalVsObfuscatedUploadGapPercent)}
+                  helper="A comparação ajuda a ver se a diferença aparece em mais de um tipo de tráfego."
+                  icon={<ShieldAlert className="h-5 w-5" />}
+                  tone={verdictTone}
+                />
+              </div>
+
+              {flowComparison ? (
+                <div className="rounded-3xl border border-border p-6">
+                  <h3 className="text-2xl font-bold">Comparação das médias</h3>
+                  <div className="mt-5 overflow-x-auto">
+                    <table className="min-w-full text-left text-sm">
+                      <thead>
+                        <tr className="border-b border-border text-muted-foreground">
+                          <th className="py-3 pr-4 font-semibold">Métrica</th>
+                          <th className="py-3 pr-4 font-semibold">Fluxo padrão</th>
+                          <th className="py-3 pr-4 font-semibold">Fluxo ofuscado</th>
+                          <th className="py-3 font-semibold">Diferença</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {flowComparison.map(item => (
+                          <tr key={item.label} className="border-b border-border last:border-0">
+                            <td className="py-3 pr-4 font-semibold">{item.label}</td>
+                            <td className="py-3 pr-4 text-muted-foreground">{item.normal}</td>
+                            <td className="py-3 pr-4 text-muted-foreground">{item.obfuscated}</td>
+                            <td className="py-3 font-semibold">{item.gap}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="rounded-3xl border border-border p-6">
+                <h3 className="text-2xl font-bold">Rodada por rodada</h3>
+                <div className="mt-5 grid gap-4 xl:grid-cols-3">
+                  {summary.rounds.map(round => (
+                    <article
+                      key={round.round}
+                      className="rounded-3xl bg-secondary p-5"
+                    >
+                      <h4 className="text-lg font-bold">Rodada {round.round}</h4>
+                      <div className="mt-4 space-y-3 text-sm leading-6">
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            Fluxo padrão
+                          </p>
+                          <p className="text-muted-foreground">
+                            Down {formatSpeed(round.normal.downloadMbps)} • Up{" "}
+                            {formatSpeed(round.normal.uploadMbps)}
+                          </p>
+                          <p className="text-muted-foreground">
+                            Ping {formatLatency(round.normal.pingMs)} • Jitter{" "}
+                            {formatLatency(round.normal.jitterMs)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            Fluxo ofuscado
+                          </p>
+                          <p className="text-muted-foreground">
+                            Down {formatSpeed(round.obfuscated.downloadMbps)} • Up{" "}
+                            {formatSpeed(round.obfuscated.uploadMbps)}
+                          </p>
+                          <p className="text-muted-foreground">
+                            Ping {formatLatency(round.obfuscated.pingMs)} • Jitter{" "}
+                            {formatLatency(round.obfuscated.jitterMs)}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-6 rounded-3xl border border-dashed border-border p-6 text-sm leading-6 text-muted-foreground">
+              Quando você iniciar o teste, a página vai medir três rodadas completas e consolidar as médias antes de mostrar o resultado final.
+            </div>
+          )}
+
+          <div className="mt-6">
+            <AdSlot
+              id="ads-throttling-top"
+              minHeight={120}
+              format="horizontal"
+              className="rounded-2xl"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section id="explicacao" className="section-anchor">
+        <div className="section-card">
+          <h2 className="text-3xl font-bold">O que é throttling e por que ele acontece</h2>
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            <article className="rounded-3xl bg-secondary p-5">
+              <h3 className="text-xl font-bold">Throttling</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                É quando a velocidade percebida cai em certos cenários, serviços ou horários. Nem sempre isso é intencional, mas o efeito para o usuário é parecido: a conexão parece pior do que deveria.
+              </p>
+            </article>
+            <article className="rounded-3xl bg-secondary p-5">
+              <h3 className="text-xl font-bold">Traffic shaping</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                É a prática de tratar tipos de tráfego de formas diferentes. Pode ser usada para equilibrar rede, controlar congestionamento ou priorizar alguns fluxos.
+              </p>
+            </article>
+            <article className="rounded-3xl bg-secondary p-5">
+              <h3 className="text-xl font-bold">Por que comparar fluxos</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Se dois fluxos muito parecidos apresentam desempenho bem diferente de forma repetida, isso acende um alerta de que a rede pode estar tratando um deles pior que o outro.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="exemplos" className="section-anchor">
+        <div className="section-card">
+          <h2 className="text-3xl font-bold">Como interpretar o resultado</h2>
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            <article className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">Sem evidência relevante</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                As médias dos dois fluxos ficaram próximas. Nessa situação, o teste não encontrou um padrão forte de separação entre eles.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">Indício moderado ou forte</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Quando o fluxo ofuscado vence repetidamente em download, upload ou latência sob carga, aparece um sinal mais claro de possível diferenciação de tráfego.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">Inconclusivo</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Se a conexão oscila demais, com muita perda de pacotes ou jitter alto, o teste prefere não forçar uma conclusão.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">O melhor próximo passo</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Repetir em outro horário, trocar o Wi-Fi por cabo e comparar em outro aparelho costuma ajudar bastante a separar limitação seletiva de simples congestionamento.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" className="section-anchor">
+        <div className="section-card">
+          <h2 className="text-3xl font-bold">Perguntas frequentes</h2>
+          <div className="mt-6 space-y-3">
+            {FAQ_ITEMS.map(item => (
+              <details
+                key={item.question}
+                className="rounded-2xl bg-secondary px-4 py-3"
+              >
+                <summary className="cursor-pointer font-semibold">
+                  {item.question}
+                </summary>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  {item.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    </PageShell>
+  );
+}

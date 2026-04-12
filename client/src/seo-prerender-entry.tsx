@@ -7,7 +7,9 @@ import Age from "@/pages/Age";
 import Calculator from "@/pages/Calculator";
 import Calendar from "@/pages/Calendar";
 import Home from "@/pages/Home";
+import MyIp from "@/pages/MyIp";
 import Schedule from "@/pages/Schedule";
+import ThrottlingTest from "@/pages/ThrottlingTest";
 import WorldClock from "@/pages/WorldClock";
 import WorldClockMarkets from "@/pages/WorldClockMarkets";
 
@@ -33,6 +35,10 @@ function getPage(pathname: string) {
       return <Calendar />;
     case "/escala/":
       return <Schedule />;
+    case "/utilitarios/qual-e-meu-ip/":
+      return <MyIp />;
+    case "/utilitarios/teste-de-throttling/":
+      return <ThrottlingTest />;
     case "/utilitarios/horario-mundial/":
       return <WorldClock />;
     case "/utilitarios/horario-mercados/":

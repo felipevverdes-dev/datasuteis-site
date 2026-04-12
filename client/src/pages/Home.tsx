@@ -595,10 +595,10 @@ export default function Home() {
       title: utilitiesNavLabel,
       description:
         language === "en"
-          ? "Calculator, random picker, weather and currency tools."
+          ? "Calculator, IP lookup, internet test, weather and currency tools."
           : language === "es"
-            ? "Calculadora, sorteador, clima y cambio."
-            : "Calculadora, sorteador, clima e câmbio.",
+            ? "Calculadora, IP, prueba de internet, clima y cambio."
+            : "Calculadora, IP, teste de internet, clima e câmbio.",
       icon: Wrench,
     },
     {

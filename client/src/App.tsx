@@ -25,6 +25,8 @@ const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Games = lazy(() => import("./pages/Games"));
 const Utilities = lazy(() => import("./pages/Utilities"));
 const RandomPicker = lazy(() => import("./pages/RandomPicker"));
+const MyIp = lazy(() => import("./pages/MyIp"));
+const ThrottlingTest = lazy(() => import("./pages/ThrottlingTest"));
 const CurrencyConverter = lazy(() => import("./pages/CurrencyConverter"));
 const Weather = lazy(() => import("./pages/Weather"));
 const WorldClock = lazy(() => import("./pages/WorldClock"));
@@ -141,6 +143,16 @@ function Router() {
         />
         <Route path={"/utilitarios/clima/"} component={Weather} />
         <Route path={"/utilitarios/clima"} component={Weather} />
+        <Route path={"/utilitarios/qual-e-meu-ip/"} component={MyIp} />
+        <Route path={"/utilitarios/qual-e-meu-ip"} component={MyIp} />
+        <Route
+          path={"/utilitarios/teste-de-throttling/"}
+          component={ThrottlingTest}
+        />
+        <Route
+          path={"/utilitarios/teste-de-throttling"}
+          component={ThrottlingTest}
+        />
         <Route path={"/utilitarios/horario-mundial/"} component={WorldClock} />
         <Route path={"/utilitarios/horario-mundial"} component={WorldClock} />
         <Route

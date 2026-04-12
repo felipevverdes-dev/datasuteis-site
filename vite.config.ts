@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig } from "vite";
 import { createBusinessDayApiRouter } from "./server/business-days-api";
+import { createConnectionToolRouter } from "./server/connection-tools";
 import { createExternalDataRouter } from "./server/external-data";
 
 export default defineConfig({
@@ -13,6 +14,7 @@ export default defineConfig({
       name: "datasuteis-widgets-api",
       configureServer(server) {
         server.middlewares.use(createBusinessDayApiRouter());
+        server.middlewares.use(createConnectionToolRouter());
         server.middlewares.use(createExternalDataRouter());
       },
     },

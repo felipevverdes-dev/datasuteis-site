@@ -3,6 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { registerBusinessDayApiRoutes } from "./business-days-api.js";
+import { registerConnectionToolRoutes } from "./connection-tools.js";
 import { registerExternalDataRoutes } from "./external-data.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -222,6 +223,7 @@ async function startServer() {
   });
 
   registerBusinessDayApiRoutes(app);
+  registerConnectionToolRoutes(app);
   registerExternalDataRoutes(app);
 
   // Serve static files from dist/public in production
@@ -325,6 +327,8 @@ async function startServer() {
     /^\/utilitarios\/sorteador\/?$/,
     /^\/utilitarios\/conversor-de-moeda\/?$/,
     /^\/utilitarios\/clima\/?$/,
+    /^\/utilitarios\/qual-e-meu-ip\/?$/,
+    /^\/utilitarios\/teste-de-throttling\/?$/,
     /^\/utilitarios\/horario-mundial\/?$/,
     /^\/utilitarios\/horario-mercados\/?$/,
     /^\/jogos\/?$/,

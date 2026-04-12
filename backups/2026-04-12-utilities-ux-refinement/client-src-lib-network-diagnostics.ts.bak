@@ -1,0 +1,529 @@
+import type {
+  ThrottlingVerdict,
+  TrafficFlowMode,
+} from "@shared/connection-tools";
+
+export interface FlowMetrics {
+  pingMs: number;
+  jitterMs: number;
+  packetLossPercent: number;
+  downloadMbps: number;
+  uploadMbps: number;
+  loadedLatencyMs: number;
+}
+
+export interface ThrottlingRoundResult {
+  round: number;
+  normal: FlowMetrics;
+  obfuscated: FlowMetrics;
+}
+
+export interface ThrottlingProgressState {
+  currentRound: number;
+  currentStep: number;
+  totalSteps: number;
+  percent: number;
+  label: string;
+}
+
+export interface ThrottlingSummary {
+  rounds: ThrottlingRoundResult[];
+  averageNormal: FlowMetrics;
+  averageObfuscated: FlowMetrics;
+  overallPingMs: number;
+  overallJitterMs: number;
+  overallPacketLossPercent: number;
+  normalVsObfuscatedDownloadGapPercent: number;
+  normalVsObfuscatedUploadGapPercent: number;
+  normalVsObfuscatedLatencyGapPercent: number;
+  verdict: ThrottlingVerdict;
+  explanation: string;
+  reasons: string[];
+}
+
+interface PingMetrics {
+  averageMs: number;
+  jitterMs: number;
+  packetLossPercent: number;
+}
+
+interface ThroughputMeasurement {
+  throughputMbps: number;
+  concurrentPingMs: number | null;
+}
+
+const TEST_ROUNDS = 3;
+const STEPS_PER_ROUND = 6;
+const PING_ATTEMPTS = 5;
+const DOWNLOAD_SIZE_BYTES = 1_200_000;
+const UPLOAD_SIZE_BYTES = 650_000;
+const REQUEST_TIMEOUT_MS = 15000;
+
+function createSeed() {
+  if (
+    typeof crypto !== "undefined" &&
+    typeof crypto.randomUUID === "function"
+  ) {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function average(values: number[]) {
+  if (!values.length) {
+    return 0;
+  }
+
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function roundTo(value: number, digits = 2) {
+  const factor = 10 ** digits;
+  return Math.round(value * factor) / factor;
+}
+
+function computeJitter(values: number[]) {
+  if (values.length < 2) {
+    return 0;
+  }
+
+  const deltas: number[] = [];
+  for (let index = 1; index < values.length; index += 1) {
+    deltas.push(Math.abs(values[index] - values[index - 1]));
+  }
+
+  return average(deltas);
+}
+
+function buildTestUrl(pathname: string, params: Record<string, string | number>) {
+  const url = new URL(pathname, window.location.origin);
+  Object.entries(params).forEach(([key, value]) => {
+    url.searchParams.set(key, String(value));
+  });
+  url.searchParams.set("ts", String(Date.now()));
+  return url.toString();
+}
+
+async function timedFetch(
+  input: RequestInfo | URL,
+  init: RequestInit = {},
+  timeoutMs = REQUEST_TIMEOUT_MS
+) {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(input, {
+      ...init,
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    return { response };
+  } finally {
+    window.clearTimeout(timeoutId);
+  }
+}
+
+function createUploadPayload(
+  mode: TrafficFlowMode,
+  sizeBytes: number,
+  seedText: string
+) {
+  if (mode === "normal") {
+    const encoder = new TextEncoder();
+    const pattern = encoder.encode("datasuteis-upload-normal-flow|");
+    const payload = new Uint8Array(sizeBytes);
+
+    for (let index = 0; index < sizeBytes; index += pattern.length) {
+      payload.set(pattern.slice(0, Math.min(pattern.length, sizeBytes - index)), index);
+    }
+
+    return payload;
+  }
+
+  const payload = new Uint8Array(sizeBytes);
+  let state = 2166136261;
+  for (let index = 0; index < seedText.length; index += 1) {
+    state ^= seedText.charCodeAt(index);
+    state = Math.imul(state, 16777619);
+  }
+
+  for (let index = 0; index < payload.length; index += 1) {
+    state ^= state << 13;
+    state ^= state >>> 17;
+    state ^= state << 5;
+    payload[index] = state & 0xff;
+  }
+
+  return payload;
+}
+
+async function measureSinglePing(mode: TrafficFlowMode) {
+  const request = buildTestUrl("/api/network/ping", { mode });
+  const startedAt = performance.now();
+  const { response } = await timedFetch(request, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`ping_failed_${response.status}`);
+  }
+
+  await response.json();
+  return performance.now() - startedAt;
+}
+
+async function measurePing(mode: TrafficFlowMode) {
+  const successfulRtts: number[] = [];
+  let failedAttempts = 0;
+
+  for (let attempt = 0; attempt < PING_ATTEMPTS; attempt += 1) {
+    try {
+      const rtt = await measureSinglePing(mode);
+      successfulRtts.push(rtt);
+    } catch {
+      failedAttempts += 1;
+    }
+  }
+
+  return {
+    averageMs: roundTo(average(successfulRtts)),
+    jitterMs: roundTo(computeJitter(successfulRtts)),
+    packetLossPercent: roundTo((failedAttempts / PING_ATTEMPTS) * 100),
+  } satisfies PingMetrics;
+}
+
+async function measureDownload(mode: TrafficFlowMode) {
+  const request = buildTestUrl("/api/network/download", {
+    mode,
+    size: DOWNLOAD_SIZE_BYTES,
+    seed: `${mode}-${createSeed()}`,
+  });
+  const concurrentPingPromise = (async () => {
+    await new Promise(resolve => window.setTimeout(resolve, 100));
+    return measureSinglePing(mode);
+  })().catch(() => null);
+
+  const startedAt = performance.now();
+  const { response } = await timedFetch(request, {
+    method: "GET",
+    headers: {
+      Accept: "application/octet-stream",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`download_failed_${response.status}`);
+  }
+
+  const buffer = await response.arrayBuffer();
+  const durationMs = performance.now() - startedAt;
+  const concurrentPingMs = await concurrentPingPromise;
+  const throughputMbps = (buffer.byteLength * 8) / (durationMs / 1000) / 1_000_000;
+
+  return {
+    throughputMbps: roundTo(throughputMbps),
+    concurrentPingMs: concurrentPingMs === null ? null : roundTo(concurrentPingMs),
+  } satisfies ThroughputMeasurement;
+}
+
+async function measureUpload(mode: TrafficFlowMode) {
+  const payload = createUploadPayload(
+    mode,
+    UPLOAD_SIZE_BYTES,
+    `${mode}-${createSeed()}`
+  );
+  const request = buildTestUrl("/api/network/upload", {
+    mode,
+    size: payload.byteLength,
+  });
+  const concurrentPingPromise = (async () => {
+    await new Promise(resolve => window.setTimeout(resolve, 80));
+    return measureSinglePing(mode);
+  })().catch(() => null);
+
+  const startedAt = performance.now();
+  const { response } = await timedFetch(
+    request,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/octet-stream",
+        Accept: "application/json",
+      },
+      body: payload,
+    },
+    REQUEST_TIMEOUT_MS
+  );
+
+  if (!response.ok) {
+    throw new Error(`upload_failed_${response.status}`);
+  }
+
+  const json = (await response.json()) as { receivedBytes?: number };
+  const durationMs = performance.now() - startedAt;
+  const receivedBytes =
+    typeof json.receivedBytes === "number" ? json.receivedBytes : payload.byteLength;
+  const concurrentPingMs = await concurrentPingPromise;
+  const throughputMbps =
+    (receivedBytes * 8) / (durationMs / 1000) / 1_000_000;
+
+  return {
+    throughputMbps: roundTo(throughputMbps),
+    concurrentPingMs: concurrentPingMs === null ? null : roundTo(concurrentPingMs),
+  } satisfies ThroughputMeasurement;
+}
+
+function averageFlowMetrics(rounds: ThrottlingRoundResult[], mode: TrafficFlowMode) {
+  const values = rounds.map(round => round[mode]);
+
+  return {
+    pingMs: roundTo(average(values.map(item => item.pingMs))),
+    jitterMs: roundTo(average(values.map(item => item.jitterMs))),
+    packetLossPercent: roundTo(
+      average(values.map(item => item.packetLossPercent))
+    ),
+    downloadMbps: roundTo(average(values.map(item => item.downloadMbps))),
+    uploadMbps: roundTo(average(values.map(item => item.uploadMbps))),
+    loadedLatencyMs: roundTo(
+      average(values.map(item => item.loadedLatencyMs))
+    ),
+  } satisfies FlowMetrics;
+}
+
+function computeAdvantagePercent(baseValue: number, comparisonValue: number) {
+  if (baseValue <= 0 || comparisonValue <= 0) {
+    return 0;
+  }
+
+  return roundTo(((comparisonValue - baseValue) / baseValue) * 100);
+}
+
+function buildSummary(rounds: ThrottlingRoundResult[]) {
+  const averageNormal = averageFlowMetrics(rounds, "normal");
+  const averageObfuscated = averageFlowMetrics(rounds, "obfuscated");
+  const downloadGap = computeAdvantagePercent(
+    averageNormal.downloadMbps,
+    averageObfuscated.downloadMbps
+  );
+  const uploadGap = computeAdvantagePercent(
+    averageNormal.uploadMbps,
+    averageObfuscated.uploadMbps
+  );
+  const latencyGap = computeAdvantagePercent(
+    averageObfuscated.loadedLatencyMs,
+    averageNormal.loadedLatencyMs
+  );
+
+  let score = 0;
+  const reasons: string[] = [];
+  const unstable =
+    averageNormal.packetLossPercent >= 8 ||
+    averageObfuscated.packetLossPercent >= 8 ||
+    averageNormal.jitterMs >= 45 ||
+    averageObfuscated.jitterMs >= 45;
+
+  if (downloadGap >= 35) {
+    score += 2;
+    reasons.push(
+      "O fluxo ofuscado manteve download bem acima do fluxo padrão."
+    );
+  } else if (downloadGap >= 18) {
+    score += 1;
+    reasons.push(
+      "O fluxo ofuscado teve vantagem moderada no download em relação ao fluxo padrão."
+    );
+  }
+
+  if (uploadGap >= 35) {
+    score += 2;
+    reasons.push(
+      "O fluxo ofuscado manteve upload bem acima do fluxo padrão."
+    );
+  } else if (uploadGap >= 18) {
+    score += 1;
+    reasons.push(
+      "O fluxo ofuscado teve vantagem moderada no upload em relação ao fluxo padrão."
+    );
+  }
+
+  if (latencyGap >= 40) {
+    score += 2;
+    reasons.push(
+      "A latência durante carga ficou mais alta no fluxo padrão do que no fluxo ofuscado."
+    );
+  } else if (latencyGap >= 20) {
+    score += 1;
+    reasons.push(
+      "A latência sob carga ficou um pouco pior no fluxo padrão."
+    );
+  }
+
+  const roundsWithRepeatedPattern = rounds.filter(
+    round =>
+      round.obfuscated.downloadMbps > round.normal.downloadMbps * 1.15 &&
+      round.obfuscated.uploadMbps > round.normal.uploadMbps * 1.1
+  ).length;
+
+  if (roundsWithRepeatedPattern >= 2) {
+    score += 1;
+    reasons.push(
+      "A diferença apareceu em mais de uma rodada, o que reduz a chance de ser apenas um pico isolado."
+    );
+  }
+
+  let verdict: ThrottlingVerdict = "no_relevant_evidence";
+  let explanation =
+    "Os dois fluxos ficaram próximos nas médias. Nesta medição, não apareceu evidência relevante de diferenciação de tráfego.";
+
+  if (unstable) {
+    verdict = "inconclusive";
+    explanation =
+      "A conexão variou bastante durante o teste. Houve jitter ou perda de pacotes suficiente para deixar o resultado inconclusivo.";
+  } else if (score >= 5) {
+    verdict = "strong_indication";
+    explanation =
+      "O fluxo ofuscado ficou repetidamente melhor do que o fluxo padrão. Isso sugere um indício forte de possível diferenciação de tráfego, mas ainda não é prova definitiva.";
+  } else if (score >= 2) {
+    verdict = "moderate_indication";
+    explanation =
+      "A média mostrou alguma vantagem do fluxo ofuscado sobre o fluxo padrão. Isso sugere um indício moderado de possível limitação seletiva.";
+  }
+
+  if (!reasons.length) {
+    reasons.push(
+      "As médias ficaram próximas entre si e não formaram um padrão claro de separação entre os dois fluxos."
+    );
+  }
+
+  return {
+    rounds,
+    averageNormal,
+    averageObfuscated,
+    overallPingMs: roundTo(
+      average([averageNormal.pingMs, averageObfuscated.pingMs])
+    ),
+    overallJitterMs: roundTo(
+      average([averageNormal.jitterMs, averageObfuscated.jitterMs])
+    ),
+    overallPacketLossPercent: roundTo(
+      average([
+        averageNormal.packetLossPercent,
+        averageObfuscated.packetLossPercent,
+      ])
+    ),
+    normalVsObfuscatedDownloadGapPercent: downloadGap,
+    normalVsObfuscatedUploadGapPercent: uploadGap,
+    normalVsObfuscatedLatencyGapPercent: latencyGap,
+    verdict,
+    explanation,
+    reasons,
+  } satisfies ThrottlingSummary;
+}
+
+export async function runThrottlingDiagnostics(
+  onProgress: (state: ThrottlingProgressState) => void
+) {
+  const rounds: ThrottlingRoundResult[] = [];
+  const totalSteps = TEST_ROUNDS * STEPS_PER_ROUND;
+  let currentStep = 0;
+
+  const announce = (currentRound: number, label: string) => {
+    currentStep += 1;
+    onProgress({
+      currentRound,
+      currentStep,
+      totalSteps,
+      percent: roundTo((currentStep / totalSteps) * 100),
+      label,
+    });
+  };
+
+  for (let round = 1; round <= TEST_ROUNDS; round += 1) {
+    announce(round, `Rodada ${round}: medindo latência do fluxo padrão`);
+    const normalPing = await measurePing("normal");
+
+    announce(round, `Rodada ${round}: medindo download do fluxo padrão`);
+    const normalDownload = await measureDownload("normal");
+
+    announce(round, `Rodada ${round}: medindo upload do fluxo padrão`);
+    const normalUpload = await measureUpload("normal");
+
+    announce(round, `Rodada ${round}: medindo latência do fluxo ofuscado`);
+    const obfuscatedPing = await measurePing("obfuscated");
+
+    announce(round, `Rodada ${round}: medindo download do fluxo ofuscado`);
+    const obfuscatedDownload = await measureDownload("obfuscated");
+
+    announce(round, `Rodada ${round}: medindo upload do fluxo ofuscado`);
+    const obfuscatedUpload = await measureUpload("obfuscated");
+
+    const normalConcurrentPings = [
+      normalDownload.concurrentPingMs,
+      normalUpload.concurrentPingMs,
+    ].filter((value): value is number => typeof value === "number");
+    const obfuscatedConcurrentPings = [
+      obfuscatedDownload.concurrentPingMs,
+      obfuscatedUpload.concurrentPingMs,
+    ].filter((value): value is number => typeof value === "number");
+
+    rounds.push({
+      round,
+      normal: {
+        pingMs: normalPing.averageMs,
+        jitterMs: normalPing.jitterMs,
+        packetLossPercent: normalPing.packetLossPercent,
+        downloadMbps: normalDownload.throughputMbps,
+        uploadMbps: normalUpload.throughputMbps,
+        loadedLatencyMs: roundTo(
+          normalConcurrentPings.length
+            ? average(normalConcurrentPings)
+            : normalPing.averageMs
+        ),
+      },
+      obfuscated: {
+        pingMs: obfuscatedPing.averageMs,
+        jitterMs: obfuscatedPing.jitterMs,
+        packetLossPercent: obfuscatedPing.packetLossPercent,
+        downloadMbps: obfuscatedDownload.throughputMbps,
+        uploadMbps: obfuscatedUpload.throughputMbps,
+        loadedLatencyMs: roundTo(
+          obfuscatedConcurrentPings.length
+            ? average(obfuscatedConcurrentPings)
+            : obfuscatedPing.averageMs
+        ),
+      },
+    });
+  }
+
+  return buildSummary(rounds);
+}
+
+export function formatSpeed(value: number) {
+  return `${roundTo(value, value >= 100 ? 0 : 1).toLocaleString("pt-BR")} Mbps`;
+}
+
+export function formatLatency(value: number) {
+  return `${roundTo(value, value >= 100 ? 0 : 1).toLocaleString("pt-BR")} ms`;
+}
+
+export function formatPercent(value: number) {
+  return `${roundTo(value, Math.abs(value) >= 100 ? 0 : 1).toLocaleString("pt-BR")}%`;
+}
+
+export function getVerdictLabel(verdict: ThrottlingVerdict) {
+  switch (verdict) {
+    case "strong_indication":
+      return "Indício forte";
+    case "moderate_indication":
+      return "Indício moderado";
+    case "inconclusive":
+      return "Inconclusivo";
+    default:
+      return "Sem evidência relevante";
+  }
+}

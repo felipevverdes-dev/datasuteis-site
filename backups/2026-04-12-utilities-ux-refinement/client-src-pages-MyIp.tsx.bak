@@ -1,0 +1,371 @@
+import { useEffect, useMemo, useState } from "react";
+import {
+  Copy,
+  Globe2,
+  MapPin,
+  MonitorSmartphone,
+  RefreshCcw,
+  Router,
+  ShieldCheck,
+} from "lucide-react";
+import { toast } from "sonner";
+import AdSlot from "@/components/AdSlot";
+import UtilityMetricCard from "@/components/utilities/UtilityMetricCard";
+import PageShell from "@/components/layout/PageShell";
+import { useI18n } from "@/contexts/LanguageContext";
+import { trackAnalyticsEvent } from "@/lib/analytics";
+import {
+  buildBreadcrumbSchema,
+  buildFaqPageSchema,
+  getNavigationLabels,
+} from "@/lib/navigation";
+import { getBackToTopLabel, getToolPageNavItems } from "@/lib/page-sections";
+import { usePageSeo } from "@/lib/seo";
+import type { IpLookupResponse } from "@shared/connection-tools";
+
+const PAGE_PATH = "/utilitarios/qual-e-meu-ip/";
+
+const FAQ_ITEMS = [
+  {
+    question: "O endereço mostrado aqui é o meu IP público?",
+    answer:
+      "Sim. A ferramenta tenta mostrar o endereço público visto pela internet, não o IP interno do seu roteador dentro de casa ou da empresa.",
+  },
+  {
+    question: "A localização é exata?",
+    answer:
+      "Não. A cidade e a região são aproximadas. Em algumas conexões, o resultado pode apontar para uma cidade próxima ou para o local do provedor.",
+  },
+  {
+    question: "Qual é a diferença entre IP público e privado?",
+    answer:
+      "O IP público identifica sua conexão para sites e serviços online. O IP privado é usado só dentro da sua rede local, como na comunicação entre celular, notebook e roteador.",
+  },
+  {
+    question: "Por que às vezes aparece IPv4 e em outras IPv6?",
+    answer:
+      "Porque a internet hoje convive com os dois padrões. Algumas operadoras entregam IPv4, outras IPv6, e algumas usam ambos ao mesmo tempo.",
+  },
+  {
+    question: "Vocês armazenam meu IP ou minha localização?",
+    answer:
+      "Não. O resultado é consultado na hora e exibido apenas para uso imediato nesta página.",
+  },
+];
+
+function formatLocation(data: IpLookupResponse) {
+  const parts = [data.city, data.region, data.country].filter(Boolean);
+  return parts.length ? parts.join(", ") : "Localização aproximada indisponível";
+}
+
+export default function MyIp() {
+  const { language } = useI18n();
+  const navigationLabels = getNavigationLabels(language);
+  const navItems = getToolPageNavItems(language);
+  const topLabel = getBackToTopLabel(language);
+  const breadcrumbs = [
+    { label: navigationLabels.home, href: "/" },
+    { label: navigationLabels.utilities, href: "/utilitarios/" },
+    { label: "Qual é meu IP?" },
+  ];
+
+  const [data, setData] = useState<IpLookupResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  usePageSeo({
+    title: "Qual é meu IP? Veja seu IP público, localização e provedor",
+    description:
+      "Descubra seu IP público, localização aproximada e provedor de internet de forma rápida e gratuita.",
+    path: PAGE_PATH,
+    keywords: [
+      "qual é meu ip",
+      "meu ip público",
+      "descobrir ip",
+      "ip público",
+      "ipv4 e ipv6",
+      "provedor de internet",
+    ],
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        name: "Qual é meu IP?",
+        url: `https://datasuteis.com.br${PAGE_PATH}`,
+        description:
+          "Ferramenta online para ver IP público, localização aproximada, provedor, navegador e sistema operacional.",
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name: "Qual é meu IP?",
+        applicationCategory: "UtilitiesApplication",
+        operatingSystem: "Web",
+        url: `https://datasuteis.com.br${PAGE_PATH}`,
+        description:
+          "Consulta rápida do IP público e de dados básicos da conexão.",
+      },
+      buildBreadcrumbSchema([
+        { label: navigationLabels.home, href: "/" },
+        { label: navigationLabels.utilities, href: "/utilitarios/" },
+        { label: "Qual é meu IP?", href: PAGE_PATH },
+      ]),
+      buildFaqPageSchema(FAQ_ITEMS),
+    ],
+  });
+
+  async function loadIpData() {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/ip", {
+        headers: {
+          Accept: "application/json",
+        },
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        throw new Error(`ip_lookup_failed_${response.status}`);
+      }
+
+      const payload = (await response.json()) as IpLookupResponse;
+      setData(payload);
+      trackAnalyticsEvent("utility_ip_lookup_success", {
+        ip_version: payload.ipVersion,
+        has_location: Boolean(payload.city || payload.region || payload.country),
+      });
+    } catch {
+      setError(
+        "Não foi possível consultar seu IP agora. Você pode tentar novamente em instantes."
+      );
+      trackAnalyticsEvent("utility_ip_lookup_error");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadIpData();
+  }, []);
+
+  const copyText = useMemo(() => {
+    if (!data) {
+      return "";
+    }
+
+    return [
+      `IP público: ${data.ip}`,
+      `Versão: ${data.ipVersion}`,
+      `Localização aproximada: ${formatLocation(data)}`,
+      `Provedor: ${data.isp ?? "Não identificado"}`,
+      `Navegador: ${data.browser}`,
+      `Sistema operacional: ${data.os}`,
+    ].join("\n");
+  }, [data]);
+
+  async function handleCopy() {
+    if (!copyText) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(copyText);
+      toast.success("Dados copiados.");
+      trackAnalyticsEvent("utility_ip_lookup_copied");
+    } catch {
+      toast.error("Não foi possível copiar agora.");
+    }
+  }
+
+  return (
+    <PageShell
+      eyebrow="Utilitários"
+      title="Qual é meu IP?"
+      description="Veja seu IP público, localização aproximada, provedor e alguns detalhes do navegador em uma consulta rápida."
+      navItems={navItems}
+      topLabel={topLabel}
+      breadcrumbs={breadcrumbs}
+      breadcrumbAriaLabel={navigationLabels.breadcrumb}
+      backButtonLabel={navigationLabels.back}
+      backButtonAriaLabel={navigationLabels.backAria}
+      language={language}
+      ctaTitle="Quer checar a estabilidade da conexão também?"
+      ctaButtonLabel="Abrir teste de throttling"
+      ctaHref="/utilitarios/teste-de-throttling/"
+    >
+      <section id="ferramenta" className="section-anchor">
+        <div className="section-card">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-primary">
+                Consulta de conexão
+              </p>
+              <h2 className="mt-1 text-3xl font-bold">Seu endereço público</h2>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => void loadIpData()}
+                className="btn-secondary"
+                disabled={isLoading}
+              >
+                <RefreshCcw className="mr-2 h-4 w-4" />
+                Atualizar
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleCopy()}
+                className="btn-primary"
+                disabled={!data}
+              >
+                <Copy className="mr-2 h-4 w-4" />
+                Copiar dados
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+            <UtilityMetricCard
+              label="IP público"
+              value={
+                isLoading
+                  ? "Consultando..."
+                  : data?.ip ?? "Não foi possível identificar"
+              }
+              helper={
+                error ||
+                "Esse é o endereço público visto pelos sites que você acessa agora."
+              }
+              icon={<Globe2 className="h-5 w-5" />}
+              tone="primary"
+              className="min-h-[220px]"
+            />
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <UtilityMetricCard
+                label="Localização aproximada"
+                value={
+                  data
+                    ? formatLocation(data)
+                    : isLoading
+                      ? "Consultando..."
+                      : "Indisponível"
+                }
+                helper="A localização é uma estimativa baseada no IP e pode apontar para uma cidade próxima."
+                icon={<MapPin className="h-5 w-5" />}
+              />
+              <UtilityMetricCard
+                label="Provedor"
+                value={data?.isp ?? (isLoading ? "Consultando..." : "Não identificado")}
+                helper="Normalmente corresponde à operadora ou empresa que entrega sua conexão."
+                icon={<Router className="h-5 w-5" />}
+              />
+              <UtilityMetricCard
+                label="Navegador"
+                value={data?.browser ?? (isLoading ? "Consultando..." : "Não identificado")}
+                helper="Leitura resumida a partir do User-Agent enviado pelo navegador."
+                icon={<MonitorSmartphone className="h-5 w-5" />}
+              />
+              <UtilityMetricCard
+                label="Sistema"
+                value={data?.os ?? (isLoading ? "Consultando..." : "Não identificado")}
+                helper={`Versão do IP: ${data?.ipVersion ?? "Carregando..."}`}
+                icon={<ShieldCheck className="h-5 w-5" />}
+              />
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-3xl bg-secondary px-5 py-4 text-sm leading-6 text-muted-foreground">
+            <strong className="text-foreground">Aviso de privacidade:</strong>{" "}
+            a localização mostrada aqui é aproximada e nenhum desses dados é armazenado pelo site.
+          </div>
+
+          <div className="mt-5">
+            <AdSlot
+              id="ads-ip-tool-top"
+              minHeight={120}
+              format="horizontal"
+              className="rounded-2xl"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section id="explicacao" className="section-anchor">
+        <div className="section-card">
+          <h2 className="text-3xl font-bold">O que esses dados significam</h2>
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            <article className="rounded-3xl bg-secondary p-5">
+              <h3 className="text-xl font-bold">O que é um IP</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                IP é o endereço usado para identificar sua conexão quando você acessa um site, envia uma mensagem ou abre um aplicativo online.
+              </p>
+            </article>
+            <article className="rounded-3xl bg-secondary p-5">
+              <h3 className="text-xl font-bold">IP público x IP privado</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                O IP público é o que aparece para a internet. Já o IP privado vive dentro da sua rede local, ligando roteador, celular, TV e computador.
+              </p>
+            </article>
+            <article className="rounded-3xl bg-secondary p-5">
+              <h3 className="text-xl font-bold">IPv4 x IPv6</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                O IPv4 é o formato mais conhecido e ainda muito usado. O IPv6 surgiu para ampliar a quantidade de endereços disponíveis e tende a aparecer cada vez mais.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="exemplos" className="section-anchor">
+        <div className="section-card">
+          <h2 className="text-3xl font-bold">Quando essa consulta ajuda</h2>
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            <article className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">Suporte técnico</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Saber o IP, o provedor e o navegador ajuda a abrir chamados com mais contexto quando um serviço não carrega como deveria.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">Acesso remoto</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Em algumas rotinas de trabalho, você precisa confirmar o endereço público da conexão para liberar acesso, testar VPN ou revisar regras de rede.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-border p-5">
+              <h3 className="text-xl font-bold">Conferência rápida</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                Também é útil para checar se a operadora trocou seu IP, se a região reconhecida mudou ou se o site está lendo seu navegador corretamente.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" className="section-anchor">
+        <div className="section-card">
+          <h2 className="text-3xl font-bold">Perguntas frequentes</h2>
+          <div className="mt-6 space-y-3">
+            {FAQ_ITEMS.map(item => (
+              <details
+                key={item.question}
+                className="rounded-2xl bg-secondary px-4 py-3"
+              >
+                <summary className="cursor-pointer font-semibold">
+                  {item.question}
+                </summary>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  {item.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    </PageShell>
+  );
+}

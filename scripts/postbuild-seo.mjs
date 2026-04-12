@@ -20,6 +20,8 @@ const PRIORITY_PRERENDER_PATHS = new Set([
   "/idade/",
   "/calendario/",
   "/escala/",
+  "/utilitarios/qual-e-meu-ip/",
+  "/utilitarios/teste-de-throttling/",
   "/utilitarios/horario-mundial/",
   "/utilitarios/horario-mercados/",
 ]);
@@ -184,11 +186,27 @@ function buildRoutes(blogPosts) {
     ),
     route(
       "/utilitarios/",
-      "Utilitários de apoio para tarefas rápidas | Datas Úteis",
-      "Reúna calculadora, sorteador, conversor e clima em uma área de apoio ao núcleo principal do site.",
+      "Utilitários online | IP, teste de internet, calculadora, clima e mais | Datas Úteis",
+      "Reúna calculadora, verificador de IP, teste de internet, clima, câmbio e outros utilitários em uma área útil para tarefas rápidas.",
       "0.6",
       "monthly",
       { breadcrumbLabel: UTILITIES_LABEL }
+    ),
+    route(
+      "/utilitarios/qual-e-meu-ip/",
+      "Qual é meu IP? Veja seu IP público, localização e provedor",
+      "Descubra seu IP público, localização aproximada e provedor de internet de forma rápida e gratuita.",
+      "0.71",
+      "weekly",
+      { breadcrumbLabel: "Qual é meu IP?" }
+    ),
+    route(
+      "/utilitarios/teste-de-throttling/",
+      "Teste de Internet e Limitações | Veja estabilidade e sinais de limitação",
+      "Descubra se sua conexão está estável e se há indícios de limitação de velocidade.",
+      "0.7",
+      "weekly",
+      { breadcrumbLabel: "Teste de Internet e Limitações" }
     ),
     route(
       "/utilitarios/calculadora/",

@@ -4,7 +4,9 @@ import {
   CloudSun,
   Coins,
   Dices,
+  Gauge,
   Landmark,
+  ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { Link } from "wouter";
@@ -42,13 +44,27 @@ const COPY: Record<
     eyebrow: "Utilitários",
     title: "Utilitários de apoio para tarefas rápidas",
     description:
-      "Calculadora, sorteador, conversor de moeda, clima e relógio mundial para tarefas rápidas do dia a dia.",
+      "Calculadora, clima, teste de internet e outras ferramentas úteis para resolver tarefas rápidas do dia a dia.",
     seoTitle:
-      "Utilitários Online | Calculadora, Sorteador, Câmbio, Clima e Relógio Mundial | Datas Úteis",
+      "Utilitários Online | IP, Teste de Internet, Calculadora, Clima e Mais | Datas Úteis",
     seoDescription:
-      "Acesse calculadora, sorteador, conversor de moeda, clima e relógio mundial em uma área de utilitários organizada para rotinas rápidas do dia a dia.",
+      "Acesse calculadora, verificador de IP, teste de internet, clima, conversor de moeda e outras ferramentas úteis em uma área organizada para tarefas rápidas.",
     sectionLabel: "Área de ferramentas rápidas",
     cards: [
+      {
+        href: "/utilitarios/qual-e-meu-ip/",
+        title: "Qual é meu IP",
+        description:
+          "Veja seu IP público, localização aproximada, provedor, navegador e sistema em uma consulta rápida.",
+        cta: "Abrir utilitário",
+      },
+      {
+        href: "/utilitarios/teste-de-throttling/",
+        title: "Teste de Internet e Limitações",
+        description:
+          "Descubra se sua conexão está estável e se há sinais de limitação de velocidade.",
+        cta: "Abrir utilitário",
+      },
       {
         href: "/utilitarios/calculadora/",
         title: "Calculadora",
@@ -94,11 +110,13 @@ const COPY: Record<
     ],
     explanationTitle: "Ferramentas simples para tarefas rápidas",
     explanationText:
-      "Escolha a ferramenta que precisa para fazer contas, sortear nomes, converter valores, checar o clima ou comparar horários internacionais em poucos passos.",
+      "Escolha a ferramenta que precisa para fazer contas, checar o IP, testar a conexão, converter valores, ver o clima ou comparar horários internacionais em poucos passos.",
     examplesTitle: "Quando usar",
     examples: [
       "Use a calculadora para contas rápidas ligadas a orçamento, reajuste, porcentagem e conferência diária.",
       "Use o sorteador para definir ordem de atendimento, rodízio interno, brindes ou seleção simples de nomes.",
+      "Use o verificador de IP para conferir endereço público, localização aproximada e provedor antes de pedir ajuda ao suporte.",
+      "Use o teste de internet para ver se a conexão está estável quando ela parecer mais lenta do que o normal.",
       "Use o conversor para checar valores em dólar, euro, libra e real antes de aprovar compras ou comparar custos.",
       "Use o clima para ajustar deslocamentos, visitas, entregas e rotinas externas com uma leitura rápida da previsão.",
       "Use o horário mundial para comparar fusos entre países, reuniões remotas e janelas de mercado internacional.",
@@ -108,12 +126,12 @@ const COPY: Record<
       {
         question: "Os utilitários são gratuitos?",
         answer:
-          "Sim. Você pode usar calculadora, sorteador, conversor de moeda, clima e horário mundial sem pagar.",
+          "Sim. Você pode usar calculadora, verificador de IP, teste de internet, sorteador, conversor de moeda, clima e horário mundial sem pagar.",
       },
       {
         question: "As páginas funcionam no celular?",
         answer:
-          "Sim. Todas seguem o mesmo layout base e foram organizadas para leitura e toque em telas menores.",
+          "Sim. Você pode abrir as ferramentas no celular e usar os controles principais sem depender de aplicativo separado.",
       },
       {
         question: "Preciso criar conta para usar?",
@@ -125,13 +143,27 @@ const COPY: Record<
     eyebrow: "Utilities",
     title: "Support utilities for quick tasks",
     description:
-      "Calculator, random picker, currency converter, weather and world clock for quick daily tasks.",
+      "Calculator, internet test, weather and other utilities for quick daily tasks.",
     seoTitle:
-      "Utilities | Calculator, Random Picker, Weather, Currency and World Clock | Datas Úteis",
+      "Utilities | IP lookup, internet test, calculator and more | Datas Úteis",
     seoDescription:
-      "Open calculator, random picker, currency conversion, weather and world clock tools in one utility area for quick daily tasks.",
+      "Open IP lookup, internet test, calculator, currency conversion, weather and world clock tools in one utility area for quick tasks.",
     sectionLabel: "Quick tools area",
     cards: [
+      {
+        href: "/utilitarios/qual-e-meu-ip/",
+        title: "What is my IP",
+        description:
+          "Check your public IP, approximate location, provider, browser and operating system quickly.",
+        cta: "Open utility",
+      },
+      {
+        href: "/utilitarios/teste-de-throttling/",
+        title: "Internet limit test",
+        description:
+          "Check whether your connection stays stable and whether any signs of speed limitation appear.",
+        cta: "Open utility",
+      },
       {
         href: "/utilitarios/calculadora/",
         title: "Calculator",
@@ -177,11 +209,13 @@ const COPY: Record<
     ],
     explanationTitle: "Simple tools for quick tasks",
     explanationText:
-      "Choose the tool you need to calculate, draw names, convert values, check weather or compare international timezones in a few steps.",
+      "Choose the tool you need to calculate, inspect your connection, convert values, check weather or compare international timezones in a few steps.",
     examplesTitle: "When to use it",
     examples: [
       "Use the calculator for quick percentage, budget and daily checking tasks.",
       "Use the random picker for rotation order, internal draws or simple name selection.",
+      "Use the IP lookup page before opening a support ticket or checking whether your connection changed.",
+      "Use the internet test when a connection feels slower than expected and you want a clearer stability check.",
       "Use the currency converter before comparing costs in USD, EUR, GBP and BRL.",
       "Use the weather page to adjust visits, deliveries and outdoor routines quickly.",
       "Use the world clock to compare countries, meeting slots and global market windows.",
@@ -191,12 +225,12 @@ const COPY: Record<
       {
         question: "Are these utilities free?",
         answer:
-          "Yes. You can use the calculator, random picker, currency converter, weather tool and world clock without paying.",
+          "Yes. You can use the calculator, IP lookup, internet test, random picker, currency converter, weather tool and world clock without paying.",
       },
       {
         question: "Do these pages work on mobile?",
         answer:
-          "Yes. They follow the same base layout and support touch interactions.",
+          "Yes. You can open the tools on mobile and use the main controls without needing a separate app.",
       },
       {
         question: "Do I need an account?",
@@ -208,13 +242,27 @@ const COPY: Record<
     eyebrow: "Utilidades",
     title: "Utilidades de apoyo para tareas rápidas",
     description:
-      "Calculadora, sorteador, conversor de moneda, clima y reloj mundial para tareas rápidas del día a día.",
+      "Calculadora, prueba de internet, clima y otras utilidades para tareas rápidas del día a día.",
     seoTitle:
-      "Utilidades | Calculadora, Sorteador, Cambio, Clima y Reloj Mundial | Datas Úteis",
+      "Utilidades | IP, prueba de internet, calculadora y más | Datas Úteis",
     seoDescription:
-      "Acceda a calculadora, sorteador, conversor de moneda, clima y reloj mundial en una sección de utilidades organizada para tareas rápidas.",
+      "Acceda a verificador de IP, prueba de internet, calculadora, clima, conversor y reloj mundial en una sección organizada para tareas rápidas.",
     sectionLabel: "Área de herramientas rápidas",
     cards: [
+      {
+        href: "/utilitarios/qual-e-meu-ip/",
+        title: "Cuál es mi IP",
+        description:
+          "Vea su IP pública, ubicación aproximada, proveedor, navegador y sistema rápidamente.",
+        cta: "Abrir utilidad",
+      },
+      {
+        href: "/utilitarios/teste-de-throttling/",
+        title: "Prueba de internet y límites",
+        description:
+          "Descubra si la conexión se mantiene estable y si aparecen señales de limitación de velocidad.",
+        cta: "Abrir utilidad",
+      },
       {
         href: "/utilitarios/calculadora/",
         title: "Calculadora",
@@ -260,11 +308,13 @@ const COPY: Record<
     ],
     explanationTitle: "Herramientas simples para tareas rápidas",
     explanationText:
-      "Elija la herramienta que necesita para hacer cuentas, sortear nombres, convertir valores, consultar el clima o comparar horarios internacionales en pocos pasos.",
+      "Elija la herramienta que necesita para hacer cuentas, revisar la conexión, convertir valores, consultar el clima o comparar horarios internacionales en pocos pasos.",
     examplesTitle: "Cuándo usar",
     examples: [
       "Use la calculadora para porcentajes, presupuesto y conferencias rápidas.",
       "Use el sorteador para orden de atención, rotación interna o selección simple de nombres.",
+      "Use el verificador de IP antes de abrir un ticket técnico o revisar si la conexión cambió.",
+      "Use la prueba de internet cuando la conexión parezca más lenta de lo normal y quiera revisar su estabilidad.",
       "Use el conversor para comparar valores en USD, EUR, GBP y BRL.",
       "Use el clima para ajustar visitas, entregas y rutinas externas rápidamente.",
       "Use el reloj mundial para comparar países, reuniones remotas y ventanas de mercado global.",
@@ -274,12 +324,12 @@ const COPY: Record<
       {
         question: "¿Estas utilidades son gratuitas?",
         answer:
-          "Sí. Puede usar la calculadora, el sorteador, el conversor, el clima y el reloj mundial sin pagar.",
+          "Sí. Puede usar la calculadora, el verificador de IP, la prueba de internet, el sorteador, el conversor, el clima y el reloj mundial sin pagar.",
       },
       {
         question: "¿Funcionan en el celular?",
         answer:
-          "Sí. Siguen el mismo layout base y están organizadas para toque y lectura.",
+          "Sí. Puede abrir las herramientas en el celular y usar los controles principales sin una app aparte.",
       },
       {
         question: "¿Necesito cuenta?",
@@ -365,7 +415,11 @@ export default function Utilities() {
           <div className="mt-5 page-grid">
             {copy.cards.map(card => {
               const Icon =
-                card.href === "/utilitarios/calculadora/"
+                card.href === "/utilitarios/qual-e-meu-ip/"
+                  ? ShieldCheck
+                  : card.href === "/utilitarios/teste-de-throttling/"
+                    ? Gauge
+                    : card.href === "/utilitarios/calculadora/"
                   ? Calculator
                   : card.href === "/utilitarios/sorteador/"
                     ? Dices
